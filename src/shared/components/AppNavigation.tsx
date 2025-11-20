@@ -1,5 +1,6 @@
 import { useNavigation } from '../../hooks/useNavigation';
 import ThemeToggle from './ThemeToggle';
+import MetronomeControls from './MetronomeControls';
 import type { AppPage } from '../../types/navigation';
 
 export default function AppNavigation() {
@@ -22,7 +23,7 @@ export default function AppNavigation() {
             </h1>
           </div>
 
-          {/* Navigation Links and Theme Toggle */}
+          {/* Navigation Links, Metronome, and Theme Toggle */}
           <div className="flex items-center space-x-3">
             {navItems.map(({ page, label, description }) => (
               <button
@@ -42,6 +43,7 @@ export default function AppNavigation() {
                 {label}
               </button>
             ))}
+            <MetronomeControls />
             <ThemeToggle />
           </div>
         </div>

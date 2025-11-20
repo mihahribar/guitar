@@ -5,5 +5,6 @@
  * learning systems and components.
  */
 
-// Currently no shared hooks - system-specific hooks are in their respective modules
+export { useMetronome } from './useMetronome';
+
 // App-level hooks (theme, navigation) remain in the root /hooks directory
