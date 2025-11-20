@@ -1,1 +1,1 @@
-export type AppPage = 'caged' | 'quiz' | 'modes';
+export type AppPage = 'caged' | 'quiz';

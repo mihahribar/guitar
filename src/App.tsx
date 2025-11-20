@@ -5,9 +5,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { NavigationProvider } from "./contexts/NavigationContext";
 import { useNavigation } from "./hooks/useNavigation";
 
-// Lazy load Quiz and Modes components for better initial bundle size
+// Lazy load Quiz component for better initial bundle size
 const QuizPage = lazy(() => import("@/systems/quiz/components/QuizPage"));
-const ModesVisualizer = lazy(() => import("@/systems/modes/components/ModesVisualizer"));
 
 function AppContent() {
   const { currentPage } = useNavigation();
@@ -25,11 +24,6 @@ function AppContent() {
         {currentPage === 'quiz' && (
           <Suspense fallback={<LoadingFallback message="Loading quiz..." size="large" />}>
             <QuizPage />
-          </Suspense>
-        )}
-        {currentPage === 'modes' && (
-          <Suspense fallback={<LoadingFallback message="Loading modes..." size="large" />}>
-            <ModesVisualizer />
           </Suspense>
         )}
       </main>

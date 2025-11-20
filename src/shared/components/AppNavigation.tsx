@@ -8,7 +8,6 @@ export default function AppNavigation() {
 
   const navItems: { page: AppPage; label: string; description: string }[] = [
     { page: 'caged', label: 'CAGED', description: 'Interactive CAGED system explorer' },
-    { page: 'modes', label: 'Modes', description: 'Learn guitar modes and scale patterns' },
     { page: 'quiz', label: 'Quiz', description: 'Test your chord identification skills' }
   ];
 
