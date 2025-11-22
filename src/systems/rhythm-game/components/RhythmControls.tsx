@@ -4,7 +4,7 @@
  * Control panel with BPM input, Start/Stop, Randomize, and toggle switches.
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
 
 interface RhythmControlsProps {
@@ -82,10 +82,38 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
   onSetPlayAudio,
   onSetBpm,
 }) => {
+  // Local state for BPM input to allow typing without immediate clamping
+  const [inputValue, setInputValue] = useState(String(bpm));
+
+  // Sync local state when bpm prop changes (e.g., from external source)
+  useEffect(() => {
+    setInputValue(String(bpm));
+  }, [bpm]);
+
   const handleBpmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
+    setInputValue(e.target.value);
+  };
+
+  const applyBpmValue = () => {
+    const value = parseInt(inputValue, 10);
     if (!isNaN(value)) {
-      onSetBpm(value);
+      // Clamp and apply
+      const clampedValue = Math.max(
+        METRONOME_CONSTANTS.MIN_BPM,
+        Math.min(METRONOME_CONSTANTS.MAX_BPM, value)
+      );
+      onSetBpm(clampedValue);
+      setInputValue(String(clampedValue));
+    } else {
+      // Reset to current bpm if invalid
+      setInputValue(String(bpm));
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      applyBpmValue();
+      (e.target as HTMLInputElement).blur();
     }
   };
 
@@ -97,8 +125,10 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
         <div className="flex items-center rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
           <input
             type="number"
-            value={bpm}
+            value={inputValue}
             onChange={handleBpmChange}
+            onBlur={applyBpmValue}
+            onKeyDown={handleKeyDown}
             min={METRONOME_CONSTANTS.MIN_BPM}
             max={METRONOME_CONSTANTS.MAX_BPM}
             className="
