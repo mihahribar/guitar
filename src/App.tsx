@@ -5,8 +5,9 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { NavigationProvider } from "./contexts/NavigationContext";
 import { useNavigation } from "./hooks/useNavigation";
 
-// Lazy load Quiz component for better initial bundle size
+// Lazy load Quiz and Rhythm components for better initial bundle size
 const QuizPage = lazy(() => import("@/systems/quiz/components/QuizPage"));
+const RhythmPage = lazy(() => import("@/systems/rhythm-game/components/RhythmPage"));
 
 function AppContent() {
   const { currentPage } = useNavigation();
@@ -24,6 +25,11 @@ function AppContent() {
         {currentPage === 'quiz' && (
           <Suspense fallback={<LoadingFallback message="Loading quiz..." size="large" />}>
             <QuizPage />
+          </Suspense>
+        )}
+        {currentPage === 'rhythm' && (
+          <Suspense fallback={<LoadingFallback message="Loading rhythm game..." size="large" />}>
+            <RhythmPage />
           </Suspense>
         )}
       </main>

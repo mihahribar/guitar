@@ -1,0 +1,18 @@
+# Task Group Assignments for Site-Wide Metronome Implementation
+
+task_assignments:
+  - task_group: "Task Group 1: Audio Engine & Type Definitions"
+    assigned_subagent: "api-engineer"
+    rationale: "Handles custom hooks (useMetronome), Web Audio API logic, TypeScript types, and constants"
+
+  - task_group: "Task Group 2: Metronome UI Controls"
+    assigned_subagent: "ui-designer"
+    rationale: "Handles UI components (MetronomeControls), TailwindCSS styling, accessibility, and dark mode"
+
+  - task_group: "Task Group 3: AppNavigation Integration"
+    assigned_subagent: "ui-designer"
+    rationale: "Handles integration into AppNavigation component, layout, and responsive design"
+
+  - task_group: "Task Group 4: Feature Testing & Quality Assurance"
+    assigned_subagent: "ui-designer"
+    rationale: "Handles manual testing checklists, cross-browser testing, and validation"

@@ -1,0 +1,23 @@
+# Implementer Roles Configuration
+# Defines the subagent roles responsible for implementing different types of tasks
+
+implementers:
+  - id: ui-designer
+    description: "Handles UI components, views, layouts, styling, responsive design"
+    verified_by: frontend-verifier
+    capabilities:
+      - React component development
+      - TailwindCSS styling
+      - Responsive design
+      - Accessibility implementation
+      - Dark mode support
+
+  - id: api-engineer
+    description: "Handles API endpoints, controllers, business logic, hooks, utilities"
+    verified_by: backend-verifier
+    capabilities:
+      - Custom React hooks
+      - Business logic implementation
+      - Web APIs (Web Audio API, etc.)
+      - State management
+      - Utility functions
