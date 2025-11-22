@@ -20,6 +20,8 @@ interface UseSubdivisionAudioProps {
 interface UseSubdivisionAudioReturn {
   /** Play clicks for a specific pattern at the current beat */
   playPatternClicks: (pattern: RhythmPattern) => void;
+  /** Play a single beat click (for panel changes) */
+  playBeatClick: () => void;
   /** Stop any scheduled clicks */
   stopClicks: () => void;
 }
@@ -106,6 +108,17 @@ export const useSubdivisionAudio = ({
   }, []);
 
   /**
+   * Play a single beat click (for panel changes)
+   */
+  const playBeatClick = useCallback(() => {
+    const audioContext = initAudioContext();
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+    scheduleClick(audioContext, now);
+  }, [initAudioContext, scheduleClick]);
+
+  /**
    * Play clicks for all notes in a pattern
    */
   const playPatternClicks = useCallback(
@@ -159,6 +172,7 @@ export const useSubdivisionAudio = ({
 
   return {
     playPatternClicks,
+    playBeatClick,
     stopClicks,
   };
 };

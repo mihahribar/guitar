@@ -73,20 +73,28 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
   });
 
   // Audio playback hook
-  const { playPatternClicks, stopClicks } = useSubdivisionAudio({
+  const { playPatternClicks, playBeatClick, stopClicks } = useSubdivisionAudio({
     enabled: playAudio,
     bpm,
   });
 
   /**
-   * Play audio for current beat's pattern when beat changes
+   * Play audio when beat changes:
+   * - Always play beat click (for panel changes)
+   * - If playAudio is enabled, also play subdivision notes
    */
   useEffect(() => {
-    if (currentBeat !== null && playAudio && isPlaying) {
-      const currentPattern = panels[currentBeat];
-      playPatternClicks(currentPattern);
+    if (currentBeat !== null && isPlaying) {
+      // Always play beat click on panel change
+      playBeatClick();
+
+      // If "Play Notes" is enabled, also play the pattern subdivisions
+      if (playAudio) {
+        const currentPattern = panels[currentBeat];
+        playPatternClicks(currentPattern);
+      }
     }
-  }, [currentBeat, panels, playAudio, isPlaying, playPatternClicks]);
+  }, [currentBeat, panels, playAudio, isPlaying, playBeatClick, playPatternClicks]);
 
   /**
    * Stop audio when playback is disabled or game stops

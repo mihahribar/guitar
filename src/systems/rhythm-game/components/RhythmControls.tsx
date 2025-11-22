@@ -224,7 +224,7 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
           id="play-audio"
           checked={playAudio}
           onChange={onSetPlayAudio}
-          label="Play Audio"
+          label="Play Notes"
         />
       </div>
     </div>

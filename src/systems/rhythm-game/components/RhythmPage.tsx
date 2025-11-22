@@ -109,7 +109,7 @@ const RhythmPage: React.FC = () => {
             Set your tempo with the BPM input, then click Start to begin.
           </p>
           <p className="mt-1">
-            Enable "Play Audio" to hear clicks for each subdivision.
+            Enable "Play Notes" to hear the subdivision notes for each pattern.
           </p>
         </footer>
       </div>
