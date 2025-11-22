@@ -93,8 +93,8 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
     <div className="w-full max-w-md mx-auto space-y-4">
       {/* Main action buttons */}
       <div className="flex gap-3 items-center">
-        {/* BPM input */}
-        <div className="flex items-center gap-2">
+        {/* BPM input with inline label */}
+        <div className="flex items-center rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
           <input
             type="number"
             value={bpm}
@@ -102,17 +102,16 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
             min={METRONOME_CONSTANTS.MIN_BPM}
             max={METRONOME_CONSTANTS.MAX_BPM}
             className="
-              w-20 px-3 py-3 rounded-lg
-              text-center font-semibold
-              bg-gray-100 dark:bg-gray-700
+              w-16 px-3 py-3
+              text-right font-semibold
+              bg-transparent
               text-gray-900 dark:text-gray-100
-              border border-gray-300 dark:border-gray-600
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+              focus:outline-none
               [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
             "
             aria-label="Tempo in beats per minute"
           />
-          <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+          <span className="pr-3 text-sm text-gray-500 dark:text-gray-400 font-medium select-none">
             BPM
           </span>
         </div>
