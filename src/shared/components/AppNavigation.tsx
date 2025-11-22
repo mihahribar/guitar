@@ -1,6 +1,5 @@
 import { useNavigation } from '../../hooks/useNavigation';
 import ThemeToggle from './ThemeToggle';
-import MetronomeControls from './MetronomeControls';
 import type { AppPage } from '../../types/navigation';
 
 export default function AppNavigation() {
@@ -8,6 +7,7 @@ export default function AppNavigation() {
 
   const navItems: { page: AppPage; label: string; description: string }[] = [
     { page: 'caged', label: 'CAGED', description: 'Interactive CAGED system explorer' },
+    { page: 'rhythm', label: 'Rhythm', description: 'Practice rhythm patterns' },
     { page: 'quiz', label: 'Quiz', description: 'Test your chord identification skills' }
   ];
 
@@ -22,7 +22,7 @@ export default function AppNavigation() {
             </h1>
           </div>
 
-          {/* Navigation Links, Metronome, and Theme Toggle */}
+          {/* Navigation Links and Theme Toggle */}
           <div className="flex items-center space-x-3">
             {navItems.map(({ page, label, description }) => (
               <button
@@ -42,7 +42,6 @@ export default function AppNavigation() {
                 {label}
               </button>
             ))}
-            <MetronomeControls />
             <ThemeToggle />
           </div>
         </div>

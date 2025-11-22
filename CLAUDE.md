@@ -1,7 +1,7 @@
 # CAGED Visualizer Project - Claude Development Guide
 
 ## Project Overview
-Interactive React web application for learning the CAGED guitar system - a guitar learning method that teaches 5 chord shapes that can be moved up and down the neck. The app includes an interactive visualizer, quiz mode for chord identification practice, and a guitar modes learning system. **Now supports both major and minor chord qualities** with complete CAGED implementation for all chord types and all 7 traditional guitar modes.
+Interactive React web application for learning the CAGED guitar system - a guitar learning method that teaches 5 chord shapes that can be moved up and down the neck. The app includes an interactive visualizer, quiz mode for chord identification practice and rhythm practice with audio feedback. **Now supports both major and minor chord qualities** with complete CAGED implementation for all chord types.
 
 **Live Site**: [caged.hribar.org](https://caged.hribar.org)
 
@@ -61,12 +61,26 @@ src/
 │   │   ├── types/             # CAGED-specific types
 │   │   │   └── index.ts       # CAGED interfaces and types
 │   │   └── utils/             # CAGED-specific utilities
-│   ├── modes/                 # Guitar modes system module
-│   │   ├── components/        # Modes-specific components
-│   │   │   ├── ModesVisualizer.tsx # Main modes visualizer
-│   │   │   └── ToggleSwitch.tsx          # Reusable toggle component
-│   │   ├── constants.ts       # Mode definitions and tuning data
-│   │   └── utils.ts           # Music theory utilities for modes
+│   ├── rhythm-game/           # Rhythm practice system module
+│   │   ├── components/        # Rhythm UI components
+│   │   │   ├── RhythmPage.tsx        # Main rhythm page
+│   │   │   ├── RhythmGrid.tsx        # 4-panel grid layout
+│   │   │   ├── RhythmPanel.tsx       # Individual rhythm panel
+│   │   │   ├── RhythmControls.tsx    # BPM, play, toggles
+│   │   │   ├── PatternSelector.tsx   # Pattern selection modal
+│   │   │   ├── NotationDisplay.tsx   # Musical notation renderer
+│   │   │   └── NotationSymbols.tsx   # SVG notation components
+│   │   ├── hooks/             # Rhythm-specific hooks
+│   │   │   ├── useRhythmGame.ts      # Main game orchestration
+│   │   │   ├── useRhythmCycler.ts    # Beat cycling logic
+│   │   │   └── useSubdivisionAudio.ts # Web Audio API playback
+│   │   ├── constants/         # Rhythm patterns and defaults
+│   │   │   ├── index.ts       # Default panels and config
+│   │   │   └── patterns.ts    # All rhythm pattern definitions
+│   │   ├── types/             # Rhythm system types
+│   │   │   └── index.ts       # RhythmPattern, Note, etc.
+│   │   └── utils/             # Rhythm utilities
+│   │       └── rhythmUtils.ts # Timing calculations
 │   └── quiz/                  # Quiz learning system module
 │       ├── components/        # Quiz-specific components
 │       │   ├── QuizPage.tsx           # Quiz mode entry point
@@ -112,6 +126,7 @@ src/
 The project uses TypeScript path aliases for clean, predictable imports:
 - `@/shared` - Access to shared utilities, components, and types
 - `@/systems/caged` - CAGED system module imports
+- `@/systems/rhythm-game` - Rhythm practice system imports
 - `@/systems/quiz` - Quiz system module imports
 
 Example imports:
@@ -129,6 +144,7 @@ import { useQuiz } from '@/systems/quiz/hooks';
 Each module provides clean barrel exports for easy consumption:
 - `src/shared/index.ts` - All shared resources
 - `src/systems/caged/index.ts` - Complete CAGED system
+- `src/systems/rhythm-game/index.ts` - Complete rhythm system
 - `src/systems/quiz/index.ts` - Complete quiz system
 
 ### System Isolation
@@ -138,9 +154,9 @@ Each module provides clean barrel exports for easy consumption:
 - Each system maintains its own types, constants, and business logic
 
 ### Code Splitting & Performance
-- Quiz system is lazy-loaded for optimal initial bundle size
+- Quiz and Rhythm systems are lazy-loaded for optimal initial bundle size
 - Modular structure enables excellent tree shaking
-- Bundle sizes: Main (~213kB), Quiz chunk (~18kB), CSS (~33kB)
+- Bundle sizes: Main (~214kB), Rhythm chunk (~21kB), Quiz chunk (~18kB), CSS (~38kB)
 
 ## Code Conventions & Patterns
 
@@ -291,6 +307,13 @@ When asking Claude for help with this project:
 3. Test with all chord shapes and positions
 4. Verify visual accuracy on fretboard
 
+#### Adding Rhythm Features
+1. Update types in `src/systems/rhythm-game/types/index.ts`
+2. Add patterns in `src/systems/rhythm-game/constants/patterns.ts`
+3. Modify game logic in `src/systems/rhythm-game/hooks/useRhythmGame.ts`
+4. Update audio in `src/systems/rhythm-game/hooks/useSubdivisionAudio.ts`
+5. Test with different BPM values and pattern combinations
+
 #### Adding New Learning System
 1. Create new directory `src/systems/[system-name]/`
 2. Set up standard structure: `components/`, `hooks/`, `types/`, `constants/`
@@ -324,6 +347,7 @@ When asking Claude for help with this project:
 - **TailwindCSS 4.x**: Uses different syntax than v3.x
 - **TypeScript strict**: All props and state must be properly typed
 - **Mobile layout**: Fretboard display needs special mobile considerations
+- **Web Audio autoplay**: AudioContext must be resumed after user interaction (browser policy)
 
 ### Testing Approach
 - **Manual testing**: No automated test suite currently
@@ -349,16 +373,18 @@ When asking Claude for help with this project:
 - **Mathematical chord calculation**: Real music theory implementation
 - **Gradient overlay system**: Complex visual blending for overlapping patterns
 - **Context-minimal approach**: Only theme and navigation in context
-- **Code splitting by system**: Quiz system lazy-loaded for performance
+- **Code splitting by system**: Quiz and Rhythm systems lazy-loaded for performance
+- **Web Audio API integration**: Rhythm system uses Web Audio for precise timing and audio playback
 
 ### Performance Considerations
 - **Modular tree shaking**: Excellent bundle optimization through system isolation
-- **Code splitting**: Quiz system lazy-loaded (~18kB chunk), reducing initial bundle
+- **Code splitting**: Quiz (~18kB) and Rhythm (~21kB) systems lazy-loaded, reducing initial bundle
 - **useMemo for calculations**: CAGED logic is memoized within systems
 - **Minimal re-renders**: State changes are targeted and system-contained
 - **Efficient gradient generation**: Dynamic CSS generation
 - **Vite build optimization**: Enhanced tree shaking and bundling with path aliases
 - **System isolation**: Prevents unnecessary cross-system re-renders
+- **Web Audio scheduling**: Rhythm audio uses precise AudioContext timing
 
 ### Security Considerations
 - **Static site**: No server-side vulnerabilities
