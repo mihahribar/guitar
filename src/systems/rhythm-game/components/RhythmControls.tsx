@@ -1,10 +1,11 @@
 /**
  * Rhythm Controls Component
  *
- * Control panel with Start/Stop, Randomize, and toggle switches.
+ * Control panel with BPM input, Start/Stop, Randomize, and toggle switches.
  */
 
 import React from 'react';
+import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
 
 interface RhythmControlsProps {
   /** Whether the game is currently playing */
@@ -23,6 +24,8 @@ interface RhythmControlsProps {
   onSetRandomChangeMode: (enabled: boolean) => void;
   /** Set audio playback */
   onSetPlayAudio: (enabled: boolean) => void;
+  /** Set BPM */
+  onSetBpm: (bpm: number) => void;
 }
 
 /**
@@ -77,11 +80,43 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
   onRandomizeAll,
   onSetRandomChangeMode,
   onSetPlayAudio,
+  onSetBpm,
 }) => {
+  const handleBpmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    if (!isNaN(value)) {
+      onSetBpm(value);
+    }
+  };
+
   return (
     <div className="w-full max-w-md mx-auto space-y-4">
       {/* Main action buttons */}
-      <div className="flex gap-3">
+      <div className="flex gap-3 items-center">
+        {/* BPM input */}
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            value={bpm}
+            onChange={handleBpmChange}
+            min={METRONOME_CONSTANTS.MIN_BPM}
+            max={METRONOME_CONSTANTS.MAX_BPM}
+            className="
+              w-20 px-3 py-3 rounded-lg
+              text-center font-semibold
+              bg-gray-100 dark:bg-gray-700
+              text-gray-900 dark:text-gray-100
+              border border-gray-300 dark:border-gray-600
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+              [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+            "
+            aria-label="Tempo in beats per minute"
+          />
+          <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+            BPM
+          </span>
+        </div>
+
         {/* Start/Stop button */}
         <button
           onClick={onTogglePlay}
@@ -162,12 +197,6 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
           onChange={onSetPlayAudio}
           label="Play Audio"
         />
-      </div>
-
-      {/* BPM display */}
-      <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-        <span className="font-medium">{bpm}</span> BPM
-        <span className="text-xs ml-1">(adjust in nav bar)</span>
       </div>
     </div>
   );

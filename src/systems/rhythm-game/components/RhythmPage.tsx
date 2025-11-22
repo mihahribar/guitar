@@ -29,6 +29,7 @@ const RhythmPage: React.FC = () => {
     randomizeAll,
     setRandomChangeMode,
     setPlayAudio,
+    setBpm,
   } = useRhythmGame();
 
   // Pattern selector state
@@ -97,6 +98,7 @@ const RhythmPage: React.FC = () => {
               onRandomizeAll={randomizeAll}
               onSetRandomChangeMode={setRandomChangeMode}
               onSetPlayAudio={setPlayAudio}
+              onSetBpm={setBpm}
             />
           </section>
         </main>
@@ -104,7 +106,7 @@ const RhythmPage: React.FC = () => {
         {/* Instructions */}
         <footer className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400">
           <p>
-            Adjust BPM using the metronome controls in the navigation bar.
+            Set your tempo with the BPM input, then click Start to begin.
           </p>
           <p className="mt-1">
             Enable "Play Audio" to hear clicks for each subdivision.

@@ -6,7 +6,7 @@
  */
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { useMetronome } from '@/shared/hooks/useMetronome';
+import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
 import type {
   RhythmPattern,
   UseRhythmGameReturn,
@@ -25,10 +25,11 @@ import { getRandomPattern, getRandomPanelIndex } from '../utils/rhythmUtils';
  * - Beat cycling synchronized with BPM
  * - Audio playback for subdivisions
  * - Random change mode
+ * - Own BPM state (independent of site metronome)
  */
 export const useRhythmGame = (): UseRhythmGameReturn => {
-  // Get BPM from the shared metronome hook
-  const { bpm } = useMetronome();
+  // Own BPM state (independent of site-wide metronome)
+  const [bpm, setBpmState] = useState<number>(METRONOME_CONSTANTS.DEFAULT_BPM);
 
   // Panel patterns state
   const [panels, setPanels] = useState<
@@ -167,6 +168,17 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
     setPlayAudioState(enabled);
   }, []);
 
+  /**
+   * Set BPM with validation
+   */
+  const setBpm = useCallback((newBpm: number) => {
+    const clampedBpm = Math.max(
+      METRONOME_CONSTANTS.MIN_BPM,
+      Math.min(METRONOME_CONSTANTS.MAX_BPM, newBpm)
+    );
+    setBpmState(clampedBpm);
+  }, []);
+
   // Memoized return value
   return useMemo(
     () => ({
@@ -185,6 +197,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       randomizeAll,
       setRandomChangeMode,
       setPlayAudio,
+      setBpm,
     }),
     [
       panels,
@@ -200,6 +213,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       randomizeAll,
       setRandomChangeMode,
       setPlayAudio,
+      setBpm,
     ]
   );
 };

@@ -80,6 +80,8 @@ export interface RhythmGameActions {
   setRandomChangeMode: (enabled: boolean) => void;
   /** Toggle audio playback */
   setPlayAudio: (enabled: boolean) => void;
+  /** Set BPM tempo */
+  setBpm: (bpm: number) => void;
 }
 
 /**
