@@ -16,6 +16,8 @@ interface RhythmControlsProps {
   randomChangeMode: boolean;
   /** Whether audio playback is enabled */
   playAudio: boolean;
+  /** Whether metronome playback is enabled */
+  playMetronome: boolean;
   /** Toggle play/pause */
   onTogglePlay: () => void;
   /** Randomize all patterns */
@@ -24,6 +26,8 @@ interface RhythmControlsProps {
   onSetRandomChangeMode: (enabled: boolean) => void;
   /** Set audio playback */
   onSetPlayAudio: (enabled: boolean) => void;
+  /** Set metronome playback */
+  onSetPlayMetronome: (enabled: boolean) => void;
   /** Set BPM */
   onSetBpm: (bpm: number) => void;
 }
@@ -76,10 +80,12 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
   bpm,
   randomChangeMode,
   playAudio,
+  playMetronome,
   onTogglePlay,
   onRandomizeAll,
   onSetRandomChangeMode,
   onSetPlayAudio,
+  onSetPlayMetronome,
   onSetBpm,
 }) => {
   // Local state for BPM input to allow typing without immediate clamping
@@ -225,6 +231,12 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
           checked={playAudio}
           onChange={onSetPlayAudio}
           label="Play Notes"
+        />
+        <ToggleSwitch
+          id="play-metronome"
+          checked={playMetronome}
+          onChange={onSetPlayMetronome}
+          label="Play Metronome"
         />
       </div>
     </div>

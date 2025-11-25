@@ -23,12 +23,14 @@ const RhythmPage: React.FC = () => {
     currentBeat,
     randomChangeMode,
     playAudio,
+    playMetronome,
     bpm,
     togglePlay,
     setPattern,
     randomizeAll,
     setRandomChangeMode,
     setPlayAudio,
+    setPlayMetronome,
     setBpm,
   } = useRhythmGame();
 
@@ -94,10 +96,12 @@ const RhythmPage: React.FC = () => {
               bpm={bpm}
               randomChangeMode={randomChangeMode}
               playAudio={playAudio}
+              playMetronome={playMetronome}
               onTogglePlay={togglePlay}
               onRandomizeAll={randomizeAll}
               onSetRandomChangeMode={setRandomChangeMode}
               onSetPlayAudio={setPlayAudio}
+              onSetPlayMetronome={setPlayMetronome}
               onSetBpm={setBpm}
             />
           </section>
@@ -110,6 +114,9 @@ const RhythmPage: React.FC = () => {
           </p>
           <p className="mt-1">
             Enable "Play Notes" to hear the subdivision notes for each pattern.
+          </p>
+          <p className="mt-1">
+            Enable "Play Metronome" to hear a click on each beat.
           </p>
         </footer>
       </div>

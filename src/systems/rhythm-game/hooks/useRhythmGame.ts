@@ -39,6 +39,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
   // Game mode states
   const [randomChangeMode, setRandomChangeModeState] = useState(false);
   const [playAudio, setPlayAudioState] = useState(false);
+  const [playMetronome, setPlayMetronomeState] = useState(true);
 
   /**
    * Handle cycle completion - randomize one panel if in random change mode
@@ -81,21 +82,23 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
 
   /**
    * Play audio when beat changes:
-   * - Always play beat click (for panel changes)
-   * - If playAudio is enabled, also play subdivision notes
+   * - If playMetronome is enabled: play beat click for timing reference
+   * - If playAudio is enabled: play pattern subdivisions (respects rests)
    */
   useEffect(() => {
     if (currentBeat !== null && isPlaying) {
-      // Always play beat click on panel change
-      playBeatClick();
+      // Play metronome beat click if enabled
+      if (playMetronome) {
+        playBeatClick();
+      }
 
-      // If "Play Notes" is enabled, also play the pattern subdivisions
+      // Play pattern subdivisions if enabled (respects rests)
       if (playAudio) {
         const currentPattern = panels[currentBeat];
         playPatternClicks(currentPattern);
       }
     }
-  }, [currentBeat, panels, playAudio, isPlaying, playBeatClick, playPatternClicks]);
+  }, [currentBeat, panels, playAudio, playMetronome, isPlaying, playBeatClick, playPatternClicks]);
 
   /**
    * Stop audio when playback is disabled or game stops
@@ -183,6 +186,13 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
   }, []);
 
   /**
+   * Set metronome playback enabled
+   */
+  const setPlayMetronome = useCallback((enabled: boolean) => {
+    setPlayMetronomeState(enabled);
+  }, []);
+
+  /**
    * Set BPM with validation
    */
   const setBpm = useCallback((newBpm: number) => {
@@ -202,6 +212,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       currentBeat,
       randomChangeMode,
       playAudio,
+      playMetronome,
       bpm,
       // Actions
       start,
@@ -211,6 +222,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       randomizeAll,
       setRandomChangeMode,
       setPlayAudio,
+      setPlayMetronome,
       setBpm,
     }),
     [
@@ -219,6 +231,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       currentBeat,
       randomChangeMode,
       playAudio,
+      playMetronome,
       bpm,
       start,
       stop,
@@ -227,6 +240,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       randomizeAll,
       setRandomChangeMode,
       setPlayAudio,
+      setPlayMetronome,
       setBpm,
     ]
   );
