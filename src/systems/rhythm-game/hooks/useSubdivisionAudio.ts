@@ -24,6 +24,8 @@ interface UseSubdivisionAudioReturn {
   playBeatClick: () => void;
   /** Stop any scheduled clicks */
   stopClicks: () => void;
+  /** Initialize and resume AudioContext (must be called from user gesture) */
+  initAudio: () => Promise<boolean>;
 }
 
 /**
@@ -38,6 +40,7 @@ export const useSubdivisionAudio = ({
 
   /**
    * Initialize AudioContext on first use
+   * This is synchronous for backwards compatibility with existing code
    */
   const initAudioContext = useCallback(() => {
     if (!audioContextRef.current) {
@@ -49,15 +52,33 @@ export const useSubdivisionAudio = ({
       }
     }
 
-    // Resume AudioContext if suspended (browser autoplay policy)
-    if (audioContextRef.current.state === 'suspended') {
-      audioContextRef.current.resume().catch((error) => {
-        console.error('Failed to resume AudioContext:', error);
-      });
-    }
-
     return audioContextRef.current;
   }, []);
+
+  /**
+   * Initialize and resume AudioContext
+   * MUST be called from within a user gesture (e.g., button click) for mobile
+   * @returns Promise<boolean> - true if successful, false otherwise
+   */
+  const initAudio = useCallback(async (): Promise<boolean> => {
+    const audioContext = initAudioContext();
+    if (!audioContext) {
+      return false;
+    }
+
+    // Resume AudioContext if suspended (browser autoplay policy)
+    if (audioContext.state === 'suspended') {
+      try {
+        await audioContext.resume();
+      } catch (error) {
+        console.error('Failed to resume AudioContext:', error);
+        return false;
+      }
+    }
+
+    // Verify AudioContext is now running
+    return audioContext.state === 'running';
+  }, [initAudioContext]);
 
   /**
    * Play a single click sound at a specific time
@@ -112,7 +133,7 @@ export const useSubdivisionAudio = ({
    */
   const playBeatClick = useCallback(() => {
     const audioContext = initAudioContext();
-    if (!audioContext) return;
+    if (!audioContext || audioContext.state !== 'running') return;
 
     const now = audioContext.currentTime;
     scheduleClick(audioContext, now);
@@ -126,7 +147,7 @@ export const useSubdivisionAudio = ({
       if (!enabled) return;
 
       const audioContext = initAudioContext();
-      if (!audioContext) return;
+      if (!audioContext || audioContext.state !== 'running') return;
 
       // Clear any previously scheduled clicks
       stopClicks();
@@ -174,5 +195,6 @@ export const useSubdivisionAudio = ({
     playPatternClicks,
     playBeatClick,
     stopClicks,
+    initAudio,
   };
 };

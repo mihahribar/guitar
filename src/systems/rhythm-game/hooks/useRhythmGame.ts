@@ -73,10 +73,11 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
   });
 
   // Audio playback hook
-  const { playPatternClicks, playBeatClick, stopClicks } = useSubdivisionAudio({
-    enabled: playAudio,
-    bpm,
-  });
+  const { playPatternClicks, playBeatClick, stopClicks, initAudio } =
+    useSubdivisionAudio({
+      enabled: playAudio,
+      bpm,
+    });
 
   /**
    * Play audio when beat changes:
@@ -107,10 +108,15 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
 
   /**
    * Start the rhythm game
+   * Initializes audio context first (requires user gesture for mobile)
    */
-  const start = useCallback(() => {
+  const start = useCallback(async () => {
+    // Initialize and resume AudioContext within user gesture for mobile compatibility
+    await initAudio();
+
+    // Start the beat cycler
     startCycling();
-  }, [startCycling]);
+  }, [startCycling, initAudio]);
 
   /**
    * Stop the rhythm game
