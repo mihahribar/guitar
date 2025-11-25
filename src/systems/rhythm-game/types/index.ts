@@ -60,6 +60,8 @@ export interface RhythmGameState {
   randomChangeMode: boolean;
   /** Whether audio playback is enabled */
   playAudio: boolean;
+  /** Whether metronome beat click is enabled */
+  playMetronome: boolean;
 }
 
 /**
@@ -80,6 +82,8 @@ export interface RhythmGameActions {
   setRandomChangeMode: (enabled: boolean) => void;
   /** Toggle audio playback */
   setPlayAudio: (enabled: boolean) => void;
+  /** Toggle metronome playback */
+  setPlayMetronome: (enabled: boolean) => void;
   /** Set BPM tempo */
   setBpm: (bpm: number) => void;
 }
