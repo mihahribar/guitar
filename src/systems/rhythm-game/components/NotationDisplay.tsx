@@ -28,6 +28,8 @@ import {
   FourEighthsBeamed,
   DottedEighthSixteenthBeamed,
   SixteenthDottedEighthBeamed,
+  RestThreeSixteenthsBeamed,
+  ThreeSixteenthsRestBeamed,
 } from './NotationSymbols';
 
 /**
@@ -157,7 +159,17 @@ const renderFourSixteenths = (notes: RhythmNote[]): React.ReactElement => {
   const hasRest = notes.some((n) => n.isRest);
 
   if (hasRest) {
-    // Render individually with spacing
+    // Check for rest + three sixteenths
+    if (notes[0].isRest && notes.slice(1).every(n => !n.isRest)) {
+      return <RestThreeSixteenthsBeamed />;
+    }
+
+    // Check for three sixteenths + rest
+    if (notes[3].isRest && notes.slice(0, 3).every(n => !n.isRest)) {
+      return <ThreeSixteenthsRestBeamed />;
+    }
+
+    // Other rest patterns: render individually with spacing
     return (
       <g>
         {notes.map((note, i) => (
