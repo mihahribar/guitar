@@ -249,3 +249,203 @@ export const TripletNotes: React.FC<SymbolProps> = ({ className = '' }) => (
     <TripletBracket width={57} />
   </g>
 );
+
+/**
+ * Eighth note followed by two sixteenth notes (beamed)
+ */
+export const EighthTwoSixteenthsBeamed: React.FC<SymbolProps> = ({ className = '' }) => (
+  <g className={className}>
+    {/* Eighth note */}
+    <g transform="translate(0, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* First sixteenth */}
+    <g transform="translate(24, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Second sixteenth */}
+    <g transform="translate(38, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Primary beam connecting all three notes */}
+    <NoteBeam x1={10.5} x2={48.5} />
+    {/* Secondary beam only for the two sixteenths */}
+    <rect x={34.5} y={-10} width={14} height="4" fill="currentColor" />
+  </g>
+);
+
+/**
+ * Two sixteenth notes followed by eighth note (beamed)
+ */
+export const TwoSixteenthsEighthBeamed: React.FC<SymbolProps> = ({ className = '' }) => (
+  <g className={className}>
+    {/* First sixteenth */}
+    <g transform="translate(0, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Second sixteenth */}
+    <g transform="translate(14, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Eighth note */}
+    <g transform="translate(38, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Primary beam connecting all three notes */}
+    <NoteBeam x1={10.5} x2={48.5} />
+    {/* Secondary beam only for the two sixteenths */}
+    <rect x={10.5} y={-10} width={14} height="4" fill="currentColor" />
+  </g>
+);
+
+/**
+ * Sixteenth, eighth, sixteenth (beamed)
+ */
+export const SixteenthEighthSixteenthBeamed: React.FC<SymbolProps> = ({ className = '' }) => (
+  <g className={className}>
+    {/* First sixteenth */}
+    <g transform="translate(0, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Eighth note */}
+    <g transform="translate(28, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Second sixteenth */}
+    <g transform="translate(42, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Primary beam connecting all three notes */}
+    <NoteBeam x1={10.5} x2={52.5} />
+    {/* Partial secondary beams (flags) for first and last sixteenths */}
+    <rect x={10.5} y={-10} width={8} height="4" fill="currentColor" />
+    <rect x={44.5} y={-10} width={8} height="4" fill="currentColor" />
+  </g>
+);
+
+/**
+ * Four beamed eighth notes
+ */
+export const FourEighthsBeamed: React.FC<SymbolProps> = ({ className = '' }) => (
+  <g className={className}>
+    {[0, 16, 32, 48].map((offset, i) => (
+      <g key={i} transform={`translate(${offset}, 0)`}>
+        <NoteHeadFilled />
+        <NoteStem />
+      </g>
+    ))}
+    {/* Single beam connecting all four notes */}
+    <NoteBeam x1={10.5} x2={58.5} />
+  </g>
+);
+
+/**
+ * Dotted eighth note followed by sixteenth note (beamed)
+ */
+export const DottedEighthSixteenthBeamed: React.FC<SymbolProps> = ({ className = '' }) => (
+  <g className={className}>
+    {/* Dotted eighth note */}
+    <g transform="translate(0, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+      {/* Dot for dotted note */}
+      <circle cx="14" cy="12" r="2" fill="currentColor" />
+    </g>
+    {/* Sixteenth note */}
+    <g transform="translate(42, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Primary beam connecting both notes */}
+    <NoteBeam x1={10.5} x2={52.5} />
+    {/* Secondary beam only for the sixteenth */}
+    <rect x={44.5} y={-10} width={8} height="4" fill="currentColor" />
+  </g>
+);
+
+/**
+ * Sixteenth note followed by dotted eighth note (beamed)
+ */
+export const SixteenthDottedEighthBeamed: React.FC<SymbolProps> = ({ className = '' }) => (
+  <g className={className}>
+    {/* Sixteenth note */}
+    <g transform="translate(0, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Dotted eighth note */}
+    <g transform="translate(28, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+      {/* Dot for dotted note */}
+      <circle cx="14" cy="12" r="2" fill="currentColor" />
+    </g>
+    {/* Primary beam connecting both notes */}
+    <NoteBeam x1={10.5} x2={38.5} />
+    {/* Secondary beam only for the sixteenth */}
+    <rect x={10.5} y={-10} width={8} height="4" fill="currentColor" />
+  </g>
+);
+
+/**
+ * Sixteenth rest followed by three beamed sixteenth notes
+ */
+export const RestThreeSixteenthsBeamed: React.FC<SymbolProps> = ({ className = '' }) => (
+  <g className={className}>
+    {/* Sixteenth rest */}
+    <g transform="translate(0, 0)">
+      <SixteenthRest />
+    </g>
+    {/* Three beamed sixteenth notes */}
+    <g transform="translate(14, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    <g transform="translate(28, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    <g transform="translate(42, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Double beam connecting the three notes */}
+    <NoteBeam x1={24.5} x2={52.5} double />
+  </g>
+);
+
+/**
+ * Three beamed sixteenth notes followed by sixteenth rest
+ */
+export const ThreeSixteenthsRestBeamed: React.FC<SymbolProps> = ({ className = '' }) => (
+  <g className={className}>
+    {/* Three beamed sixteenth notes */}
+    <g transform="translate(0, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    <g transform="translate(14, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    <g transform="translate(28, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Sixteenth rest */}
+    <g transform="translate(42, 0)">
+      <SixteenthRest />
+    </g>
+    {/* Double beam connecting the three notes */}
+    <NoteBeam x1={10.5} x2={38.5} double />
+  </g>
+);
