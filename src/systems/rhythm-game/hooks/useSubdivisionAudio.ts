@@ -82,9 +82,17 @@ export const useSubdivisionAudio = ({
 
   /**
    * Play a single click sound at a specific time
+   * Generic function that can create different click sounds based on parameters
    */
   const scheduleClick = useCallback(
-    (audioContext: AudioContext, startTime: number): OscillatorNode | null => {
+    (
+      audioContext: AudioContext,
+      startTime: number,
+      frequency: number,
+      duration: number,
+      volume: number,
+      waveType: OscillatorType = 'sine'
+    ): OscillatorNode | null => {
       try {
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
@@ -92,18 +100,15 @@ export const useSubdivisionAudio = ({
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
 
-        oscillator.frequency.value = METRONOME_CONSTANTS.CLICK_FREQUENCY;
-        oscillator.type = 'sine';
+        oscillator.frequency.value = frequency;
+        oscillator.type = waveType;
 
         // Set volume with envelope to prevent pops
-        gainNode.gain.setValueAtTime(METRONOME_CONSTANTS.CLICK_VOLUME, startTime);
-        gainNode.gain.exponentialRampToValueAtTime(
-          0.01,
-          startTime + METRONOME_CONSTANTS.CLICK_DURATION
-        );
+        gainNode.gain.setValueAtTime(volume, startTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
 
         oscillator.start(startTime);
-        oscillator.stop(startTime + METRONOME_CONSTANTS.CLICK_DURATION);
+        oscillator.stop(startTime + duration);
 
         return oscillator;
       } catch (error) {
@@ -112,6 +117,40 @@ export const useSubdivisionAudio = ({
       }
     },
     []
+  );
+
+  /**
+   * Schedule a metronome beat click (more percussive, like a snare)
+   */
+  const scheduleMetronomeClick = useCallback(
+    (audioContext: AudioContext, startTime: number): OscillatorNode | null => {
+      return scheduleClick(
+        audioContext,
+        startTime,
+        METRONOME_CONSTANTS.METRONOME_CLICK_FREQUENCY,
+        METRONOME_CONSTANTS.METRONOME_CLICK_DURATION,
+        METRONOME_CONSTANTS.METRONOME_CLICK_VOLUME,
+        'triangle' // Triangle wave for more percussive metronome sound
+      );
+    },
+    [scheduleClick]
+  );
+
+  /**
+   * Schedule a subdivision note click (smoother, melodic)
+   */
+  const scheduleNoteClick = useCallback(
+    (audioContext: AudioContext, startTime: number): OscillatorNode | null => {
+      return scheduleClick(
+        audioContext,
+        startTime,
+        METRONOME_CONSTANTS.NOTE_CLICK_FREQUENCY,
+        METRONOME_CONSTANTS.NOTE_CLICK_DURATION,
+        METRONOME_CONSTANTS.NOTE_CLICK_VOLUME,
+        'sine' // Sine wave for smoother note sound
+      );
+    },
+    [scheduleClick]
   );
 
   /**
@@ -129,15 +168,15 @@ export const useSubdivisionAudio = ({
   }, []);
 
   /**
-   * Play a single beat click (for panel changes)
+   * Play a single metronome beat click (for beat timing reference)
    */
   const playBeatClick = useCallback(() => {
     const audioContext = initAudioContext();
     if (!audioContext || audioContext.state !== 'running') return;
 
     const now = audioContext.currentTime;
-    scheduleClick(audioContext, now);
-  }, [initAudioContext, scheduleClick]);
+    scheduleMetronomeClick(audioContext, now);
+  }, [initAudioContext, scheduleMetronomeClick]);
 
   /**
    * Play clicks for all notes in a pattern
@@ -166,14 +205,14 @@ export const useSubdivisionAudio = ({
         if (!note.isRest) {
           // Convert milliseconds to seconds for Web Audio API
           const startTime = now + timings[index] / 1000;
-          const oscillator = scheduleClick(audioContext, startTime);
+          const oscillator = scheduleNoteClick(audioContext, startTime);
           if (oscillator) {
             scheduledNodesRef.current.push(oscillator);
           }
         }
       });
     },
-    [enabled, bpm, initAudioContext, scheduleClick, stopClicks]
+    [enabled, bpm, initAudioContext, scheduleNoteClick, stopClicks]
   );
 
   /**

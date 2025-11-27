@@ -126,15 +126,24 @@ export const METRONOME_CONSTANTS = {
   /** Maximum allowed BPM */
   MAX_BPM: 240,
 
-  /** Frequency of click sound in Hz */
-  CLICK_FREQUENCY: 1000,
+  /** Frequency of subdivision note click sound in Hz */
+  NOTE_CLICK_FREQUENCY: 1000,
 
-  /** Duration of click sound in seconds */
-  CLICK_DURATION: 0.01,
+  /** Frequency of metronome beat click in Hz */
+  METRONOME_CLICK_FREQUENCY: 800,
+
+  /** Duration of subdivision note click sound in seconds */
+  NOTE_CLICK_DURATION: 0.01,
+
+  /** Duration of metronome click sound in seconds */
+  METRONOME_CLICK_DURATION: 0.02,
 
   /** Time signature (beats per measure) - for future extension */
   TIME_SIGNATURE: 4,
 
-  /** Volume level for click sound (0.0 to 1.0) */
-  CLICK_VOLUME: 0.3,
+  /** Volume level for subdivision note clicks (0.0 to 1.0) */
+  NOTE_CLICK_VOLUME: 0.3,
+
+  /** Volume level for metronome clicks (0.0 to 1.0) */
+  METRONOME_CLICK_VOLUME: 0.4,
 } as const;
