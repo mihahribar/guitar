@@ -80,20 +80,20 @@ export const useMetronome = (): MetronomeHookReturn => {
       gainNode.connect(audioContext.destination);
 
       // Configure click sound
-      oscillator.frequency.value = METRONOME_CONSTANTS.CLICK_FREQUENCY;
-      oscillator.type = 'sine';
+      oscillator.frequency.value = METRONOME_CONSTANTS.METRONOME_CLICK_FREQUENCY;
+      oscillator.type = 'triangle'; // Triangle wave for percussive metronome sound
 
       // Set volume with envelope to prevent pops
       const now = audioContext.currentTime;
-      gainNode.gain.setValueAtTime(METRONOME_CONSTANTS.CLICK_VOLUME, now);
+      gainNode.gain.setValueAtTime(METRONOME_CONSTANTS.METRONOME_CLICK_VOLUME, now);
       gainNode.gain.exponentialRampToValueAtTime(
         0.01,
-        now + METRONOME_CONSTANTS.CLICK_DURATION
+        now + METRONOME_CONSTANTS.METRONOME_CLICK_DURATION
       );
 
       // Play click
       oscillator.start(now);
-      oscillator.stop(now + METRONOME_CONSTANTS.CLICK_DURATION);
+      oscillator.stop(now + METRONOME_CONSTANTS.METRONOME_CLICK_DURATION);
     } catch (error) {
       console.error('Failed to play click:', error);
     }
