@@ -22,6 +22,10 @@ import {
   NoteStem,
   NoteBeam,
   TripletBracket,
+  EighthTwoSixteenthsBeamed,
+  TwoSixteenthsEighthBeamed,
+  SixteenthEighthSixteenthBeamed,
+  FourEighthsBeamed,
 } from './NotationSymbols';
 
 /**
@@ -29,13 +33,55 @@ import {
  */
 const getPatternType = (
   notes: RhythmNote[]
-): 'quarter' | 'eighths' | 'sixteenths' | 'triplets' | 'mixed' => {
+):
+  | 'quarter'
+  | 'eighths'
+  | 'sixteenths'
+  | 'triplets'
+  | 'eighth-two-sixteenths'
+  | 'two-sixteenths-eighth'
+  | 'sixteenth-eighth-sixteenth'
+  | 'four-eighths'
+  | 'mixed' => {
+  // Single note
   if (notes.length === 1) return 'quarter';
+
+  // Triplets
   if (notes.length === 3 && notes.every((n) => Math.abs(n.duration - 1 / 3) < 0.01)) {
     return 'triplets';
   }
+
+  // Check for mixed patterns (only if no rests)
+  if (notes.length === 3 && !notes.some(n => n.isRest)) {
+    const [d1, d2, d3] = notes.map(n => n.duration);
+
+    // Eighth + two sixteenths
+    if (Math.abs(d1 - 0.5) < 0.01 && Math.abs(d2 - 0.25) < 0.01 && Math.abs(d3 - 0.25) < 0.01) {
+      return 'eighth-two-sixteenths';
+    }
+
+    // Two sixteenths + eighth
+    if (Math.abs(d1 - 0.25) < 0.01 && Math.abs(d2 - 0.25) < 0.01 && Math.abs(d3 - 0.5) < 0.01) {
+      return 'two-sixteenths-eighth';
+    }
+
+    // Sixteenth + eighth + sixteenth
+    if (Math.abs(d1 - 0.25) < 0.01 && Math.abs(d2 - 0.5) < 0.01 && Math.abs(d3 - 0.25) < 0.01) {
+      return 'sixteenth-eighth-sixteenth';
+    }
+  }
+
+  // Four eighths
+  if (notes.length === 4 && notes.every(n => !n.isRest && Math.abs(n.duration - 0.5) < 0.01)) {
+    return 'four-eighths';
+  }
+
+  // All sixteenths
   if (notes.every((n) => n.duration === 0.25)) return 'sixteenths';
+
+  // All eighths
   if (notes.every((n) => n.duration === 0.5)) return 'eighths';
+
   return 'mixed';
 };
 
@@ -139,6 +185,50 @@ const renderTriplets = (notes: RhythmNote[]): React.ReactElement => {
 };
 
 /**
+ * Render eighth note followed by two sixteenths
+ */
+const renderEighthTwoSixteenths = (): React.ReactElement => {
+  return (
+    <g transform="translate(5, 0)">
+      <EighthTwoSixteenthsBeamed />
+    </g>
+  );
+};
+
+/**
+ * Render two sixteenths followed by eighth note
+ */
+const renderTwoSixteenthsEighth = (): React.ReactElement => {
+  return (
+    <g transform="translate(5, 0)">
+      <TwoSixteenthsEighthBeamed />
+    </g>
+  );
+};
+
+/**
+ * Render sixteenth, eighth, sixteenth pattern
+ */
+const renderSixteenthEighthSixteenth = (): React.ReactElement => {
+  return (
+    <g transform="translate(3, 0)">
+      <SixteenthEighthSixteenthBeamed />
+    </g>
+  );
+};
+
+/**
+ * Render four eighth notes
+ */
+const renderFourEighths = (): React.ReactElement => {
+  return (
+    <g transform="translate(2, 0)">
+      <FourEighthsBeamed />
+    </g>
+  );
+};
+
+/**
  * Render mixed patterns (e.g., eighth + two sixteenths)
  */
 const renderMixedPattern = (notes: RhythmNote[]): React.ReactElement => {
@@ -180,10 +270,18 @@ export const NotationDisplay: React.FC<NotationDisplayProps> = ({
         );
       case 'eighths':
         return renderTwoEighths(notes);
+      case 'four-eighths':
+        return renderFourEighths();
       case 'sixteenths':
         return renderFourSixteenths(notes);
       case 'triplets':
         return renderTriplets(notes);
+      case 'eighth-two-sixteenths':
+        return renderEighthTwoSixteenths();
+      case 'two-sixteenths-eighth':
+        return renderTwoSixteenthsEighth();
+      case 'sixteenth-eighth-sixteenth':
+        return renderSixteenthEighthSixteenth();
       case 'mixed':
       default:
         return renderMixedPattern(notes);
