@@ -347,3 +347,51 @@ export const FourEighthsBeamed: React.FC<SymbolProps> = ({ className = '' }) => 
     <NoteBeam x1={10.5} x2={58.5} />
   </g>
 );
+
+/**
+ * Dotted eighth note followed by sixteenth note (beamed)
+ */
+export const DottedEighthSixteenthBeamed: React.FC<SymbolProps> = ({ className = '' }) => (
+  <g className={className}>
+    {/* Dotted eighth note */}
+    <g transform="translate(0, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+      {/* Dot for dotted note */}
+      <circle cx="14" cy="12" r="2" fill="currentColor" />
+    </g>
+    {/* Sixteenth note */}
+    <g transform="translate(42, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Primary beam connecting both notes */}
+    <NoteBeam x1={10.5} x2={52.5} />
+    {/* Secondary beam only for the sixteenth */}
+    <rect x={44.5} y={-10} width={8} height="4" fill="currentColor" />
+  </g>
+);
+
+/**
+ * Sixteenth note followed by dotted eighth note (beamed)
+ */
+export const SixteenthDottedEighthBeamed: React.FC<SymbolProps> = ({ className = '' }) => (
+  <g className={className}>
+    {/* Sixteenth note */}
+    <g transform="translate(0, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+    </g>
+    {/* Dotted eighth note */}
+    <g transform="translate(28, 0)">
+      <NoteHeadFilled />
+      <NoteStem />
+      {/* Dot for dotted note */}
+      <circle cx="14" cy="12" r="2" fill="currentColor" />
+    </g>
+    {/* Primary beam connecting both notes */}
+    <NoteBeam x1={10.5} x2={38.5} />
+    {/* Secondary beam only for the sixteenth */}
+    <rect x={10.5} y={-10} width={8} height="4" fill="currentColor" />
+  </g>
+);

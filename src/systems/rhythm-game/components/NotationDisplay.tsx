@@ -26,6 +26,8 @@ import {
   TwoSixteenthsEighthBeamed,
   SixteenthEighthSixteenthBeamed,
   FourEighthsBeamed,
+  DottedEighthSixteenthBeamed,
+  SixteenthDottedEighthBeamed,
 } from './NotationSymbols';
 
 /**
@@ -42,6 +44,8 @@ const getPatternType = (
   | 'two-sixteenths-eighth'
   | 'sixteenth-eighth-sixteenth'
   | 'four-eighths'
+  | 'dotted-eighth-sixteenth'
+  | 'sixteenth-dotted-eighth'
   | 'mixed' => {
   // Single note
   if (notes.length === 1) return 'quarter';
@@ -49,6 +53,21 @@ const getPatternType = (
   // Triplets
   if (notes.length === 3 && notes.every((n) => Math.abs(n.duration - 1 / 3) < 0.01)) {
     return 'triplets';
+  }
+
+  // Check for dotted eighth patterns (only if no rests)
+  if (notes.length === 2 && !notes.some(n => n.isRest)) {
+    const [d1, d2] = notes.map(n => n.duration);
+
+    // Dotted eighth + sixteenth
+    if (Math.abs(d1 - 0.75) < 0.01 && Math.abs(d2 - 0.25) < 0.01) {
+      return 'dotted-eighth-sixteenth';
+    }
+
+    // Sixteenth + dotted eighth
+    if (Math.abs(d1 - 0.25) < 0.01 && Math.abs(d2 - 0.75) < 0.01) {
+      return 'sixteenth-dotted-eighth';
+    }
   }
 
   // Check for mixed patterns (only if no rests)
@@ -229,6 +248,28 @@ const renderFourEighths = (): React.ReactElement => {
 };
 
 /**
+ * Render dotted eighth followed by sixteenth
+ */
+const renderDottedEighthSixteenth = (): React.ReactElement => {
+  return (
+    <g transform="translate(4, 0)">
+      <DottedEighthSixteenthBeamed />
+    </g>
+  );
+};
+
+/**
+ * Render sixteenth followed by dotted eighth
+ */
+const renderSixteenthDottedEighth = (): React.ReactElement => {
+  return (
+    <g transform="translate(8, 0)">
+      <SixteenthDottedEighthBeamed />
+    </g>
+  );
+};
+
+/**
  * Render mixed patterns (e.g., eighth + two sixteenths)
  */
 const renderMixedPattern = (notes: RhythmNote[]): React.ReactElement => {
@@ -282,6 +323,10 @@ export const NotationDisplay: React.FC<NotationDisplayProps> = ({
         return renderTwoSixteenthsEighth();
       case 'sixteenth-eighth-sixteenth':
         return renderSixteenthEighthSixteenth();
+      case 'dotted-eighth-sixteenth':
+        return renderDottedEighthSixteenth();
+      case 'sixteenth-dotted-eighth':
+        return renderSixteenthDottedEighth();
       case 'mixed':
       default:
         return renderMixedPattern(notes);
