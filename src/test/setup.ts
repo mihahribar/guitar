@@ -34,4 +34,4 @@ class AudioContextMock {
   }
 }
 
-global.AudioContext = AudioContextMock as any;
+globalThis.AudioContext = AudioContextMock as any;
