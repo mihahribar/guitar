@@ -5,7 +5,7 @@ import {
   getNoteNameAtFret,
   shouldShowNoteName,
   isPentatonicNote,
-  getPentatonicPositions
+  getPentatonicPositions,
 } from '@/shared/utils/musicTheory';
 import { getPentatonicIntervals } from '@/shared/utils/chordUtils';
 
@@ -52,7 +52,11 @@ import { getPentatonicIntervals } from '@/shared/utils/chordUtils';
  * - Pentatonic scales: Major (0,2,4,7,9) and Minor (0,3,5,7,10) intervals from root
  * - Shape transposition: Each shape pattern is offset by the chromatic distance to target chord
  */
-export function useCAGEDLogic(selectedChord: ChordType, chordQuality: ChordQuality, cagedSequence: string[]) {
+export function useCAGEDLogic(
+  selectedChord: ChordType,
+  chordQuality: ChordQuality,
+  cagedSequence: string[]
+) {
   // Get the appropriate shape data based on chord quality (major vs minor patterns)
   const shapeData = useMemo(() => CAGED_SHAPES_BY_QUALITY[chordQuality], [chordQuality]);
 
@@ -79,61 +83,73 @@ export function useCAGEDLogic(selectedChord: ChordType, chordQuality: ChordQuali
    * @param basePosition - Base fret position for this shape
    * @returns Fret number to play, or -1 if string not played
    */
-  const getShapeFret = useMemo(() => (shapeKey: string, stringIndex: number, basePosition: number) => {
-    const shape = shapeData[shapeKey];
-    const patternFret = shape.pattern[stringIndex]; // Relative fret from shape pattern
+  const getShapeFret = useMemo(
+    () => (shapeKey: string, stringIndex: number, basePosition: number) => {
+      const shape = shapeData[shapeKey];
+      const patternFret = shape.pattern[stringIndex]; // Relative fret from shape pattern
 
-    // Handle special cases in CAGED patterns:
-    if (patternFret === -1) return -1; // String not played in this shape
-    if (patternFret === 0 && basePosition === 0) return 0; // Open string (absolute position 0)
-    if (patternFret === 0 && basePosition > 0) return basePosition; // Barre at base position
+      // Handle special cases in CAGED patterns:
+      if (patternFret === -1) return -1; // String not played in this shape
+      if (patternFret === 0 && basePosition === 0) return 0; // Open string (absolute position 0)
+      if (patternFret === 0 && basePosition > 0) return basePosition; // Barre at base position
 
-    // Standard case: add pattern offset to base position
-    return patternFret + basePosition;
-  }, [shapeData]);
+      // Standard case: add pattern offset to base position
+      return patternFret + basePosition;
+    },
+    [shapeData]
+  );
 
-  const getShapesAtPosition = useMemo(() => (stringIndex: number, fretNumber: number) => {
-    const shapesHere: string[] = [];
-    for (const shapeKey of cagedSequence) {
-      const basePosition = shapePositions[shapeKey];
-      const shapeFret = getShapeFret(shapeKey, stringIndex, basePosition);
-      if (shapeFret === fretNumber && shapeFret > 0) {
-        shapesHere.push(shapeKey);
+  const getShapesAtPosition = useMemo(
+    () => (stringIndex: number, fretNumber: number) => {
+      const shapesHere: string[] = [];
+      for (const shapeKey of cagedSequence) {
+        const basePosition = shapePositions[shapeKey];
+        const shapeFret = getShapeFret(shapeKey, stringIndex, basePosition);
+        if (shapeFret === fretNumber && shapeFret > 0) {
+          shapesHere.push(shapeKey);
+        }
       }
-    }
-    return shapesHere;
-  }, [cagedSequence, shapePositions, getShapeFret]);
+      return shapesHere;
+    },
+    [cagedSequence, shapePositions, getShapeFret]
+  );
 
   /**
    * Generate CSS styling for overlapping CAGED shapes using gradients
    * @param shapes - Array of shape keys that overlap at this position
    * @returns CSS style object with appropriate background
    */
-  const createGradientStyle = useMemo(() => (shapes: string[]) => {
-    // Single shape: solid color background
-    if (shapes.length === 1) {
-      return { backgroundColor: shapeData[shapes[0]].color };
-    }
-    // Two shapes: split 50/50 with hard edge
-    else if (shapes.length === 2) {
-      const color1 = shapeData[shapes[0]].color;
-      const color2 = shapeData[shapes[1]].color;
-      return {
-        background: `linear-gradient(90deg, ${color1} 50%, ${color2} 50%)`
-      };
-    }
-    // Multiple shapes: equal segments across width
-    else if (shapes.length > 2) {
-      const colors = shapes.map(shape => shapeData[shape].color);
-      // Create equal-width segments with hard transitions between colors
-      const gradientStops = colors.map((color, i) =>
-        `${color} ${(i * 100 / colors.length)}%, ${color} ${((i + 1) * 100 / colors.length)}%`
-      ).join(', ');
-      return {
-        background: `linear-gradient(90deg, ${gradientStops})`
-      };
-    }
-  }, [shapeData]);
+  const createGradientStyle = useMemo(
+    () => (shapes: string[]) => {
+      // Single shape: solid color background
+      if (shapes.length === 1) {
+        return { backgroundColor: shapeData[shapes[0]].color };
+      }
+      // Two shapes: split 50/50 with hard edge
+      else if (shapes.length === 2) {
+        const color1 = shapeData[shapes[0]].color;
+        const color2 = shapeData[shapes[1]].color;
+        return {
+          background: `linear-gradient(90deg, ${color1} 50%, ${color2} 50%)`,
+        };
+      }
+      // Multiple shapes: equal segments across width
+      else if (shapes.length > 2) {
+        const colors = shapes.map((shape) => shapeData[shape].color);
+        // Create equal-width segments with hard transitions between colors
+        const gradientStops = colors
+          .map(
+            (color, i) =>
+              `${color} ${(i * 100) / colors.length}%, ${color} ${((i + 1) * 100) / colors.length}%`
+          )
+          .join(', ');
+        return {
+          background: `linear-gradient(90deg, ${gradientStops})`,
+        };
+      }
+    },
+    [shapeData]
+  );
 
   // Use shared pentatonic logic
   const isPentatonicNoteAtPosition = useMemo(() => {

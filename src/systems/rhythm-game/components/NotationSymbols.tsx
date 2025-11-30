@@ -92,9 +92,7 @@ export const NoteBeam: React.FC<
 > = ({ className = '', x1, x2, y = -16, double = false }) => (
   <g className={className}>
     <rect x={x1} y={y} width={x2 - x1} height="4" fill="currentColor" />
-    {double && (
-      <rect x={x1} y={y + 6} width={x2 - x1} height="4" fill="currentColor" />
-    )}
+    {double && <rect x={x1} y={y + 6} width={x2 - x1} height="4" fill="currentColor" />}
   </g>
 );
 
@@ -145,12 +143,7 @@ export const QuarterRest: React.FC<SymbolProps> = ({ className = '' }) => (
 export const EighthRest: React.FC<SymbolProps> = ({ className = '' }) => (
   <g className={className}>
     <circle cx="8" cy="-4" r="3" fill="currentColor" />
-    <path
-      d="M 10 -4 Q 14 4 8 12"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    />
+    <path d="M 10 -4 Q 14 4 8 12" fill="none" stroke="currentColor" strokeWidth="2" />
   </g>
 );
 
@@ -161,12 +154,7 @@ export const SixteenthRest: React.FC<SymbolProps> = ({ className = '' }) => (
   <g className={className}>
     <circle cx="8" cy="-8" r="2.5" fill="currentColor" />
     <circle cx="10" cy="-2" r="2.5" fill="currentColor" />
-    <path
-      d="M 9 -8 Q 16 2 8 14"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    />
+    <path d="M 9 -8 Q 16 2 8 14" fill="none" stroke="currentColor" strokeWidth="2" />
   </g>
 );
 

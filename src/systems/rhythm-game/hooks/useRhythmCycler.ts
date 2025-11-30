@@ -61,7 +61,7 @@ export const useRhythmCycler = ({
    */
   const advanceBeat = useCallback(() => {
     setCurrentBeat((prev) => {
-      const nextBeat = ((prev ?? -1) + 1) % 4 as BeatIndex;
+      const nextBeat = (((prev ?? -1) + 1) % 4) as BeatIndex;
 
       // If completing a cycle (going from beat 3 to 0), call the callback
       if (nextBeat === 0 && prev === 3) {

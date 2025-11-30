@@ -36,10 +36,7 @@ export default function QuizPage() {
 
           {/* Quiz Configuration */}
           <div className="mb-8 max-w-sm mx-auto">
-            <QuizModeToggle
-              value={preferences.quizMode}
-              onChange={updateQuizMode}
-            />
+            <QuizModeToggle value={preferences.quizMode} onChange={updateQuizMode} />
           </div>
 
           <div className="flex justify-center">
@@ -65,11 +62,8 @@ export default function QuizPage() {
             totalQuestions={preferences.questionCount}
           />
         </div>
-        
-        <QuizQuestion
-          question={currentQuestion}
-          onSubmitAnswer={submitAnswer}
-        />
+
+        <QuizQuestion question={currentQuestion} onSubmitAnswer={submitAnswer} />
       </div>
     );
   }
@@ -78,10 +72,7 @@ export default function QuizPage() {
     const results = getResults();
     return (
       <div className="max-w-4xl mx-auto p-8">
-        <QuizResults
-          results={results}
-          onStartNewQuiz={startNewQuiz}
-        />
+        <QuizResults results={results} onStartNewQuiz={startNewQuiz} />
       </div>
     );
   }

@@ -5,7 +5,6 @@
  * features and customizable content.
  */
 
-
 /**
  * Props for LoadingFallback component
  */
@@ -115,10 +114,7 @@ export function NavigationSkeleton() {
   return (
     <div className="flex flex-wrap gap-2 animate-pulse">
       {Array.from({ length: 5 }, (_, i) => (
-        <div
-          key={i}
-          className="w-12 h-10 bg-gray-200 dark:bg-gray-700 rounded"
-        />
+        <div key={i} className="w-12 h-10 bg-gray-200 dark:bg-gray-700 rounded" />
       ))}
     </div>
   );
@@ -144,10 +140,7 @@ export function QuizSkeleton() {
       {/* Answer choices */}
       <div className="grid grid-cols-5 gap-3">
         {Array.from({ length: 5 }, (_, i) => (
-          <div
-            key={i}
-            className="h-12 bg-gray-200 dark:bg-gray-700 rounded"
-          />
+          <div key={i} className="h-12 bg-gray-200 dark:bg-gray-700 rounded" />
         ))}
       </div>
     </div>

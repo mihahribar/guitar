@@ -74,25 +74,21 @@ const defaultConfig: QuizConfig = DEFAULT_QUIZ_CONFIG;
 
 export function useQuizState() {
   const [state, dispatch] = useReducer(quizReducer, initialState);
-  
+
   const actions = {
-    startQuiz: (questions: QuizQuestion[], config: QuizConfig = defaultConfig) => 
+    startQuiz: (questions: QuizQuestion[], config: QuizConfig = defaultConfig) =>
       dispatch({ type: 'START_QUIZ', payload: { questions, config } }),
-    answerQuestion: (answer: QuizAnswer) => 
-      dispatch({ type: 'ANSWER_QUESTION', payload: answer }),
-    nextQuestion: () => 
-      dispatch({ type: 'NEXT_QUESTION' }),
-    finishQuiz: () => 
-      dispatch({ type: 'FINISH_QUIZ' }),
-    resetQuiz: () => 
-      dispatch({ type: 'RESET_QUIZ' }),
+    answerQuestion: (answer: QuizAnswer) => dispatch({ type: 'ANSWER_QUESTION', payload: answer }),
+    nextQuestion: () => dispatch({ type: 'NEXT_QUESTION' }),
+    finishQuiz: () => dispatch({ type: 'FINISH_QUIZ' }),
+    resetQuiz: () => dispatch({ type: 'RESET_QUIZ' }),
   };
 
   // Derived state
   const currentQuestion = state.questions[state.currentQuestionIndex];
   const progress = state.totalQuestions > 0 ? state.currentQuestionIndex / state.totalQuestions : 0;
   const scorePercentage = state.totalQuestions > 0 ? (state.score / state.totalQuestions) * 100 : 0;
-  
+
   return {
     state,
     actions,

@@ -153,8 +153,7 @@ export const useMetronome = (): MetronomeHookReturn => {
   /**
    * Check if BPM is valid
    */
-  const isValid =
-    bpm >= METRONOME_CONSTANTS.MIN_BPM && bpm <= METRONOME_CONSTANTS.MAX_BPM;
+  const isValid = bpm >= METRONOME_CONSTANTS.MIN_BPM && bpm <= METRONOME_CONSTANTS.MAX_BPM;
 
   /**
    * Effect: Handle play/pause state changes

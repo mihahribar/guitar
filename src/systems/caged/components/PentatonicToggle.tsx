@@ -14,8 +14,14 @@ export default function PentatonicToggle({ showPentatonic, onToggle }: Pentatoni
             : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 focus:ring-gray-400 dark:focus:ring-gray-500'
         }`}
         aria-pressed={showPentatonic}
-        aria-label={showPentatonic ? 'Hide pentatonic scale overlay' : 'Show pentatonic scale overlay'}
-        title={showPentatonic ? 'Hide major pentatonic scale notes' : 'Show major pentatonic scale notes over chord shapes'}
+        aria-label={
+          showPentatonic ? 'Hide pentatonic scale overlay' : 'Show pentatonic scale overlay'
+        }
+        title={
+          showPentatonic
+            ? 'Hide major pentatonic scale notes'
+            : 'Show major pentatonic scale notes over chord shapes'
+        }
       >
         {showPentatonic ? 'Hide Pentatonic Scale' : 'Show Pentatonic Scale'}
       </button>

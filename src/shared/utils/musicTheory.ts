@@ -20,7 +20,18 @@ export const STANDARD_TUNING = [4, 11, 7, 2, 9, 4] as const;
  * Chromatic scale to note names mapping (including sharps)
  */
 export const CHROMATIC_TO_NOTE_NAME: readonly string[] = [
-  'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'
+  'C',
+  'C#',
+  'D',
+  'D#',
+  'E',
+  'F',
+  'F#',
+  'G',
+  'G#',
+  'A',
+  'A#',
+  'B',
 ] as const;
 
 /**
@@ -36,10 +47,14 @@ export const STRING_NAMES = ['E', 'B', 'G', 'D', 'A', 'E'] as const;
  */
 export function getNoteAtFret(stringIndex: number, fretNumber: number): number {
   if (stringIndex < 0 || stringIndex >= STANDARD_TUNING.length) {
-    throw new Error(`Invalid string index: ${stringIndex}. Must be 0-${STANDARD_TUNING.length - 1}`);
+    throw new Error(
+      `Invalid string index: ${stringIndex}. Must be 0-${STANDARD_TUNING.length - 1}`
+    );
   }
   if (fretNumber < 0 || fretNumber > FRETBOARD_CONSTANTS.MAX_FRET) {
-    throw new Error(`Invalid fret number: ${fretNumber}. Must be 0-${FRETBOARD_CONSTANTS.MAX_FRET}`);
+    throw new Error(
+      `Invalid fret number: ${fretNumber}. Must be 0-${FRETBOARD_CONSTANTS.MAX_FRET}`
+    );
   }
 
   return (STANDARD_TUNING[stringIndex] + fretNumber) % FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE;
@@ -65,7 +80,7 @@ export function getNoteNameAtFret(stringIndex: number, fretNumber: number): stri
 export function shouldShowNoteName(stringIndex: number, fretNumber: number): boolean {
   const chromaticValue = getNoteAtFret(stringIndex, fretNumber);
   return MUSIC_THEORY_CONSTANTS.NATURAL_NOTE_POSITIONS.includes(
-    chromaticValue as typeof MUSIC_THEORY_CONSTANTS.NATURAL_NOTE_POSITIONS[number]
+    chromaticValue as (typeof MUSIC_THEORY_CONSTANTS.NATURAL_NOTE_POSITIONS)[number]
   );
 }
 
@@ -84,7 +99,9 @@ export function isPentatonicNote(
   intervals: readonly number[]
 ): boolean {
   const noteAtFret = getNoteAtFret(stringIndex, fretNumber);
-  const pentatonicNotes = intervals.map(interval => (rootNote + interval) % FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE);
+  const pentatonicNotes = intervals.map(
+    (interval) => (rootNote + interval) % FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE
+  );
   return pentatonicNotes.includes(noteAtFret);
 }
 
@@ -118,7 +135,10 @@ export function getPentatonicPositions(
  * @returns Chromatic distance in semitones (0-11)
  */
 export function calculateChromaticDistance(fromNote: number, toNote: number): number {
-  return (toNote - fromNote + FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE) % FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE;
+  return (
+    (toNote - fromNote + FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE) %
+    FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE
+  );
 }
 
 /**
@@ -130,5 +150,5 @@ export function calculateChromaticDistance(fromNote: number, toNote: number): nu
  */
 export function transposePattern(pattern: number[], fromRoot: number, toRoot: number): number[] {
   const distance = calculateChromaticDistance(fromRoot, toRoot);
-  return pattern.map(note => (note + distance) % FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE);
+  return pattern.map((note) => (note + distance) % FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE);
 }

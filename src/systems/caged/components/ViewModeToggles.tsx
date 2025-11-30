@@ -20,7 +20,7 @@ function ViewModeToggles({
   showAllNotes,
   onToggleShowAllShapes,
   onToggleShowPentatonic,
-  onToggleShowAllNotes
+  onToggleShowAllNotes,
 }: ViewModeTogglesProps) {
   return (
     <div className="mt-6">
@@ -33,9 +33,7 @@ function ViewModeToggles({
             <button
               onClick={onToggleShowAllShapes}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 ${
-                showAllShapes
-                  ? 'bg-indigo-600 dark:bg-indigo-500'
-                  : 'bg-gray-200 dark:bg-gray-600'
+                showAllShapes ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-gray-200 dark:bg-gray-600'
               }`}
               aria-pressed={showAllShapes}
               aria-label={showAllShapes ? 'Switch to single CAGED shape' : 'Show all CAGED shapes'}
@@ -57,12 +55,12 @@ function ViewModeToggles({
             <button
               onClick={onToggleShowPentatonic}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 ${
-                showPentatonic
-                  ? 'bg-green-600 dark:bg-green-500'
-                  : 'bg-gray-200 dark:bg-gray-600'
+                showPentatonic ? 'bg-green-600 dark:bg-green-500' : 'bg-gray-200 dark:bg-gray-600'
               }`}
               aria-pressed={showPentatonic}
-              aria-label={showPentatonic ? 'Hide pentatonic scale overlay' : 'Show pentatonic scale overlay'}
+              aria-label={
+                showPentatonic ? 'Hide pentatonic scale overlay' : 'Show pentatonic scale overlay'
+              }
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
@@ -81,12 +79,12 @@ function ViewModeToggles({
             <button
               onClick={onToggleShowAllNotes}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 ${
-                showAllNotes
-                  ? 'bg-blue-600 dark:bg-blue-500'
-                  : 'bg-gray-200 dark:bg-gray-600'
+                showAllNotes ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
               }`}
               aria-pressed={showAllNotes}
-              aria-label={showAllNotes ? 'Hide note names on fretboard' : 'Show note names on fretboard'}
+              aria-label={
+                showAllNotes ? 'Hide note names on fretboard' : 'Show note names on fretboard'
+              }
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
@@ -114,14 +112,14 @@ function ViewModeToggles({
           <p>
             {showAllShapes
               ? `Viewing all 5 CAGED positions for ${selectedChord} ${chordQuality} simultaneously`
-              : `Navigate through different ways to play ${selectedChord} ${chordQuality} using CAGED shapes`
-            }
+              : `Navigate through different ways to play ${selectedChord} ${chordQuality} using CAGED shapes`}
           </p>
           <p className="text-xs">
             {showAllShapes
               ? 'Overlapping notes show blended colors'
-              : 'Use position controls above'
-            } • Press Space to toggle view mode{showPentatonic ? ' • Press S for scale' : ''}{showAllNotes ? ' • Press N for notes' : ''}
+              : 'Use position controls above'}{' '}
+            • Press Space to toggle view mode{showPentatonic ? ' • Press S for scale' : ''}
+            {showAllNotes ? ' • Press N for notes' : ''}
           </p>
         </div>
 
@@ -130,9 +128,7 @@ function ViewModeToggles({
             <p className="font-medium text-green-600 dark:text-green-400 text-sm">
               {selectedChord} {chordQuality === 'major' ? 'Major' : 'Minor'} Pentatonic Scale Active
             </p>
-            <p className="text-xs">
-              Green dots: scale notes • Green rings: chord + scale overlap
-            </p>
+            <p className="text-xs">Green dots: scale notes • Green rings: chord + scale overlap</p>
           </div>
         )}
 

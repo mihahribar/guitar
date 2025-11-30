@@ -20,7 +20,10 @@ interface FretboardDisplayProps {
   /** Function to determine if a main dot should be shown at position */
   shouldShowDot: (stringIndex: StringIndex, fretNumber: FretNumber) => boolean;
   /** Function to get CSS styling for main dots (colors, gradients) */
-  getDotStyle: (stringIndex: StringIndex, fretNumber: FretNumber) => React.CSSProperties | undefined;
+  getDotStyle: (
+    stringIndex: StringIndex,
+    fretNumber: FretNumber
+  ) => React.CSSProperties | undefined;
   /** Function to check if position contains key notes (roots, etc.) */
   isKeyNote: (stringIndex: StringIndex, fretNumber: FretNumber) => boolean;
   /** Function to determine if overlay dot should be shown at position */
@@ -76,13 +79,17 @@ function FretboardDisplay({
   shouldShowNoteName,
   getNoteNameAtFret,
   ariaLabel,
-  keyNoteIndicator = 'R'
+  keyNoteIndicator = 'R',
 }: FretboardDisplayProps) {
-  const defaultAriaLabel = ariaLabel ||
+  const defaultAriaLabel =
+    ariaLabel ||
     `Guitar fretboard showing ${selectedRoot} ${currentPattern || 'pattern'}${showAllPatterns ? ' in all positions' : ''}`;
 
   return (
-    <section className="bg-amber-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm" aria-label="Guitar fretboard">
+    <section
+      className="bg-amber-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm"
+      aria-label="Guitar fretboard"
+    >
       <table
         className="fretboard-grid w-full border-collapse"
         role="grid"
@@ -128,9 +135,14 @@ function FretboardDisplay({
                   {shouldShowDot(stringIndex as StringIndex, fretIndex + 1) && (
                     <div
                       className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium shadow-sm ${
-                        isKeyNote(stringIndex as StringIndex, fretIndex + 1) ? 'ring-2 ring-gray-800 dark:ring-gray-200' : ''
+                        isKeyNote(stringIndex as StringIndex, fretIndex + 1)
+                          ? 'ring-2 ring-gray-800 dark:ring-gray-200'
+                          : ''
                       } ${
-                        showOverlay && shouldShowOverlayDot(stringIndex as StringIndex, fretIndex + 1) ? 'ring-2 ring-green-600 dark:ring-green-500' : ''
+                        showOverlay &&
+                        shouldShowOverlayDot(stringIndex as StringIndex, fretIndex + 1)
+                          ? 'ring-2 ring-green-600 dark:ring-green-500'
+                          : ''
                       }`}
                       style={getDotStyle(stringIndex as StringIndex, fretIndex + 1)}
                       aria-label={`${isKeyNote(stringIndex as StringIndex, fretIndex + 1) ? 'Key note' : 'Pattern note'}${showOverlay && shouldShowOverlayDot(stringIndex as StringIndex, fretIndex + 1) ? ' (also overlay note)' : ''} on ${stringName} string, fret ${fretIndex + 1}`}
@@ -140,25 +152,28 @@ function FretboardDisplay({
                   )}
 
                   {/* Overlay dot (when not covered by main dot) */}
-                  {showOverlay && shouldShowOverlayDot(stringIndex as StringIndex, fretIndex + 1) && !shouldShowDot(stringIndex as StringIndex, fretIndex + 1) && (
-                    <div
-                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-green-600 dark:border-green-500 bg-green-600/30 dark:bg-green-500/30"
-                      aria-label={`Overlay note on ${stringName} string, fret ${fretIndex + 1}`}
-                    />
-                  )}
+                  {showOverlay &&
+                    shouldShowOverlayDot(stringIndex as StringIndex, fretIndex + 1) &&
+                    !shouldShowDot(stringIndex as StringIndex, fretIndex + 1) && (
+                      <div
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-green-600 dark:border-green-500 bg-green-600/30 dark:bg-green-500/30"
+                        aria-label={`Overlay note on ${stringName} string, fret ${fretIndex + 1}`}
+                      />
+                    )}
 
                   {/* Note name overlay */}
-                  {showNoteNames && shouldShowNoteName(stringIndex as StringIndex, fretIndex + 1) && (
-                    <div
-                      className="absolute top-0.5 left-0.5 text-xs font-semibold text-gray-600 dark:text-gray-300
+                  {showNoteNames &&
+                    shouldShowNoteName(stringIndex as StringIndex, fretIndex + 1) && (
+                      <div
+                        className="absolute top-0.5 left-0.5 text-xs font-semibold text-gray-600 dark:text-gray-300
                                  bg-white/90 dark:bg-gray-800/90 rounded px-1 border border-gray-300 dark:border-gray-600
                                  pointer-events-none z-20 leading-tight min-w-[1rem] text-center
                                  sm:top-1 sm:left-1"
-                      aria-label={`Note ${getNoteNameAtFret(stringIndex as StringIndex, fretIndex + 1)} on ${stringName} string, fret ${fretIndex + 1}`}
-                    >
-                      {getNoteNameAtFret(stringIndex as StringIndex, fretIndex + 1)}
-                    </div>
-                  )}
+                        aria-label={`Note ${getNoteNameAtFret(stringIndex as StringIndex, fretIndex + 1)} on ${stringName} string, fret ${fretIndex + 1}`}
+                      >
+                        {getNoteNameAtFret(stringIndex as StringIndex, fretIndex + 1)}
+                      </div>
+                    )}
                 </td>
               ))}
             </tr>

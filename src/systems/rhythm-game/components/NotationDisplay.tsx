@@ -58,8 +58,8 @@ const getPatternType = (
   }
 
   // Check for dotted eighth patterns (only if no rests)
-  if (notes.length === 2 && !notes.some(n => n.isRest)) {
-    const [d1, d2] = notes.map(n => n.duration);
+  if (notes.length === 2 && !notes.some((n) => n.isRest)) {
+    const [d1, d2] = notes.map((n) => n.duration);
 
     // Dotted eighth + sixteenth
     if (Math.abs(d1 - 0.75) < 0.01 && Math.abs(d2 - 0.25) < 0.01) {
@@ -73,8 +73,8 @@ const getPatternType = (
   }
 
   // Check for mixed patterns (only if no rests)
-  if (notes.length === 3 && !notes.some(n => n.isRest)) {
-    const [d1, d2, d3] = notes.map(n => n.duration);
+  if (notes.length === 3 && !notes.some((n) => n.isRest)) {
+    const [d1, d2, d3] = notes.map((n) => n.duration);
 
     // Eighth + two sixteenths
     if (Math.abs(d1 - 0.5) < 0.01 && Math.abs(d2 - 0.25) < 0.01 && Math.abs(d3 - 0.25) < 0.01) {
@@ -93,7 +93,7 @@ const getPatternType = (
   }
 
   // Four eighths
-  if (notes.length === 4 && notes.every(n => !n.isRest && Math.abs(n.duration - 0.5) < 0.01)) {
+  if (notes.length === 4 && notes.every((n) => !n.isRest && Math.abs(n.duration - 0.5) < 0.01)) {
     return 'four-eighths';
   }
 
@@ -109,10 +109,7 @@ const getPatternType = (
 /**
  * Render a single note or rest based on duration
  */
-const renderSingleNote = (
-  note: RhythmNote,
-  key: string
-): React.ReactElement => {
+const renderSingleNote = (note: RhythmNote, key: string): React.ReactElement => {
   if (note.isRest) {
     if (note.duration >= 0.9) return <QuarterRest key={key} />;
     if (note.duration >= 0.4) return <EighthRest key={key} />;
@@ -134,12 +131,8 @@ const renderTwoEighths = (notes: RhythmNote[]): React.ReactElement => {
     // Render individually with spacing
     return (
       <g>
-        <g transform="translate(8, 0)">
-          {notes[0].isRest ? <EighthRest /> : <EighthNote />}
-        </g>
-        <g transform="translate(32, 0)">
-          {notes[1].isRest ? <EighthRest /> : <EighthNote />}
-        </g>
+        <g transform="translate(8, 0)">{notes[0].isRest ? <EighthRest /> : <EighthNote />}</g>
+        <g transform="translate(32, 0)">{notes[1].isRest ? <EighthRest /> : <EighthNote />}</g>
       </g>
     );
   }
@@ -160,12 +153,12 @@ const renderFourSixteenths = (notes: RhythmNote[]): React.ReactElement => {
 
   if (hasRest) {
     // Check for rest + three sixteenths
-    if (notes[0].isRest && notes.slice(1).every(n => !n.isRest)) {
+    if (notes[0].isRest && notes.slice(1).every((n) => !n.isRest)) {
       return <RestThreeSixteenthsBeamed />;
     }
 
     // Check for three sixteenths + rest
-    if (notes[3].isRest && notes.slice(0, 3).every(n => !n.isRest)) {
+    if (notes[3].isRest && notes.slice(0, 3).every((n) => !n.isRest)) {
       return <ThreeSixteenthsRestBeamed />;
     }
 
@@ -197,7 +190,9 @@ const renderTriplets = (notes: RhythmNote[]): React.ReactElement => {
       <g>
         {notes.map((note, i) => (
           <g key={i} transform={`translate(${i * 18}, 0)`}>
-            {note.isRest ? <EighthRest /> : (
+            {note.isRest ? (
+              <EighthRest />
+            ) : (
               <g>
                 <NoteHeadFilled />
                 <NoteStem />
@@ -306,10 +301,7 @@ const renderMixedPattern = (notes: RhythmNote[]): React.ReactElement => {
 /**
  * Main notation display component
  */
-export const NotationDisplay: React.FC<NotationDisplayProps> = ({
-  pattern,
-  className = '',
-}) => {
+export const NotationDisplay: React.FC<NotationDisplayProps> = ({ pattern, className = '' }) => {
   const renderedNotation = useMemo(() => {
     const { notes } = pattern;
     const patternType = getPatternType(notes);
@@ -317,9 +309,7 @@ export const NotationDisplay: React.FC<NotationDisplayProps> = ({
     switch (patternType) {
       case 'quarter':
         return (
-          <g transform="translate(25, 0)">
-            {notes[0].isRest ? <QuarterRest /> : <QuarterNote />}
-          </g>
+          <g transform="translate(25, 0)">{notes[0].isRest ? <QuarterRest /> : <QuarterNote />}</g>
         );
       case 'eighths':
         return renderTwoEighths(notes);

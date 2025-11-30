@@ -47,7 +47,9 @@ export function isChordNote(
 ): boolean {
   const noteAtFret = getNoteAtFret(stringIndex, fretNumber);
   const intervals = getChordIntervals(quality);
-  const chordNotes = intervals.map(interval => (rootNote + interval) % FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE);
+  const chordNotes = intervals.map(
+    (interval) => (rootNote + interval) % FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE
+  );
   return chordNotes.includes(noteAtFret);
 }
 

@@ -16,20 +16,20 @@ export default function QuizResults({ results, onStartNewQuiz }: QuizResultsProp
   if (!results) return null;
 
   const { totalQuestions, correctAnswers, percentage, answers, questions } = results;
-  
+
   const getScoreMessage = (percentage: number): string => {
     if (percentage === 100) return "Perfect! You've mastered the CAGED system!";
-    if (percentage >= 80) return "Excellent work! You have a strong understanding.";
-    if (percentage >= 60) return "Good job! Keep practicing to improve.";
-    if (percentage >= 40) return "Not bad! Review the patterns and try again.";
-    return "Keep studying! The CAGED system takes practice.";
+    if (percentage >= 80) return 'Excellent work! You have a strong understanding.';
+    if (percentage >= 60) return 'Good job! Keep practicing to improve.';
+    if (percentage >= 40) return 'Not bad! Review the patterns and try again.';
+    return 'Keep studying! The CAGED system takes practice.';
   };
 
   const getScoreColor = (percentage: number): string => {
-    if (percentage >= 80) return "text-green-600";
-    if (percentage >= 60) return "text-blue-600";
-    if (percentage >= 40) return "text-yellow-600";
-    return "text-red-600";
+    if (percentage >= 80) return 'text-green-600';
+    if (percentage >= 60) return 'text-blue-600';
+    if (percentage >= 40) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
   return (
@@ -52,9 +52,7 @@ export default function QuizResults({ results, onStartNewQuiz }: QuizResultsProp
         <div className={`text-2xl font-medium mb-4 ${getScoreColor(percentage)}`}>
           {Math.round(percentage)}%
         </div>
-        <p className="text-gray-600 dark:text-gray-300">
-          {getScoreMessage(percentage)}
-        </p>
+        <p className="text-gray-600 dark:text-gray-300">{getScoreMessage(percentage)}</p>
       </div>
 
       {/* Answer Review */}
@@ -64,7 +62,7 @@ export default function QuizResults({ results, onStartNewQuiz }: QuizResultsProp
         </h2>
         <div className="space-y-3">
           {answers.map((answer, index) => {
-            const question = questions.find(q => q.id === answer.questionId);
+            const question = questions.find((q) => q.id === answer.questionId);
             const chordQuality = question?.quality || 'major';
             const qualityText = chordQuality === 'major' ? 'Major' : 'Minor';
 
@@ -78,21 +76,20 @@ export default function QuizResults({ results, onStartNewQuiz }: QuizResultsProp
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">
-                    {answer.isCorrect ? '✓' : '✗'}
-                  </span>
+                  <span className="text-lg">{answer.isCorrect ? '✓' : '✗'}</span>
                   <span className="text-gray-700 dark:text-gray-200">
                     Question {index + 1} ({qualityText})
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
-                    Your answer:
-                  </span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Your answer:</span>
                   <div
                     className="w-6 h-6 rounded flex items-center justify-center text-white text-xs font-medium"
-                    style={{ backgroundColor: CAGED_SHAPES_BY_QUALITY[chordQuality][answer.selectedAnswer].color }}
+                    style={{
+                      backgroundColor:
+                        CAGED_SHAPES_BY_QUALITY[chordQuality][answer.selectedAnswer].color,
+                    }}
                   >
                     {answer.selectedAnswer}
                   </div>
@@ -101,7 +98,10 @@ export default function QuizResults({ results, onStartNewQuiz }: QuizResultsProp
                       <span className="text-sm text-gray-500 dark:text-gray-400">→ Correct:</span>
                       <div
                         className="w-6 h-6 rounded flex items-center justify-center text-white text-xs font-medium"
-                        style={{ backgroundColor: CAGED_SHAPES_BY_QUALITY[chordQuality][answer.correctAnswer].color }}
+                        style={{
+                          backgroundColor:
+                            CAGED_SHAPES_BY_QUALITY[chordQuality][answer.correctAnswer].color,
+                        }}
                         title={`Correct answer: ${answer.correctAnswer} ${qualityText}`}
                       >
                         {answer.correctAnswer}
@@ -133,9 +133,13 @@ export default function QuizResults({ results, onStartNewQuiz }: QuizResultsProp
           </h3>
           <ul className="text-left text-blue-700 dark:text-blue-300 space-y-2">
             <li>• Practice identifying each CAGED shape at different positions</li>
-            <li>• Remember that the shape name tells you which chord it makes at the nut (position 0)</li>
+            <li>
+              • Remember that the shape name tells you which chord it makes at the nut (position 0)
+            </li>
             <li>• Use the position number to calculate which root chord you're playing</li>
-            <li>• The relationship between shapes and positions is mathematical - learn the pattern!</li>
+            <li>
+              • The relationship between shapes and positions is mathematical - learn the pattern!
+            </li>
           </ul>
         </div>
       )}

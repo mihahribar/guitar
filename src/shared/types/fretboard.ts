@@ -24,7 +24,10 @@ export interface FretboardDisplayProps {
   /** Function to determine if a dot should be shown at position */
   shouldShowDot: (stringIndex: StringIndex, fretNumber: FretNumber) => boolean;
   /** Function to get CSS styling for dots */
-  getDotStyle: (stringIndex: StringIndex, fretNumber: FretNumber) => React.CSSProperties | undefined;
+  getDotStyle: (
+    stringIndex: StringIndex,
+    fretNumber: FretNumber
+  ) => React.CSSProperties | undefined;
   /** Function to check if position contains important notes */
   isKeyNote: (stringIndex: StringIndex, fretNumber: FretNumber) => boolean;
   /** Function to determine if overlay dot should be shown */

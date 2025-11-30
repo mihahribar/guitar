@@ -61,10 +61,7 @@ interface SafeComponentProps {
  * </SafeComponent>
  * ```
  */
-export function SafeComponent({
-  children,
-  config,
-}: SafeComponentProps) {
+export function SafeComponent({ children, config }: SafeComponentProps) {
   const {
     componentName,
     loadingFallback,
@@ -88,22 +85,11 @@ export function SafeComponent({
     }
   };
 
-  const defaultLoadingFallback = (
-    <LoadingFallback
-      message={loadingMessage}
-      size="medium"
-    />
-  );
+  const defaultLoadingFallback = <LoadingFallback message={loadingMessage} size="medium" />;
 
   return (
-    <ErrorBoundary
-      componentName={componentName}
-      fallback={errorFallback}
-      onError={handleError}
-    >
-      <Suspense fallback={loadingFallback || defaultLoadingFallback}>
-        {children}
-      </Suspense>
+    <ErrorBoundary componentName={componentName} fallback={errorFallback} onError={handleError}>
+      <Suspense fallback={loadingFallback || defaultLoadingFallback}>{children}</Suspense>
     </ErrorBoundary>
   );
 }
@@ -155,10 +141,7 @@ export function withSafeComponent<P extends object>(
  * @returns State object with data, loading, and error states
  */
 // eslint-disable-next-line react-refresh/only-export-components
-export function useSafeAsync<T>(
-  operation: () => Promise<T>,
-  deps: React.DependencyList = []
-) {
+export function useSafeAsync<T>(operation: () => Promise<T>, deps: React.DependencyList = []) {
   const [state, setState] = React.useState<{
     data: T | null;
     loading: boolean;
@@ -175,7 +158,7 @@ export function useSafeAsync<T>(
     const runOperation = async () => {
       if (cancelled) return;
 
-      setState(prev => ({ ...prev, loading: true, error: null }));
+      setState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
         const result = await operation();
@@ -185,15 +168,18 @@ export function useSafeAsync<T>(
       } catch (error) {
         if (!cancelled) {
           const errorInstance = error instanceof Error ? error : new Error(String(error));
-          setState(prev => ({ ...prev, loading: false, error: errorInstance }));
+          setState((prev) => ({ ...prev, loading: false, error: errorInstance }));
 
           // Log the error
-          errorLogger.logError({
-            code: 'ASYNC_OPERATION_ERROR',
-            message: errorInstance.message,
-            timestamp: new Date(),
-            context: { operation: operation.toString() },
-          } as unknown as AppErrorType, 'medium');
+          errorLogger.logError(
+            {
+              code: 'ASYNC_OPERATION_ERROR',
+              message: errorInstance.message,
+              timestamp: new Date(),
+              context: { operation: operation.toString() },
+            } as unknown as AppErrorType,
+            'medium'
+          );
         }
       }
     };
@@ -207,7 +193,7 @@ export function useSafeAsync<T>(
   }, deps);
 
   const retry = React.useCallback(() => {
-    setState(prev => ({ ...prev, error: null }));
+    setState((prev) => ({ ...prev, error: null }));
   }, []);
 
   return {

@@ -1,24 +1,24 @@
-import { lazy, Suspense } from "react";
-import CAGEDVisualizer from "@/systems/caged/components/CAGEDVisualizer";
-import { AppNavigation, LoadingFallback } from "@/shared/components";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { NavigationProvider } from "./contexts/NavigationContext";
-import { useNavigation } from "./hooks/useNavigation";
+import { lazy, Suspense } from 'react';
+import CAGEDVisualizer from '@/systems/caged/components/CAGEDVisualizer';
+import { AppNavigation, LoadingFallback } from '@/shared/components';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { NavigationProvider } from './contexts/NavigationContext';
+import { useNavigation } from './hooks/useNavigation';
 
 // Lazy load Quiz and Rhythm components for better initial bundle size
-const QuizPage = lazy(() => import("@/systems/quiz/components/QuizPage"));
-const RhythmPage = lazy(() => import("@/systems/rhythm-game/components/RhythmPage"));
+const QuizPage = lazy(() => import('@/systems/quiz/components/QuizPage'));
+const RhythmPage = lazy(() => import('@/systems/rhythm-game/components/RhythmPage'));
 
 function AppContent() {
   const { currentPage } = useNavigation();
-  
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
       {/* Navigation Bar */}
       <header>
         <AppNavigation />
       </header>
-      
+
       {/* Main Content */}
       <main>
         {currentPage === 'caged' && <CAGEDVisualizer />}

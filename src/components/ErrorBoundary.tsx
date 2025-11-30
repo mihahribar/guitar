@@ -72,13 +72,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return {
       hasError: true,
-      error: createComponentError(
-        'Unknown Component',
-        'update',
-        undefined,
-        error.message,
-        error
-      ),
+      error: createComponentError('Unknown Component', 'update', undefined, error.message, error),
     };
   }
 
@@ -168,8 +162,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 <p>
                   {this.props.componentName
                     ? `There was an error in the ${this.props.componentName} component.`
-                    : 'An unexpected error occurred.'
-                  } Please try again.
+                    : 'An unexpected error occurred.'}{' '}
+                  Please try again.
                 </p>
                 {this.state.error && (
                   <details className="mt-2">
@@ -177,9 +171,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                       Error details
                     </summary>
                     <div className="mt-1 text-xs font-mono bg-red-100 dark:bg-red-900/40 p-2 rounded border">
-                      <p><strong>Message:</strong> {this.state.error.message}</p>
-                      <p><strong>Component:</strong> {this.state.error.componentName}</p>
-                      <p><strong>Time:</strong> {this.state.error.timestamp.toLocaleString()}</p>
+                      <p>
+                        <strong>Message:</strong> {this.state.error.message}
+                      </p>
+                      <p>
+                        <strong>Component:</strong> {this.state.error.componentName}
+                      </p>
+                      <p>
+                        <strong>Time:</strong> {this.state.error.timestamp.toLocaleString()}
+                      </p>
                     </div>
                   </details>
                 )}

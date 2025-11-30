@@ -16,7 +16,7 @@ export const CAGED_SHAPE_DATA: CAGEDShapeData = {
     pattern: [0, 1, 0, 2, 3, -1],
     fingers: [0, 1, 0, 2, 3, -1],
     keyNotes: [4],
-    rootNotes: [4]
+    rootNotes: [4],
   },
   A: {
     name: 'A Shape',
@@ -24,7 +24,7 @@ export const CAGED_SHAPE_DATA: CAGEDShapeData = {
     pattern: [0, 2, 2, 2, 0, -1],
     fingers: [0, 4, 3, 2, 0, -1],
     keyNotes: [4],
-    rootNotes: [4]
+    rootNotes: [4],
   },
   G: {
     name: 'G Shape',
@@ -32,7 +32,7 @@ export const CAGED_SHAPE_DATA: CAGEDShapeData = {
     pattern: [3, 0, 0, 0, 2, 3],
     fingers: [4, -1, 0, 0, 2, 3],
     keyNotes: [0, 5],
-    rootNotes: [0, 5]
+    rootNotes: [0, 5],
   },
   E: {
     name: 'E Shape',
@@ -40,7 +40,7 @@ export const CAGED_SHAPE_DATA: CAGEDShapeData = {
     pattern: [0, 0, 1, 2, 2, 0],
     fingers: [0, 0, 1, 3, 2, 0],
     keyNotes: [0, 5],
-    rootNotes: [0, 5]
+    rootNotes: [0, 5],
   },
   D: {
     name: 'D Shape',
@@ -48,8 +48,8 @@ export const CAGED_SHAPE_DATA: CAGEDShapeData = {
     pattern: [2, 3, 2, 0, -1, -1],
     fingers: [2, 3, 1, 0, -1, -1],
     keyNotes: [3],
-    rootNotes: [3]
-  }
+    rootNotes: [3],
+  },
 };
 
 // Minor chord patterns
@@ -60,7 +60,7 @@ export const CAGED_MINOR_SHAPE_DATA: CAGEDShapeData = {
     pattern: [-1, 1, 0, 1, 3, -1],
     fingers: [-1, 2, 0, 1, 4, -1],
     keyNotes: [4],
-    rootNotes: [4]
+    rootNotes: [4],
   },
   A: {
     name: 'Am Shape',
@@ -68,7 +68,7 @@ export const CAGED_MINOR_SHAPE_DATA: CAGEDShapeData = {
     pattern: [0, 1, 2, 2, 0, -1],
     fingers: [0, 1, 3, 2, 0, -1],
     keyNotes: [4],
-    rootNotes: [4]
+    rootNotes: [4],
   },
   G: {
     name: 'Gm Shape',
@@ -76,7 +76,7 @@ export const CAGED_MINOR_SHAPE_DATA: CAGEDShapeData = {
     pattern: [3, -1, 0, 0, 1, 3],
     fingers: [4, 0, 0, 0, 1, 3],
     keyNotes: [0, 5],
-    rootNotes: [0, 5]
+    rootNotes: [0, 5],
   },
   E: {
     name: 'Em Shape',
@@ -84,7 +84,7 @@ export const CAGED_MINOR_SHAPE_DATA: CAGEDShapeData = {
     pattern: [0, 0, 0, 2, 2, 0],
     fingers: [0, 0, 0, 2, 3, 0],
     keyNotes: [0, 5],
-    rootNotes: [0, 5]
+    rootNotes: [0, 5],
   },
   D: {
     name: 'Dm Shape',
@@ -92,14 +92,14 @@ export const CAGED_MINOR_SHAPE_DATA: CAGEDShapeData = {
     pattern: [1, 3, 2, 0, -1, -1],
     fingers: [1, 3, 2, 0, -1, -1],
     keyNotes: [3],
-    rootNotes: [3]
-  }
+    rootNotes: [3],
+  },
 };
 
 // Combined chord data by quality
 export const CAGED_SHAPES_BY_QUALITY: CAGEDShapesByQuality = {
   major: CAGED_SHAPE_DATA,
-  minor: CAGED_MINOR_SHAPE_DATA
+  minor: CAGED_MINOR_SHAPE_DATA,
 };
 
 // Chromatic values for CAGED chord roots
@@ -108,16 +108,16 @@ export const CHROMATIC_VALUES: ChromaticValues = {
   A: 9,
   G: 7,
   E: 4,
-  D: 2
+  D: 2,
 };
 
 // Natural starting shapes for each CAGED chord
 export const NATURAL_STARTING_SHAPES = {
-  'C': 'C',
-  'A': 'A',
-  'G': 'G',
-  'E': 'E',
-  'D': 'D'
+  C: 'C',
+  A: 'A',
+  G: 'G',
+  E: 'E',
+  D: 'D',
 } as const;
 
 // Complete CAGED sequence order
@@ -149,15 +149,15 @@ export const PENTATONIC_BOX_PATTERNS: PentatonicBoxPatterns = {
     4: { startFret: -1, endFret: 3, name: 'E Minor Shape' },
     // Position 5: D shape
     5: { startFret: -1, endFret: 3, name: 'D Minor Shape' },
-  }
+  },
 };
 
 // Map CAGED shape letters to pentatonic box positions
 // This determines which pentatonic box pattern to use for each CAGED shape
 export const CAGED_TO_PENTATONIC_BOX: { [key: string]: number } = {
-  'C': 1,  // C shape corresponds to pentatonic box 1
-  'A': 2,  // A shape corresponds to pentatonic box 2
-  'G': 3,  // G shape corresponds to pentatonic box 3
-  'E': 4,  // E shape corresponds to pentatonic box 4
-  'D': 5,  // D shape corresponds to pentatonic box 5
+  C: 1, // C shape corresponds to pentatonic box 1
+  A: 2, // A shape corresponds to pentatonic box 2
+  G: 3, // G shape corresponds to pentatonic box 3
+  E: 4, // E shape corresponds to pentatonic box 4
+  D: 5, // D shape corresponds to pentatonic box 5
 };

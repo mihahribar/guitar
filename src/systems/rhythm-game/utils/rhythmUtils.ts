@@ -14,10 +14,7 @@ import { ALL_PATTERNS, PATTERNS_BY_CATEGORY } from '../constants';
  * @returns true if pattern durations sum to 1.0
  */
 export const validatePattern = (pattern: RhythmPattern): boolean => {
-  const totalDuration = pattern.notes.reduce(
-    (sum, note) => sum + note.duration,
-    0
-  );
+  const totalDuration = pattern.notes.reduce((sum, note) => sum + note.duration, 0);
   // Allow small floating point tolerance
   return Math.abs(totalDuration - 1.0) < 0.001;
 };
@@ -27,12 +24,8 @@ export const validatePattern = (pattern: RhythmPattern): boolean => {
  * @param category - Optional category to filter by
  * @returns A random rhythm pattern
  */
-export const getRandomPattern = (
-  category?: SubdivisionType
-): RhythmPattern => {
-  const patterns = category
-    ? PATTERNS_BY_CATEGORY[category]
-    : ALL_PATTERNS;
+export const getRandomPattern = (category?: SubdivisionType): RhythmPattern => {
+  const patterns = category ? PATTERNS_BY_CATEGORY[category] : ALL_PATTERNS;
 
   const randomIndex = Math.floor(Math.random() * patterns.length);
   return patterns[randomIndex];
@@ -71,10 +64,7 @@ export const getAudibleNoteCount = (pattern: RhythmPattern): number => {
  * @param beatDurationMs - Duration of one beat in milliseconds
  * @returns Array of timing offsets in milliseconds for each note
  */
-export const calculateNoteTimings = (
-  pattern: RhythmPattern,
-  beatDurationMs: number
-): number[] => {
+export const calculateNoteTimings = (pattern: RhythmPattern, beatDurationMs: number): number[] => {
   const timings: number[] = [];
   let currentOffset = 0;
 
@@ -103,12 +93,7 @@ export const generateRandomPanels = (): [
   RhythmPattern,
   RhythmPattern,
   RhythmPattern,
-  RhythmPattern
+  RhythmPattern,
 ] => {
-  return [
-    getRandomPattern(),
-    getRandomPattern(),
-    getRandomPattern(),
-    getRandomPattern(),
-  ];
+  return [getRandomPattern(), getRandomPattern(), getRandomPattern(), getRandomPattern()];
 };

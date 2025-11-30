@@ -49,7 +49,7 @@ const RhythmPage: React.FC = () => {
   /**
    * Handle pattern selection from modal
    */
-  const handlePatternSelect = (pattern: typeof panels[0]) => {
+  const handlePatternSelect = (pattern: (typeof panels)[0]) => {
     if (selectedPanelIndex !== null) {
       setPattern(selectedPanelIndex, pattern);
     }
@@ -82,11 +82,7 @@ const RhythmPage: React.FC = () => {
         <main className="space-y-8">
           {/* Rhythm grid */}
           <section aria-label="Rhythm grid">
-            <RhythmGrid
-              panels={panels}
-              currentBeat={currentBeat}
-              onPanelClick={handlePanelClick}
-            />
+            <RhythmGrid panels={panels} currentBeat={currentBeat} onPanelClick={handlePanelClick} />
           </section>
 
           {/* Controls */}
@@ -109,15 +105,11 @@ const RhythmPage: React.FC = () => {
 
         {/* Instructions */}
         <footer className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400">
-          <p>
-            Set your tempo with the BPM input, then click Start to begin.
-          </p>
+          <p>Set your tempo with the BPM input, then click Start to begin.</p>
           <p className="mt-1">
             Enable "Play Notes" to hear the subdivision notes for each pattern.
           </p>
-          <p className="mt-1">
-            Enable "Play Metronome" to hear a click on each beat.
-          </p>
+          <p className="mt-1">Enable "Play Metronome" to hear a click on each beat.</p>
         </footer>
       </div>
 
@@ -126,9 +118,7 @@ const RhythmPage: React.FC = () => {
         isOpen={selectorOpen}
         onClose={handleCloseSelector}
         onSelect={handlePatternSelect}
-        currentPattern={
-          selectedPanelIndex !== null ? panels[selectedPanelIndex] : undefined
-        }
+        currentPattern={selectedPanelIndex !== null ? panels[selectedPanelIndex] : undefined}
       />
     </div>
   );

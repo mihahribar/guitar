@@ -32,12 +32,12 @@ export const DEFAULT_PATTERN: RhythmPattern = QUARTER_PATTERNS[0];
  * Default patterns for initial state
  * Each panel starts with a quarter note
  */
-export const DEFAULT_PANELS: [
-  RhythmPattern,
-  RhythmPattern,
-  RhythmPattern,
-  RhythmPattern
-] = [DEFAULT_PATTERN, DEFAULT_PATTERN, DEFAULT_PATTERN, DEFAULT_PATTERN];
+export const DEFAULT_PANELS: [RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern] = [
+  DEFAULT_PATTERN,
+  DEFAULT_PATTERN,
+  DEFAULT_PATTERN,
+  DEFAULT_PATTERN,
+];
 
 /**
  * Visual state constants for panels

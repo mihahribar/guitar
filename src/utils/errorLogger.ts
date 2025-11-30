@@ -157,7 +157,7 @@ export class ErrorLogger {
       recent: 0,
     };
 
-    logs.forEach(log => {
+    logs.forEach((log) => {
       // Count by severity
       stats.bySeverity[log.severity]++;
 
@@ -239,7 +239,7 @@ export class ErrorLogger {
       body: JSON.stringify(logEntry),
       signal: controller.signal,
     })
-      .catch(error => {
+      .catch((error) => {
         console.warn('Failed to report error to external service:', error);
       })
       .finally(() => {

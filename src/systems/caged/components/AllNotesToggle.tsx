@@ -15,7 +15,11 @@ export default function AllNotesToggle({ showAllNotes, onToggle }: AllNotesToggl
         }`}
         aria-pressed={showAllNotes}
         aria-label={showAllNotes ? 'Hide note names on fretboard' : 'Show note names on fretboard'}
-        title={showAllNotes ? 'Hide natural note names (E,F,G,A,B,C,D)' : 'Show natural note names on all fret positions'}
+        title={
+          showAllNotes
+            ? 'Hide natural note names (E,F,G,A,B,C,D)'
+            : 'Show natural note names on all fret positions'
+        }
       >
         {showAllNotes ? 'Hide All Notes' : 'Show All Notes'}
       </button>

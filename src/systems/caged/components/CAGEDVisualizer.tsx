@@ -9,7 +9,7 @@ import { FretboardDisplay } from '@/shared';
 import {
   CAGED_SHAPES_BY_QUALITY,
   PENTATONIC_BOX_PATTERNS,
-  CAGED_TO_PENTATONIC_BOX
+  CAGED_TO_PENTATONIC_BOX,
 } from '../constants';
 
 /**
@@ -46,79 +46,105 @@ import {
  */
 export default function CAGEDVisualizer() {
   const { state, actions } = useCAGEDState();
-  const { selectedChord, chordQuality, currentPosition, showAllShapes, showPentatonic, showAllNotes } = state;
+  const {
+    selectedChord,
+    chordQuality,
+    currentPosition,
+    showAllShapes,
+    showPentatonic,
+    showAllNotes,
+  } = state;
 
   // Use custom hooks for music theory logic and calculations
   const cagedSequence = useCAGEDSequence(selectedChord);
-  const { shapePositions, getShapeFret, getShapesAtPosition, createGradientStyle, isPentatonicNote, getNoteNameAtFret, shouldShowNoteName } = useCAGEDLogic(selectedChord, chordQuality, cagedSequence);
+  const {
+    shapePositions,
+    getShapeFret,
+    getShapesAtPosition,
+    createGradientStyle,
+    isPentatonicNote,
+    getNoteNameAtFret,
+    shouldShowNoteName,
+  } = useCAGEDLogic(selectedChord, chordQuality, cagedSequence);
   const currentShape = cagedSequence[currentPosition];
 
-
   // Check if a dot should be shown at this position
-  const shouldShowDot = useCallback((stringIndex: number, fretNumber: number) => {
-    if (showAllShapes) {
-      return getShapesAtPosition(stringIndex, fretNumber).length > 0;
-    } else {
-      // Show only current shape
-      const basePosition = shapePositions[currentShape];
-      const shapeFret = getShapeFret(currentShape, stringIndex, basePosition);
-      return shapeFret === fretNumber && shapeFret > 0;
-    }
-  }, [showAllShapes, getShapesAtPosition, shapePositions, currentShape, getShapeFret]);
+  const shouldShowDot = useCallback(
+    (stringIndex: number, fretNumber: number) => {
+      if (showAllShapes) {
+        return getShapesAtPosition(stringIndex, fretNumber).length > 0;
+      } else {
+        // Show only current shape
+        const basePosition = shapePositions[currentShape];
+        const shapeFret = getShapeFret(currentShape, stringIndex, basePosition);
+        return shapeFret === fretNumber && shapeFret > 0;
+      }
+    },
+    [showAllShapes, getShapesAtPosition, shapePositions, currentShape, getShapeFret]
+  );
 
   // Get color/style for a dot at this position
-  const getDotStyle = useCallback((stringIndex: number, fretNumber: number) => {
-    if (showAllShapes) {
-      const shapesHere = getShapesAtPosition(stringIndex, fretNumber);
-      return createGradientStyle(shapesHere);
-    } else {
-      return { backgroundColor: CAGED_SHAPES_BY_QUALITY[chordQuality][currentShape].color };
-    }
-  }, [showAllShapes, getShapesAtPosition, createGradientStyle, chordQuality, currentShape]);
+  const getDotStyle = useCallback(
+    (stringIndex: number, fretNumber: number) => {
+      if (showAllShapes) {
+        const shapesHere = getShapesAtPosition(stringIndex, fretNumber);
+        return createGradientStyle(shapesHere);
+      } else {
+        return { backgroundColor: CAGED_SHAPES_BY_QUALITY[chordQuality][currentShape].color };
+      }
+    },
+    [showAllShapes, getShapesAtPosition, createGradientStyle, chordQuality, currentShape]
+  );
 
   // Check if this is a root note for the current shape
-  const isRootNote = useCallback((stringIndex: number, fretNumber: number) => {
-    if (showAllShapes) {
-      // When showing all shapes, check if any shape has a root note at this position
-      const shapesHere = getShapesAtPosition(stringIndex, fretNumber);
-      return shapesHere.some(shapeKey => {
-        const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][shapeKey];
-        return shape.rootNotes.includes(stringIndex);
-      });
-    } else {
-      // For single shape view, check if current shape has root note here
-      const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][currentShape];
-      return shape.rootNotes.includes(stringIndex) && shouldShowDot(stringIndex, fretNumber);
-    }
-  }, [showAllShapes, getShapesAtPosition, chordQuality, currentShape, shouldShowDot]);
+  const isRootNote = useCallback(
+    (stringIndex: number, fretNumber: number) => {
+      if (showAllShapes) {
+        // When showing all shapes, check if any shape has a root note at this position
+        const shapesHere = getShapesAtPosition(stringIndex, fretNumber);
+        return shapesHere.some((shapeKey) => {
+          const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][shapeKey];
+          return shape.rootNotes.includes(stringIndex);
+        });
+      } else {
+        // For single shape view, check if current shape has root note here
+        const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][currentShape];
+        return shape.rootNotes.includes(stringIndex) && shouldShowDot(stringIndex, fretNumber);
+      }
+    },
+    [showAllShapes, getShapesAtPosition, chordQuality, currentShape, shouldShowDot]
+  );
 
   // Check if a pentatonic dot should be shown at this position
-  const shouldShowPentatonicDot = useCallback((stringIndex: number, fretNumber: number) => {
-    if (!isPentatonicNote(stringIndex, fretNumber)) {
-      return false;
-    }
+  const shouldShowPentatonicDot = useCallback(
+    (stringIndex: number, fretNumber: number) => {
+      if (!isPentatonicNote(stringIndex, fretNumber)) {
+        return false;
+      }
 
-    // If showing all shapes, show all pentatonic notes (current behavior)
-    if (showAllShapes) {
-      return true;
-    }
+      // If showing all shapes, show all pentatonic notes (current behavior)
+      if (showAllShapes) {
+        return true;
+      }
 
-    // When showing single shape, use the specific pentatonic box pattern
-    // that corresponds to the current CAGED shape
-    const basePosition = shapePositions[currentShape];
-    const boxNumber = CAGED_TO_PENTATONIC_BOX[currentShape];
-    const boxPattern = PENTATONIC_BOX_PATTERNS[chordQuality][boxNumber];
+      // When showing single shape, use the specific pentatonic box pattern
+      // that corresponds to the current CAGED shape
+      const basePosition = shapePositions[currentShape];
+      const boxNumber = CAGED_TO_PENTATONIC_BOX[currentShape];
+      const boxPattern = PENTATONIC_BOX_PATTERNS[chordQuality][boxNumber];
 
-    if (!boxPattern) {
-      return false;
-    }
+      if (!boxPattern) {
+        return false;
+      }
 
-    // Calculate the actual fret range for this pentatonic box
-    const boxStartFret = Math.max(0, basePosition + boxPattern.startFret);
-    const boxEndFret = basePosition + boxPattern.endFret;
+      // Calculate the actual fret range for this pentatonic box
+      const boxStartFret = Math.max(0, basePosition + boxPattern.startFret);
+      const boxEndFret = basePosition + boxPattern.endFret;
 
-    return fretNumber >= boxStartFret && fretNumber <= boxEndFret;
-  }, [isPentatonicNote, showAllShapes, shapePositions, currentShape, chordQuality]);
+      return fretNumber >= boxStartFret && fretNumber <= boxEndFret;
+    },
+    [isPentatonicNote, showAllShapes, shapePositions, currentShape, chordQuality]
+  );
 
   const nextPosition = useCallback(() => {
     actions.nextPosition(cagedSequence.length);
@@ -137,12 +163,11 @@ export default function CAGEDVisualizer() {
     onSetPosition: actions.setPosition,
     onToggleShowAllShapes: actions.toggleShowAllShapes,
     onToggleShowPentatonic: actions.toggleShowPentatonic,
-    onToggleShowAllNotes: actions.toggleShowAllNotes
+    onToggleShowAllNotes: actions.toggleShowAllNotes,
   });
 
   return (
     <div className="max-w-6xl mx-auto p-8">
-
       <CAGEDNavigation
         selectedChord={selectedChord}
         chordQuality={chordQuality}

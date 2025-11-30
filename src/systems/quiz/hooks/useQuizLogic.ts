@@ -26,7 +26,7 @@ function generateQualityDistribution(quizMode: string, totalQuestions: number): 
 
   const qualities: ChordQuality[] = [
     ...Array(majorCount).fill('major'),
-    ...Array(minorCount).fill('minor')
+    ...Array(minorCount).fill('minor'),
   ];
 
   return shuffleArray(qualities);
@@ -38,17 +38,22 @@ export function useQuizLogic(config: QuizConfig) {
       const questions: QuizQuestion[] = [];
 
       // Generate balanced quality distribution for all questions
-      const qualityDistribution = generateQualityDistribution(config.quizMode, config.questionCount);
+      const qualityDistribution = generateQualityDistribution(
+        config.quizMode,
+        config.questionCount
+      );
 
       for (let i = 0; i < config.questionCount; i++) {
         // Use pre-determined quality for balanced distribution
         const quality = qualityDistribution[i];
 
         // Randomly select a root chord for the question
-        const rootChord = config.allowedChords[Math.floor(Math.random() * config.allowedChords.length)];
+        const rootChord =
+          config.allowedChords[Math.floor(Math.random() * config.allowedChords.length)];
 
         // Randomly select a shape to use for displaying the chord
-        const shapeUsed = config.allowedShapes[Math.floor(Math.random() * config.allowedShapes.length)];
+        const shapeUsed =
+          config.allowedShapes[Math.floor(Math.random() * config.allowedShapes.length)];
 
         // Calculate the position where this shape needs to be played for the root chord
         const targetValue = CHROMATIC_VALUES[rootChord];

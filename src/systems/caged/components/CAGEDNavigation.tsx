@@ -21,7 +21,7 @@ const chords: { value: ChordType; label: string }[] = [
   { value: 'A', label: 'A' },
   { value: 'G', label: 'G' },
   { value: 'E', label: 'E' },
-  { value: 'D', label: 'D' }
+  { value: 'D', label: 'D' },
 ];
 
 function CAGEDNavigation({
@@ -34,13 +34,12 @@ function CAGEDNavigation({
   onChordQualityChange,
   onPreviousPosition,
   onNextPosition,
-  onSetPosition
+  onSetPosition,
 }: ConsolidatedNavigationProps) {
-  chords.find(chord => chord.value === selectedChord);
+  chords.find((chord) => chord.value === selectedChord);
   return (
     <div className="bg-white dark:bg-gray-900 mb-6">
       <div className="flex flex-col gap-6">
-
         {/* Root Chord and Quality Selection - Centered at top */}
         <div className="flex flex-col items-center">
           {/* Horizontal layout for chord and quality selectors */}
@@ -54,7 +53,7 @@ function CAGEDNavigation({
                   onChange={(e) => onChordChange(e.target.value as ChordType)}
                   className="appearance-none rounded-lg px-4 py-2 pr-8 text-white font-medium focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:outline-none cursor-pointer border-none shadow-md transition-all duration-200"
                   style={{
-                    backgroundColor: CAGED_SHAPES_BY_QUALITY[chordQuality][selectedChord].color
+                    backgroundColor: CAGED_SHAPES_BY_QUALITY[chordQuality][selectedChord].color,
                   }}
                   aria-label="Select root chord"
                 >
@@ -65,8 +64,18 @@ function CAGEDNavigation({
                   ))}
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                  <svg className="w-4 h-4 text-white text-opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <svg
+                    className="w-4 h-4 text-white text-opacity-80"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </div>
               </div>
@@ -75,10 +84,7 @@ function CAGEDNavigation({
             {/* Chord Quality Toggle */}
             <div className="flex flex-col items-center gap-2">
               <span className="text-xs text-gray-600 dark:text-gray-400">Quality</span>
-              <ChordQualityToggle
-                chordQuality={chordQuality}
-                onToggle={onChordQualityChange}
-              />
+              <ChordQualityToggle chordQuality={chordQuality} onToggle={onChordQualityChange} />
             </div>
           </div>
         </div>
@@ -95,7 +101,12 @@ function CAGEDNavigation({
                 title="Previous shape (←)"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
               </button>
 
@@ -123,13 +134,18 @@ function CAGEDNavigation({
 
               {/* Next Button */}
               <button
-                  onClick={onNextPosition}
-                  className="p-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 transition-colors focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:outline-none cursor-pointer"
-                  aria-label="Next chord shape"
-                  title="Next shape (→)"
+                onClick={onNextPosition}
+                className="p-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 transition-colors focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:outline-none cursor-pointer"
+                aria-label="Next chord shape"
+                title="Next shape (→)"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </button>
             </div>

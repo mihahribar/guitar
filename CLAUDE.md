@@ -1,11 +1,13 @@
 # CAGED Visualizer Project - Claude Development Guide
 
 ## Project Overview
+
 Interactive React web application for learning the CAGED guitar system - a guitar learning method that teaches 5 chord shapes that can be moved up and down the neck. The app includes an interactive visualizer, quiz mode for chord identification practice and rhythm practice with audio feedback. **Now supports both major and minor chord qualities** with complete CAGED implementation for all chord types.
 
 **Live Site**: [caged.hribar.org](https://caged.hribar.org)
 
 ## Architecture Summary
+
 - **Pattern**: Modern React SPA with **modular multi-system architecture**
 - **State Management**: React hooks with context for theme/navigation, local state for component logic
 - **UI Approach**: Component composition with separation of concerns and system isolation
@@ -14,6 +16,7 @@ Interactive React web application for learning the CAGED guitar system - a guita
 - **Scalability**: Designed to support multiple guitar learning systems beyond CAGED
 
 ## Tech Stack
+
 - **Framework**: React 19.1.1 + TypeScript 5.8.3
 - **Build Tool**: Vite 7.1.2 with React plugin and TypeScript path aliases
 - **Styling**: TailwindCSS 4.1.12 (latest version with native CSS support)
@@ -21,6 +24,7 @@ Interactive React web application for learning the CAGED guitar system - a guita
 - **Deployment**: GitHub Actions → GitHub Pages
 
 ## Project Structure (Modular Multi-System Architecture)
+
 ```
 src/
 ├── App.tsx                     # Root app with navigation logic
@@ -123,13 +127,16 @@ src/
 ## Modular Architecture Features
 
 ### TypeScript Path Aliases
+
 The project uses TypeScript path aliases for clean, predictable imports:
+
 - `@/shared` - Access to shared utilities, components, and types
 - `@/systems/caged` - CAGED system module imports
 - `@/systems/rhythm-game` - Rhythm practice system imports
 - `@/systems/quiz` - Quiz system module imports
 
 Example imports:
+
 ```typescript
 // Shared utilities
 import { FretboardDisplay } from '@/shared/components';
@@ -141,19 +148,23 @@ import { useQuiz } from '@/systems/quiz/hooks';
 ```
 
 ### Barrel Exports
+
 Each module provides clean barrel exports for easy consumption:
+
 - `src/shared/index.ts` - All shared resources
 - `src/systems/caged/index.ts` - Complete CAGED system
 - `src/systems/rhythm-game/index.ts` - Complete rhythm system
 - `src/systems/quiz/index.ts` - Complete quiz system
 
 ### System Isolation
+
 - Each learning system is completely self-contained
 - Systems can access shared utilities but not each other directly
 - Cross-system dependencies must go through shared utilities
 - Each system maintains its own types, constants, and business logic
 
 ### Code Splitting & Performance
+
 - Quiz and Rhythm systems are lazy-loaded for optimal initial bundle size
 - Modular structure enables excellent tree shaking
 - Bundle sizes: Main (~214kB), Rhythm chunk (~21kB), Quiz chunk (~18kB), CSS (~38kB)
@@ -161,6 +172,7 @@ Each module provides clean barrel exports for easy consumption:
 ## Code Conventions & Patterns
 
 ### Naming Conventions
+
 - **Components**: PascalCase (`CAGEDVisualizer.tsx`)
 - **Hooks**: camelCase with `use` prefix (`useCAGEDLogic.ts`)
 - **Types**: PascalCase interfaces (`ChordType`, `QuizSession`)
@@ -168,6 +180,7 @@ Each module provides clean barrel exports for easy consumption:
 - **Files**: PascalCase for components, camelCase for utilities
 
 ### Component Patterns
+
 - **Functional components only** - no class components
 - **Custom hooks for logic** - components focus on rendering
 - **Props interface definitions** - always typed
@@ -175,12 +188,14 @@ Each module provides clean barrel exports for easy consumption:
 - **Event handlers** - named with `handle` or `on` prefix
 
 ### State Management Patterns
+
 - **Local state**: `useState` for simple component state
 - **Complex logic**: Custom hooks with `useMemo` for expensive calculations
 - **Global state**: React Context (Theme, Navigation)
 - **State updates**: Immutable patterns with proper dependencies
 
 ### TypeScript Usage
+
 - **Strict mode enabled** - full type checking
 - **Interface over type** - for object shapes
 - **Union types** - for limited options (`ChordType = 'C' | 'A' | 'G' | 'E' | 'D'`)
@@ -188,6 +203,7 @@ Each module provides clean barrel exports for easy consumption:
 - **Generic types** - used sparingly, mainly in hooks
 
 ### Styling Approach
+
 - **TailwindCSS utility classes** - primary styling method
 - **CSS custom properties** - for complex fretboard layout
 - **Dark mode support** - using Tailwind's dark: prefix
@@ -195,6 +211,7 @@ Each module provides clean barrel exports for easy consumption:
 - **CSS Grid/Flexbox** - for complex layouts
 
 ## Key Dependencies & Their Purpose
+
 - **@tailwindcss/vite**: TailwindCSS 4.x integration with Vite
 - **react**: Core React library (latest v19)
 - **typescript**: Full TypeScript support
@@ -204,14 +221,16 @@ Each module provides clean barrel exports for easy consumption:
 ## Development Workflow
 
 ### Available Scripts
+
 ```bash
 npm run dev      # Development server (http://localhost:5173)
 npm run build    # Production build (runs TypeScript check first)
-npm run lint     # ESLint code quality check  
+npm run lint     # ESLint code quality check
 npm run preview  # Preview production build locally
 ```
 
 ### Development Process
+
 1. **Start dev server**: `npm run dev`
 2. **Code changes**: Auto-reload via Vite HMR
 3. **Type checking**: Continuous via TypeScript
@@ -219,6 +238,7 @@ npm run preview  # Preview production build locally
 5. **Build testing**: `npm run build` before deployment
 
 ### Deployment Process
+
 - **Trigger**: Push to `main` branch
 - **CI/CD**: GitHub Actions (`.github/workflows/deploy.yml`)
 - **Build**: `npm ci && npm run build`
@@ -226,15 +246,18 @@ npm run preview  # Preview production build locally
 - **Domain**: Custom domain configured via CNAME
 
 ## Music Theory Context (CAGED System)
+
 The app implements the CAGED guitar system with full major and minor chord support:
 
 ### Chord Shapes and Qualities
+
 - **5 chord shapes**: C, A, G, E, D - moveable patterns for both major and minor
 - **Major chord patterns**: Original CAGED system implementation
 - **Minor chord patterns**: Parallel implementation with flattened thirds
 - **Chord quality toggle**: Seamless switching between major/minor via `ChordQuality` type
 
 ### Music Theory Implementation
+
 - **Chromatic intervals**: Mathematical chord transposition for all qualities
 - **Major chord intervals**: Root (0), Major Third (4), Perfect Fifth (7)
 - **Minor chord intervals**: Root (0), Minor Third (3), Perfect Fifth (7)
@@ -244,6 +267,7 @@ The app implements the CAGED guitar system with full major and minor chord suppo
 - **Visual overlays**: Color-coded shapes with gradient blending for overlapping patterns
 
 ### Data Structure Organization
+
 - **`CAGED_SHAPES_BY_QUALITY`**: Combined data structure organizing major/minor patterns
 - **Dynamic shape selection**: Runtime selection based on `chordQuality` state
 - **Consistent color coding**: Same colors for major/minor versions of each shape
@@ -252,13 +276,16 @@ The app implements the CAGED guitar system with full major and minor chord suppo
 ## Claude-Specific Guidance
 
 ### Context Guidelines
+
 When asking Claude for help with this project:
+
 1. **Specify component location** - include file paths
 2. **Mention feature area** - visualizer vs quiz vs theme/navigation
 3. **Include TypeScript context** - types are crucial for accuracy
 4. **Reference existing patterns** - point to similar code when requesting changes
 
 ### Effective Prompts
+
 ```
 "Add a new feature to the visualizer component that [description]. Follow the existing pattern in CAGEDVisualizer.tsx and use the custom hooks pattern."
 
@@ -268,14 +295,16 @@ When asking Claude for help with this project:
 ```
 
 ### Code Generation Guidelines
+
 - **Follow existing patterns** - check neighboring components first
-- **Use TypeScript interfaces** - define types before implementation  
+- **Use TypeScript interfaces** - define types before implementation
 - **Leverage custom hooks** - extract complex logic from components
 - **Maintain accessibility** - include ARIA labels and semantic HTML
 - **Follow TailwindCSS patterns** - use utility classes, avoid custom CSS
 - **Test responsive behavior** - consider mobile/desktop layouts
 
 ### Important Constraints
+
 - **Music theory accuracy** - CAGED calculations must be mathematically correct
 - **Performance** - use `useMemo` for expensive calculations
 - **Accessibility** - keyboard navigation, screen reader support
@@ -283,6 +312,7 @@ When asking Claude for help with this project:
 - **TypeScript strict mode** - all code must pass type checking
 
 ### File Organization Rules
+
 - **System Modules**: Complete isolation of learning systems in `src/systems/[system]/`
 - **Shared Resources**: Reusable components, utilities, types in `src/shared/`
 - **Infrastructure**: App-level components, contexts, utils in root directories
@@ -295,6 +325,7 @@ When asking Claude for help with this project:
 ### Common Task Templates
 
 #### Adding New Quiz Features
+
 1. Update types in `src/systems/quiz/types/index.ts`
 2. Modify quiz logic in `src/systems/quiz/hooks/` (useQuiz.ts or related hooks)
 3. Update UI components in `src/systems/quiz/components/Quiz*.tsx`
@@ -302,12 +333,14 @@ When asking Claude for help with this project:
 5. Test with different chord combinations
 
 #### Modifying CAGED Logic
+
 1. Review music theory in `src/systems/caged/constants/index.ts`
 2. Update calculation logic in `src/systems/caged/hooks/useCAGEDLogic.ts`
 3. Test with all chord shapes and positions
 4. Verify visual accuracy on fretboard
 
 #### Adding Rhythm Features
+
 1. Update types in `src/systems/rhythm-game/types/index.ts`
 2. Add patterns in `src/systems/rhythm-game/constants/patterns.ts`
 3. Modify game logic in `src/systems/rhythm-game/hooks/useRhythmGame.ts`
@@ -315,6 +348,7 @@ When asking Claude for help with this project:
 5. Test with different BPM values and pattern combinations
 
 #### Adding New Learning System
+
 1. Create new directory `src/systems/[system-name]/`
 2. Set up standard structure: `components/`, `hooks/`, `types/`, `constants/`
 3. Create barrel export `src/systems/[system-name]/index.ts`
@@ -322,6 +356,7 @@ When asking Claude for help with this project:
 5. Import and integrate in App.tsx
 
 #### Adding Shared Components
+
 1. Create component file in `src/shared/components/`
 2. Define props interface with TypeScript
 3. Use existing TailwindCSS patterns
@@ -329,6 +364,7 @@ When asking Claude for help with this project:
 5. Test dark/light theme compatibility
 
 #### Adding System-Specific Components
+
 1. Create component file in `src/systems/[system]/components/`
 2. Use system-specific types from `../types`
 3. Import shared utilities from `@/shared`
@@ -336,12 +372,14 @@ When asking Claude for help with this project:
 5. Test within system context
 
 #### Theme/Styling Changes
+
 1. Check existing TailwindCSS usage patterns
 2. Update classes in component files
 3. Test dark mode compatibility
 4. Verify responsive behavior
 
 ### Common Gotchas
+
 - **CAGED calculations**: Off-by-one errors in fret calculations
 - **React 19 patterns**: Use latest React patterns, not legacy approaches
 - **TailwindCSS 4.x**: Uses different syntax than v3.x
@@ -350,6 +388,7 @@ When asking Claude for help with this project:
 - **Web Audio autoplay**: AudioContext must be resumed after user interaction (browser policy)
 
 ### Testing Approach
+
 - **Manual testing**: No automated test suite currently
 - **Cross-browser**: Test in Chrome, Firefox, Safari
 - **Device testing**: Desktop and mobile layouts
@@ -357,6 +396,7 @@ When asking Claude for help with this project:
 - **Performance**: Check for smooth animations and interactions
 
 ### Integration Points
+
 - **GitHub Pages**: Static site deployment
 - **GitHub Actions**: CI/CD pipeline
 - **TailwindCSS**: Styling system integration
@@ -366,6 +406,7 @@ When asking Claude for help with this project:
 ## Project-Specific Notes
 
 ### Unique Architectural Decisions
+
 - **Modular multi-system architecture**: Complete isolation of learning systems
 - **TypeScript path aliases**: Clean imports with `@/shared` and `@/systems`
 - **System isolation with shared utilities**: No direct cross-system dependencies
@@ -377,6 +418,7 @@ When asking Claude for help with this project:
 - **Web Audio API integration**: Rhythm system uses Web Audio for precise timing and audio playback
 
 ### Performance Considerations
+
 - **Modular tree shaking**: Excellent bundle optimization through system isolation
 - **Code splitting**: Quiz (~18kB) and Rhythm (~21kB) systems lazy-loaded, reducing initial bundle
 - **useMemo for calculations**: CAGED logic is memoized within systems
@@ -387,18 +429,21 @@ When asking Claude for help with this project:
 - **Web Audio scheduling**: Rhythm audio uses precise AudioContext timing
 
 ### Security Considerations
+
 - **Static site**: No server-side vulnerabilities
 - **No user data**: No storage or data collection
 - **XSS prevention**: React's built-in protections
 - **Dependency security**: Regular npm audit
 
 ### Browser Compatibility
+
 - **Modern browsers only**: Uses latest React and TailwindCSS features
 - **ES6+ features**: Arrow functions, destructuring, etc.
 - **CSS Grid support**: Required for fretboard layout
 - **Dark mode support**: CSS custom properties
 
 ### Environment Configuration
+
 - **Development**: Vite dev server with HMR
 - **Production**: Static build optimized for GitHub Pages
 - **TypeScript**: Strict mode enabled

@@ -7,11 +7,7 @@
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
-import type {
-  RhythmPattern,
-  UseRhythmGameReturn,
-  PanelIndex,
-} from '../types';
+import type { RhythmPattern, UseRhythmGameReturn, PanelIndex } from '../types';
 import { DEFAULT_PANELS } from '../constants';
 import { useRhythmCycler } from './useRhythmCycler';
 import { useSubdivisionAudio } from './useSubdivisionAudio';
@@ -32,9 +28,8 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
   const [bpm, setBpmState] = useState<number>(METRONOME_CONSTANTS.DEFAULT_BPM);
 
   // Panel patterns state
-  const [panels, setPanels] = useState<
-    [RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern]
-  >(DEFAULT_PANELS);
+  const [panels, setPanels] =
+    useState<[RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern]>(DEFAULT_PANELS);
 
   // Game mode states
   const [randomChangeMode, setRandomChangeModeState] = useState(false);
@@ -50,12 +45,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       const newPattern = getRandomPattern();
 
       setPanels((prev) => {
-        const updated = [...prev] as [
-          RhythmPattern,
-          RhythmPattern,
-          RhythmPattern,
-          RhythmPattern
-        ];
+        const updated = [...prev] as [RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern];
         updated[panelIndex] = newPattern;
         return updated;
       });
@@ -74,11 +64,10 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
   });
 
   // Audio playback hook
-  const { playPatternClicks, playBeatClick, stopClicks, initAudio } =
-    useSubdivisionAudio({
-      enabled: playAudio,
-      bpm,
-    });
+  const { playPatternClicks, playBeatClick, stopClicks, initAudio } = useSubdivisionAudio({
+    enabled: playAudio,
+    bpm,
+  });
 
   /**
    * Play audio when beat changes:
@@ -143,32 +132,19 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
   /**
    * Set pattern for a specific panel
    */
-  const setPattern = useCallback(
-    (panelIndex: PanelIndex, pattern: RhythmPattern) => {
-      setPanels((prev) => {
-        const updated = [...prev] as [
-          RhythmPattern,
-          RhythmPattern,
-          RhythmPattern,
-          RhythmPattern
-        ];
-        updated[panelIndex] = pattern;
-        return updated;
-      });
-    },
-    []
-  );
+  const setPattern = useCallback((panelIndex: PanelIndex, pattern: RhythmPattern) => {
+    setPanels((prev) => {
+      const updated = [...prev] as [RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern];
+      updated[panelIndex] = pattern;
+      return updated;
+    });
+  }, []);
 
   /**
    * Randomize all panel patterns
    */
   const randomizeAll = useCallback(() => {
-    setPanels([
-      getRandomPattern(),
-      getRandomPattern(),
-      getRandomPattern(),
-      getRandomPattern(),
-    ]);
+    setPanels([getRandomPattern(), getRandomPattern(), getRandomPattern(), getRandomPattern()]);
   }, []);
 
   /**

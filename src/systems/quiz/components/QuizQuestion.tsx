@@ -14,10 +14,10 @@ export default function QuizQuestion({ question, onSubmitAnswer }: QuizQuestionP
 
   const handleSubmit = () => {
     if (!selectedAnswer) return;
-    
+
     setShowFeedback(true);
     onSubmitAnswer(selectedAnswer);
-    
+
     // Reset for next question
     setTimeout(() => {
       setSelectedAnswer(null);
@@ -57,15 +57,20 @@ export default function QuizQuestion({ question, onSubmitAnswer }: QuizQuestionP
           Question {question.id}
         </h2>
         <p className="text-gray-600 dark:text-gray-300 text-lg">
-          What <span className="font-medium">{question.quality}</span> chord is being played using the <span className="font-medium">{question.shapeUsed} shape</span> at position {question.position}?
+          What <span className="font-medium">{question.quality}</span> chord is being played using
+          the <span className="font-medium">{question.shapeUsed} shape</span> at position{' '}
+          {question.position}?
         </p>
       </div>
 
       {/* Fretboard Display */}
-      <section className="bg-amber-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm" aria-label="Guitar fretboard">
-        <table 
+      <section
+        className="bg-amber-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm"
+        aria-label="Guitar fretboard"
+      >
+        <table
           className="fretboard-grid w-full border-collapse"
-          role="grid" 
+          role="grid"
           aria-label={`Guitar fretboard showing chord pattern using ${question.shapeUsed} shape`}
         >
           <thead>
@@ -74,7 +79,9 @@ export default function QuizQuestion({ question, onSubmitAnswer }: QuizQuestionP
               {Array.from({ length: FRETBOARD_CONSTANTS.TOTAL_FRETS }, (_, i) => (
                 <th key={i} className="text-center pb-2 relative">
                   {[3, 5, 7, 9, 12].includes(i + 1) && (
-                    <div className="text-xs text-gray-400 dark:text-gray-500 font-mono">{i + 1}</div>
+                    <div className="text-xs text-gray-400 dark:text-gray-500 font-mono">
+                      {i + 1}
+                    </div>
                   )}
                 </th>
               ))}
@@ -83,27 +90,27 @@ export default function QuizQuestion({ question, onSubmitAnswer }: QuizQuestionP
           <tbody>
             {STRING_NAMES.map((stringName, stringIndex) => (
               <tr key={stringIndex} className="string-row">
-                <th 
+                <th
                   className="w-8 text-right pr-2 text-sm font-mono text-gray-600 dark:text-gray-300 font-medium"
                   scope="row"
                   aria-label={`${stringName} string`}
                 >
                   {stringName}
                 </th>
-                
+
                 {Array.from({ length: FRETBOARD_CONSTANTS.TOTAL_FRETS }, (_, fretIndex) => (
-                  <td 
-                    key={fretIndex} 
+                  <td
+                    key={fretIndex}
                     className="fret-cell relative h-8 border-l border-gray-300 dark:border-gray-600 first:border-l-0"
                     role="gridcell"
                     aria-label={`${stringName} string, fret ${fretIndex + 1}`}
                   >
                     {/* String line */}
-                    <div 
+                    <div
                       className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 border-t border-gray-400 dark:border-gray-500 pointer-events-none"
                       aria-hidden="true"
                     />
-                    
+
                     {/* Chord dot */}
                     {shouldShowDot(stringIndex, fretIndex + 1) && (
                       <div
@@ -134,23 +141,25 @@ export default function QuizQuestion({ question, onSubmitAnswer }: QuizQuestionP
               className={`
                 px-6 py-3 rounded-lg font-medium text-sm text-white transition-all duration-200
                 min-w-[100px] focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900 focus:outline-none
-                ${selectedAnswer === choice
-                  ? showFeedback
-                    ? isCorrectAnswer
-                      ? 'shadow-lg transform scale-105 ring-2 ring-green-400'
-                      : 'shadow-lg transform scale-105 ring-2 ring-red-400'
-                    : 'shadow-lg transform scale-105 focus:ring-white'
-                  : showFeedback
-                    ? 'opacity-30 cursor-not-allowed'
-                    : 'opacity-60 hover:opacity-80 focus:ring-gray-400 cursor-pointer'
+                ${
+                  selectedAnswer === choice
+                    ? showFeedback
+                      ? isCorrectAnswer
+                        ? 'shadow-lg transform scale-105 ring-2 ring-green-400'
+                        : 'shadow-lg transform scale-105 ring-2 ring-red-400'
+                      : 'shadow-lg transform scale-105 focus:ring-white'
+                    : showFeedback
+                      ? 'opacity-30 cursor-not-allowed'
+                      : 'opacity-60 hover:opacity-80 focus:ring-gray-400 cursor-pointer'
                 }
-                ${showFeedback && choice === question.correctAnswer && selectedAnswer !== choice
-                  ? 'ring-2 ring-green-400 opacity-90'
-                  : ''
+                ${
+                  showFeedback && choice === question.correctAnswer && selectedAnswer !== choice
+                    ? 'ring-2 ring-green-400 opacity-90'
+                    : ''
                 }
               `}
               style={{
-                backgroundColor: CAGED_SHAPES_BY_QUALITY[question.quality][choice].color
+                backgroundColor: CAGED_SHAPES_BY_QUALITY[question.quality][choice].color,
               }}
               aria-label={`Select ${choice} ${question.quality}`}
               aria-pressed={selectedAnswer === choice}
@@ -172,11 +181,12 @@ export default function QuizQuestion({ question, onSubmitAnswer }: QuizQuestionP
 
         {/* Feedback */}
         {showFeedback && (
-          <div className={`text-lg font-medium ${isCorrectAnswer ? 'text-green-600' : 'text-red-600'}`}>
+          <div
+            className={`text-lg font-medium ${isCorrectAnswer ? 'text-green-600' : 'text-red-600'}`}
+          >
             {isCorrectAnswer
               ? '✓ Correct!'
-              : `✗ Incorrect. The answer was ${question.correctAnswer} ${question.quality === 'major' ? 'Major' : 'Minor'}`
-            }
+              : `✗ Incorrect. The answer was ${question.correctAnswer} ${question.quality === 'major' ? 'Major' : 'Minor'}`}
           </div>
         )}
       </div>

@@ -51,7 +51,12 @@ import type { ChordType, QuizAnswer } from '../types';
  * providing a unified interface. Uses memoization in sub-hooks for efficiency.
  */
 export function useQuiz() {
-  const { preferences, isLoaded, getQuizConfig: getUserConfig, ...preferenceActions } = useQuizPreferences();
+  const {
+    preferences,
+    isLoaded,
+    getQuizConfig: getUserConfig,
+    ...preferenceActions
+  } = useQuizPreferences();
   const config = getQuizConfig(getUserConfig());
   const { state, actions, currentQuestion, progress, scorePercentage } = useQuizState();
   const { generateQuestions, validateAnswer, getQuestionDescription } = useQuizLogic(config);
@@ -73,7 +78,7 @@ export function useQuiz() {
     };
 
     actions.answerQuestion(answer);
-    
+
     // Auto-advance to next question or finish quiz
     setTimeout(() => {
       if (state.currentQuestionIndex + 1 >= state.totalQuestions) {

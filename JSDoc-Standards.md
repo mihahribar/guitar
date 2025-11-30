@@ -1,12 +1,15 @@
 # JSDoc Documentation Standards for CAGED Visualizer
 
 ## Overview
+
 This document establishes comprehensive JSDoc documentation standards for the CAGED Visualizer project to improve code maintainability and developer experience.
 
 ## Documentation Requirements
 
 ### 1. Custom Hooks Documentation
+
 All custom hooks must include:
+
 - Purpose and functionality description
 - Parameter descriptions with types and constraints
 - Return value documentation with object properties
@@ -15,7 +18,8 @@ All custom hooks must include:
 - Music theory context where applicable
 
 #### Template for Custom Hooks:
-```typescript
+
+````typescript
 /**
  * Brief description of hook functionality
  *
@@ -39,10 +43,12 @@ All custom hooks must include:
  * @performance Notes about expensive calculations or memoization
  * @musicTheory Explanation of relevant music theory concepts
  */
-```
+````
 
 ### 2. Component Documentation
+
 All components must include:
+
 - Component purpose and functionality
 - Props interface documentation
 - Accessibility requirements
@@ -50,7 +56,8 @@ All components must include:
 - Styling expectations
 
 #### Template for Components:
-```typescript
+
+````typescript
 /**
  * Component description and purpose
  *
@@ -71,16 +78,19 @@ All components must include:
  * @accessibility Requirements and considerations
  * @styling TailwindCSS classes and responsive behavior
  */
-```
+````
 
 ### 3. Complex Function Documentation
+
 Functions with complex logic must include:
+
 - Algorithm explanation
 - Input/output specifications
 - Edge cases and error handling
 - Performance characteristics
 
 ### 4. Constant and Type Documentation
+
 - Explain purpose and usage of constants
 - Document type relationships and constraints
 - Include music theory explanations for CAGED-related types
@@ -88,13 +98,16 @@ Functions with complex logic must include:
 ## Music Theory Documentation Guidelines
 
 ### CAGED System Documentation
+
 When documenting CAGED-related code:
+
 - Explain chord shape relationships
 - Document fret position calculations
 - Clarify major vs minor chord differences
 - Include interval relationships (Root, Third, Fifth)
 
 ### Example Music Theory Documentation:
+
 ```typescript
 /**
  * Calculates fret positions for CAGED chord shapes
@@ -131,6 +144,7 @@ When documenting CAGED-related code:
 ## Validation
 
 Documentation completeness will be verified by:
+
 - Manual review of all hook files
 - Example code testing
 - Music theory accuracy validation

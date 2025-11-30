@@ -63,7 +63,7 @@ export function useKeyboardNavigation({
   onSetPosition,
   onToggleShowAllShapes,
   onToggleShowPentatonic,
-  onToggleShowAllNotes
+  onToggleShowAllNotes,
 }: UseKeyboardNavigationProps) {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -128,6 +128,6 @@ export function useKeyboardNavigation({
     cagedSequenceLength,
     onToggleShowAllShapes,
     onToggleShowPentatonic,
-    onToggleShowAllNotes
+    onToggleShowAllNotes,
   ]);
 }

@@ -3,6 +3,7 @@
 An interactive web application for learning various guitar system with a modular, extensible architecture designed to support multiple guitar learning systems.
 
 ## Features
+
 - **Visual fretboard** with color-coded chord shapes
 - **Major and Minor Chord Support** - Full CAGED system implementation for both major and minor chord qualities
 - **Chord Quality Toggle** - Seamlessly switch between major and minor chord patterns
@@ -33,6 +34,7 @@ An interactive web application for learning various guitar system with a modular
 ## Usage
 
 ### Visualizer Mode
+
 - **Select a root chord** (C, A, G, E, or D) and **chord quality** (Major/Minor)
 - Use Previous/Next buttons to cycle through the 5 shapes
 - Toggle "Show All CAGED Shapes" to see the complete pattern with gradient overlays
@@ -41,6 +43,7 @@ An interactive web application for learning various guitar system with a modular
 - Click on any colored circle in the progress indicator to jump to that shape
 
 ### Keyboard Shortcuts
+
 - **Space**: Toggle between single shape and all shapes view
 - **Arrow Keys (←/→)**: Navigate through shapes in single shape mode
 - **Numbers (1-5)**: Jump directly to a specific shape position
@@ -48,6 +51,7 @@ An interactive web application for learning various guitar system with a modular
 - **N**: Toggle all notes display
 
 ### Rhythm Practice
+
 - Click "Rhythm" to access the rhythm training system
 - View 4 rhythm panels displaying different subdivision patterns with musical notation
 - Click any panel to change its rhythm pattern from a library of common subdivisions
@@ -58,6 +62,7 @@ An interactive web application for learning various guitar system with a modular
 - Use "Randomize" to shuffle all patterns at once
 
 ### Quiz Mode
+
 - Click "Quiz Mode" to start a chord identification quiz
 - View a chord pattern on the fretboard and identify which root chord it represents
 - Choose from all 5 possible chord options (C, A, G, E, D)
@@ -75,6 +80,7 @@ npm run build
 This project features a **modular multi-system architecture** designed for scalability and maintainability:
 
 ### Directory Structure
+
 ```
 src/
 ├── shared/                 # Reusable components, utilities, and types
@@ -108,6 +114,7 @@ src/
 ```
 
 ### Key Architecture Features
+
 - **Modular Systems**: Each guitar learning system (CAGED, Rhythm, Quiz) is completely isolated
 - **Shared Resources**: Common components and utilities are centralized for reuse
 - **TypeScript Path Aliases**: Clean imports using `@/shared` and `@/systems`
@@ -116,6 +123,7 @@ src/
 - **Tree Shaking**: Optimized bundle sizes through proper module structure
 
 ### Tech Stack
+
 - **Framework**: React 19.1.1 + TypeScript 5.8.3
 - **Build Tool**: Vite 7.1.2 with React plugin and path aliases
 - **Styling**: TailwindCSS 4.1.12 with dark/light theme support
@@ -123,13 +131,16 @@ src/
 - **Deployment**: GitHub Actions → GitHub Pages
 
 ### Development Scripts
+
 - `npm run dev` - Start development server with hot reload
 - `npm run build` - Production build with TypeScript checking
 - `npm run lint` - Code quality and style checking
 - `npm run preview` - Preview production build locally
 
 ### Bundle Optimization
+
 The modular architecture enables excellent bundle optimization:
+
 - **Main bundle**: ~214kB (66kB gzipped) - Core app + CAGED system
 - **Rhythm chunk**: ~21kB (5.8kB gzipped) - Lazy-loaded rhythm system
 - **Quiz chunk**: ~18kB (5.5kB gzipped) - Lazy-loaded quiz system

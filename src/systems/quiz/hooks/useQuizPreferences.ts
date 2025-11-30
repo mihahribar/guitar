@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import type { QuizPreferences, QuizMode, ChordType, ValidationResult, ValidationError } from '../types';
+import type {
+  QuizPreferences,
+  QuizMode,
+  ChordType,
+  ValidationResult,
+  ValidationError,
+} from '../types';
 import { DEFAULT_QUIZ_CONFIG } from '../constants';
 // Simple error creation for quiz preferences
 function createStorageError(message: string): ValidationError {
@@ -7,7 +13,7 @@ function createStorageError(message: string): ValidationError {
     field: 'storage',
     message,
     received: 'localStorage operation',
-    expected: 'successful operation'
+    expected: 'successful operation',
   };
 }
 
@@ -146,12 +152,14 @@ function validateQuizPreferences(data: unknown): ValidationResult<QuizPreference
   if (!data || typeof data !== 'object') {
     return {
       success: false,
-      errors: [{
-        field: 'root',
-        message: 'Quiz preferences must be an object',
-        received: data,
-        expected: 'object'
-      }]
+      errors: [
+        {
+          field: 'root',
+          message: 'Quiz preferences must be an object',
+          received: data,
+          expected: 'object',
+        },
+      ],
     };
   }
 
@@ -163,17 +171,21 @@ function validateQuizPreferences(data: unknown): ValidationResult<QuizPreference
       field: 'quizMode',
       message: 'Quiz mode must be "major", "minor", or "mixed"',
       received: obj.quizMode,
-      expected: '"major" | "minor" | "mixed"'
+      expected: '"major" | "minor" | "mixed"',
     });
   }
 
   // Validate questionCount
-  if (typeof obj.questionCount !== 'number' || obj.questionCount <= 0 || !Number.isInteger(obj.questionCount)) {
+  if (
+    typeof obj.questionCount !== 'number' ||
+    obj.questionCount <= 0 ||
+    !Number.isInteger(obj.questionCount)
+  ) {
     errors.push({
       field: 'questionCount',
       message: 'Question count must be a positive integer',
       received: obj.questionCount,
-      expected: 'positive integer'
+      expected: 'positive integer',
     });
   }
 
@@ -183,17 +195,19 @@ function validateQuizPreferences(data: unknown): ValidationResult<QuizPreference
       field: 'allowedChords',
       message: 'Allowed chords must be a non-empty array',
       received: obj.allowedChords,
-      expected: 'ChordType[]'
+      expected: 'ChordType[]',
     });
   } else {
     const validChords = ['C', 'A', 'G', 'E', 'D'];
-    const invalidChords = obj.allowedChords.filter(chord => !validChords.includes(chord as string));
+    const invalidChords = obj.allowedChords.filter(
+      (chord) => !validChords.includes(chord as string)
+    );
     if (invalidChords.length > 0) {
       errors.push({
         field: 'allowedChords',
         message: `Invalid chord types: ${invalidChords.join(', ')}`,
         received: invalidChords,
-        expected: 'C | A | G | E | D'
+        expected: 'C | A | G | E | D',
       });
     }
   }
@@ -204,17 +218,19 @@ function validateQuizPreferences(data: unknown): ValidationResult<QuizPreference
       field: 'allowedShapes',
       message: 'Allowed shapes must be a non-empty array',
       received: obj.allowedShapes,
-      expected: 'ChordType[]'
+      expected: 'ChordType[]',
     });
   } else {
     const validShapes = ['C', 'A', 'G', 'E', 'D'];
-    const invalidShapes = obj.allowedShapes.filter(shape => !validShapes.includes(shape as string));
+    const invalidShapes = obj.allowedShapes.filter(
+      (shape) => !validShapes.includes(shape as string)
+    );
     if (invalidShapes.length > 0) {
       errors.push({
         field: 'allowedShapes',
         message: `Invalid shape types: ${invalidShapes.join(', ')}`,
         received: invalidShapes,
-        expected: 'C | A | G | E | D'
+        expected: 'C | A | G | E | D',
       });
     }
   }
@@ -226,7 +242,7 @@ function validateQuizPreferences(data: unknown): ValidationResult<QuizPreference
   // At this point, all validations passed, safe to cast
   return {
     success: true,
-    data: obj as unknown as QuizPreferences
+    data: obj as unknown as QuizPreferences,
   };
 }
 

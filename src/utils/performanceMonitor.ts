@@ -81,7 +81,7 @@ export class PerformanceMonitor {
         renderTime,
         timestamp: Date.now(),
         memoryUsage: startMemory,
-        context
+        context,
       });
 
       return result;
@@ -94,7 +94,7 @@ export class PerformanceMonitor {
         renderTime,
         timestamp: Date.now(),
         memoryUsage: startMemory,
-        context: { ...context, error: error instanceof Error ? error.message : String(error) }
+        context: { ...context, error: error instanceof Error ? error.message : String(error) },
       });
 
       throw error;
@@ -137,7 +137,7 @@ export class PerformanceMonitor {
         component: componentName,
         duration,
         renderCount: 1,
-        triggerProps
+        triggerProps,
       });
     }
   }
@@ -156,7 +156,9 @@ export class PerformanceMonitor {
 
     // Log significant performance issues
     if (metric.renderTime > 100) {
-      console.warn(`Slow operation detected: ${metric.name} took ${metric.renderTime.toFixed(2)}ms`);
+      console.warn(
+        `Slow operation detected: ${metric.name} took ${metric.renderTime.toFixed(2)}ms`
+      );
     }
   }
 
@@ -200,16 +202,18 @@ export class PerformanceMonitor {
     memoryTrend?: 'increasing' | 'stable' | 'decreasing';
   } {
     const totalMeasurements = this.metrics.length;
-    const averageRenderTime = totalMeasurements > 0
-      ? this.metrics.reduce((sum, m) => sum + m.renderTime, 0) / totalMeasurements
-      : 0;
+    const averageRenderTime =
+      totalMeasurements > 0
+        ? this.metrics.reduce((sum, m) => sum + m.renderTime, 0) / totalMeasurements
+        : 0;
 
     const slowestOperations = [...this.metrics]
       .sort((a, b) => b.renderTime - a.renderTime)
       .slice(0, 5);
 
-    const renderSummary = Array.from(this.renderMetrics.values())
-      .sort((a, b) => b.duration - a.duration);
+    const renderSummary = Array.from(this.renderMetrics.values()).sort(
+      (a, b) => b.duration - a.duration
+    );
 
     const memoryTrend = this.calculateMemoryTrend();
 
@@ -218,7 +222,7 @@ export class PerformanceMonitor {
       averageRenderTime,
       slowestOperations,
       renderSummary,
-      memoryTrend
+      memoryTrend,
     };
   }
 
@@ -227,9 +231,7 @@ export class PerformanceMonitor {
    * @returns Memory trend or undefined if not enough data
    */
   private calculateMemoryTrend(): 'increasing' | 'stable' | 'decreasing' | undefined {
-    const memoryMetrics = this.metrics
-      .filter(m => m.memoryUsage)
-      .slice(-10); // Look at last 10 measurements
+    const memoryMetrics = this.metrics.filter((m) => m.memoryUsage).slice(-10); // Look at last 10 measurements
 
     if (memoryMetrics.length < 3) {
       return undefined;
@@ -262,12 +264,16 @@ export class PerformanceMonitor {
    * @returns JSON string of all metrics
    */
   public exportMetrics(): string {
-    return JSON.stringify({
-      metrics: this.metrics,
-      renderMetrics: Array.from(this.renderMetrics.entries()),
-      summary: this.getSummary(),
-      timestamp: Date.now()
-    }, null, 2);
+    return JSON.stringify(
+      {
+        metrics: this.metrics,
+        renderMetrics: Array.from(this.renderMetrics.entries()),
+        summary: this.getSummary(),
+        timestamp: Date.now(),
+      },
+      null,
+      2
+    );
   }
 }
 
@@ -293,7 +299,7 @@ export function usePerformanceMonitor(componentName: string) {
     startRender,
     measureAsync,
     getMetrics: () => monitor.getMetrics(),
-    getSummary: () => monitor.getSummary()
+    getSummary: () => monitor.getSummary(),
   };
 }
 
@@ -307,7 +313,8 @@ export function withPerformanceMonitoring<P extends object>(
   WrappedComponent: React.ComponentType<P>,
   displayName?: string
 ): React.ComponentType<P> {
-  const componentName = displayName || WrappedComponent.displayName || WrappedComponent.name || 'Unknown';
+  const componentName =
+    displayName || WrappedComponent.displayName || WrappedComponent.name || 'Unknown';
 
   return function PerformanceMonitoredComponent(props: P) {
     const monitor = PerformanceMonitor.getInstance();

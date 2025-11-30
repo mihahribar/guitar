@@ -21,12 +21,7 @@ interface PatternSelectorProps {
   currentPattern?: RhythmPattern;
 }
 
-const CATEGORY_ORDER: SubdivisionType[] = [
-  'quarter',
-  'eighths',
-  'sixteenths',
-  'triplets',
-];
+const CATEGORY_ORDER: SubdivisionType[] = ['quarter', 'eighths', 'sixteenths', 'triplets'];
 
 /**
  * Pattern selection modal
@@ -42,10 +37,7 @@ export const PatternSelector: React.FC<PatternSelectorProps> = ({
   // Handle click outside to close
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
         onClose();
       }
     };
@@ -100,9 +92,7 @@ export const PatternSelector: React.FC<PatternSelectorProps> = ({
       >
         {/* Header */}
         <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Select Pattern
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Select Pattern</h2>
           <button
             onClick={onClose}
             className="
@@ -114,12 +104,7 @@ export const PatternSelector: React.FC<PatternSelectorProps> = ({
             "
             aria-label="Close"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

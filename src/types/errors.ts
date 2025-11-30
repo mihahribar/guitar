@@ -117,7 +117,9 @@ export const createValidationError = (
   message?: string
 ): ValidationError => ({
   code: 'VALIDATION_ERROR',
-  message: message || `Validation failed for field '${field}': expected ${expected}, received ${typeof received}`,
+  message:
+    message ||
+    `Validation failed for field '${field}': expected ${expected}, received ${typeof received}`,
   field,
   received,
   expected,
@@ -194,8 +196,7 @@ export const isStorageError = (error: AppError): error is StorageError =>
 export const isMusicTheoryError = (error: AppError): error is MusicTheoryError =>
   error.code === 'MUSIC_THEORY_ERROR';
 
-export const isQuizError = (error: AppError): error is QuizError =>
-  error.code === 'QUIZ_ERROR';
+export const isQuizError = (error: AppError): error is QuizError => error.code === 'QUIZ_ERROR';
 
 export const isComponentError = (error: AppError): error is ComponentError =>
   error.code === 'COMPONENT_ERROR';

@@ -38,7 +38,7 @@ export const combineValidationResults = <T>(
 ): ValidationResult<T> => {
   const errors = results
     .filter((result): result is { success: false; errors: ValidationError[] } => !result.success)
-    .flatMap(result => result.errors);
+    .flatMap((result) => result.errors);
 
   if (errors.length > 0) {
     return { success: false, errors };
@@ -54,24 +54,21 @@ export const validateChordType = (value: unknown): ValidationResult<ChordType> =
   if (typeof value !== 'string') {
     return {
       success: false,
-      errors: [createValidationError(
-        'chordType',
-        'Chord type must be a string',
-        value,
-        'string'
-      )]
+      errors: [createValidationError('chordType', 'Chord type must be a string', value, 'string')],
     };
   }
 
   if (!VALIDATION_CONSTANTS.VALID_CHORD_TYPES.includes(value as ChordType)) {
     return {
       success: false,
-      errors: [createValidationError(
-        'chordType',
-        `Invalid chord type. Must be one of: ${VALIDATION_CONSTANTS.VALID_CHORD_TYPES.join(', ')}`,
-        value,
-        VALIDATION_CONSTANTS.VALID_CHORD_TYPES.join(' | ')
-      )]
+      errors: [
+        createValidationError(
+          'chordType',
+          `Invalid chord type. Must be one of: ${VALIDATION_CONSTANTS.VALID_CHORD_TYPES.join(', ')}`,
+          value,
+          VALIDATION_CONSTANTS.VALID_CHORD_TYPES.join(' | ')
+        ),
+      ],
     };
   }
 
@@ -85,24 +82,23 @@ export const validateChordQuality = (value: unknown): ValidationResult<ChordQual
   if (typeof value !== 'string') {
     return {
       success: false,
-      errors: [createValidationError(
-        'chordQuality',
-        'Chord quality must be a string',
-        value,
-        'string'
-      )]
+      errors: [
+        createValidationError('chordQuality', 'Chord quality must be a string', value, 'string'),
+      ],
     };
   }
 
   if (!VALIDATION_CONSTANTS.VALID_CHORD_QUALITIES.includes(value as ChordQuality)) {
     return {
       success: false,
-      errors: [createValidationError(
-        'chordQuality',
-        `Invalid chord quality. Must be one of: ${VALIDATION_CONSTANTS.VALID_CHORD_QUALITIES.join(', ')}`,
-        value,
-        VALIDATION_CONSTANTS.VALID_CHORD_QUALITIES.join(' | ')
-      )]
+      errors: [
+        createValidationError(
+          'chordQuality',
+          `Invalid chord quality. Must be one of: ${VALIDATION_CONSTANTS.VALID_CHORD_QUALITIES.join(', ')}`,
+          value,
+          VALIDATION_CONSTANTS.VALID_CHORD_QUALITIES.join(' | ')
+        ),
+      ],
     };
   }
 
@@ -116,24 +112,21 @@ export const validateQuizMode = (value: unknown): ValidationResult<QuizMode> => 
   if (typeof value !== 'string') {
     return {
       success: false,
-      errors: [createValidationError(
-        'quizMode',
-        'Quiz mode must be a string',
-        value,
-        'string'
-      )]
+      errors: [createValidationError('quizMode', 'Quiz mode must be a string', value, 'string')],
     };
   }
 
   if (!VALIDATION_CONSTANTS.VALID_QUIZ_MODES.includes(value as QuizMode)) {
     return {
       success: false,
-      errors: [createValidationError(
-        'quizMode',
-        `Invalid quiz mode. Must be one of: ${VALIDATION_CONSTANTS.VALID_QUIZ_MODES.join(', ')}`,
-        value,
-        VALIDATION_CONSTANTS.VALID_QUIZ_MODES.join(' | ')
-      )]
+      errors: [
+        createValidationError(
+          'quizMode',
+          `Invalid quiz mode. Must be one of: ${VALIDATION_CONSTANTS.VALID_QUIZ_MODES.join(', ')}`,
+          value,
+          VALIDATION_CONSTANTS.VALID_QUIZ_MODES.join(' | ')
+        ),
+      ],
     };
   }
 
@@ -147,36 +140,28 @@ export const validatePosition = (value: unknown, maxPosition: number): Validatio
   if (typeof value !== 'number') {
     return {
       success: false,
-      errors: [createValidationError(
-        'position',
-        'Position must be a number',
-        value,
-        'number'
-      )]
+      errors: [createValidationError('position', 'Position must be a number', value, 'number')],
     };
   }
 
   if (!Number.isInteger(value)) {
     return {
       success: false,
-      errors: [createValidationError(
-        'position',
-        'Position must be an integer',
-        value,
-        'integer'
-      )]
+      errors: [createValidationError('position', 'Position must be an integer', value, 'integer')],
     };
   }
 
   if (value < 0 || value >= maxPosition) {
     return {
       success: false,
-      errors: [createValidationError(
-        'position',
-        `Position must be between 0 and ${maxPosition - 1}`,
-        value,
-        `0 <= position < ${maxPosition}`
-      )]
+      errors: [
+        createValidationError(
+          'position',
+          `Position must be between 0 and ${maxPosition - 1}`,
+          value,
+          `0 <= position < ${maxPosition}`
+        ),
+      ],
     };
   }
 
@@ -190,24 +175,18 @@ export const validateFretNumber = (value: unknown): ValidationResult<number> => 
   if (typeof value !== 'number') {
     return {
       success: false,
-      errors: [createValidationError(
-        'fretNumber',
-        'Fret number must be a number',
-        value,
-        'number'
-      )]
+      errors: [
+        createValidationError('fretNumber', 'Fret number must be a number', value, 'number'),
+      ],
     };
   }
 
   if (!Number.isInteger(value)) {
     return {
       success: false,
-      errors: [createValidationError(
-        'fretNumber',
-        'Fret number must be an integer',
-        value,
-        'integer'
-      )]
+      errors: [
+        createValidationError('fretNumber', 'Fret number must be an integer', value, 'integer'),
+      ],
     };
   }
 
@@ -215,12 +194,14 @@ export const validateFretNumber = (value: unknown): ValidationResult<number> => 
   if (value < MIN || value > MAX) {
     return {
       success: false,
-      errors: [createValidationError(
-        'fretNumber',
-        `Fret number must be between ${MIN} and ${MAX}`,
-        value,
-        `${MIN} <= fret <= ${MAX}`
-      )]
+      errors: [
+        createValidationError(
+          'fretNumber',
+          `Fret number must be between ${MIN} and ${MAX}`,
+          value,
+          `${MIN} <= fret <= ${MAX}`
+        ),
+      ],
     };
   }
 
@@ -234,24 +215,18 @@ export const validateStringIndex = (value: unknown): ValidationResult<number> =>
   if (typeof value !== 'number') {
     return {
       success: false,
-      errors: [createValidationError(
-        'stringIndex',
-        'String index must be a number',
-        value,
-        'number'
-      )]
+      errors: [
+        createValidationError('stringIndex', 'String index must be a number', value, 'number'),
+      ],
     };
   }
 
   if (!Number.isInteger(value)) {
     return {
       success: false,
-      errors: [createValidationError(
-        'stringIndex',
-        'String index must be an integer',
-        value,
-        'integer'
-      )]
+      errors: [
+        createValidationError('stringIndex', 'String index must be an integer', value, 'integer'),
+      ],
     };
   }
 
@@ -259,12 +234,14 @@ export const validateStringIndex = (value: unknown): ValidationResult<number> =>
   if (value < MIN || value > MAX) {
     return {
       success: false,
-      errors: [createValidationError(
-        'stringIndex',
-        `String index must be between ${MIN} and ${MAX}`,
-        value,
-        `${MIN} <= string <= ${MAX}`
-      )]
+      errors: [
+        createValidationError(
+          'stringIndex',
+          `String index must be between ${MIN} and ${MAX}`,
+          value,
+          `${MIN} <= string <= ${MAX}`
+        ),
+      ],
     };
   }
 
@@ -278,24 +255,23 @@ export const validateQuestionCount = (value: unknown): ValidationResult<number> 
   if (typeof value !== 'number') {
     return {
       success: false,
-      errors: [createValidationError(
-        'questionCount',
-        'Question count must be a number',
-        value,
-        'number'
-      )]
+      errors: [
+        createValidationError('questionCount', 'Question count must be a number', value, 'number'),
+      ],
     };
   }
 
   if (!Number.isInteger(value)) {
     return {
       success: false,
-      errors: [createValidationError(
-        'questionCount',
-        'Question count must be an integer',
-        value,
-        'integer'
-      )]
+      errors: [
+        createValidationError(
+          'questionCount',
+          'Question count must be an integer',
+          value,
+          'integer'
+        ),
+      ],
     };
   }
 
@@ -303,12 +279,14 @@ export const validateQuestionCount = (value: unknown): ValidationResult<number> 
   if (value < MIN_QUESTION_COUNT || value > MAX_QUESTION_COUNT) {
     return {
       success: false,
-      errors: [createValidationError(
-        'questionCount',
-        `Question count must be between ${MIN_QUESTION_COUNT} and ${MAX_QUESTION_COUNT}`,
-        value,
-        `${MIN_QUESTION_COUNT} <= count <= ${MAX_QUESTION_COUNT}`
-      )]
+      errors: [
+        createValidationError(
+          'questionCount',
+          `Question count must be between ${MIN_QUESTION_COUNT} and ${MAX_QUESTION_COUNT}`,
+          value,
+          `${MIN_QUESTION_COUNT} <= count <= ${MAX_QUESTION_COUNT}`
+        ),
+      ],
     };
   }
 
@@ -328,36 +306,35 @@ export const validateArray = <T>(
   if (!Array.isArray(value)) {
     return {
       success: false,
-      errors: [createValidationError(
-        fieldName,
-        `${fieldName} must be an array`,
-        value,
-        'array'
-      )]
+      errors: [createValidationError(fieldName, `${fieldName} must be an array`, value, 'array')],
     };
   }
 
   if (value.length < minLength) {
     return {
       success: false,
-      errors: [createValidationError(
-        fieldName,
-        `${fieldName} must have at least ${minLength} items`,
-        value,
-        `length >= ${minLength}`
-      )]
+      errors: [
+        createValidationError(
+          fieldName,
+          `${fieldName} must have at least ${minLength} items`,
+          value,
+          `length >= ${minLength}`
+        ),
+      ],
     };
   }
 
   if (maxLength !== undefined && value.length > maxLength) {
     return {
       success: false,
-      errors: [createValidationError(
-        fieldName,
-        `${fieldName} must have at most ${maxLength} items`,
-        value,
-        `length <= ${maxLength}`
-      )]
+      errors: [
+        createValidationError(
+          fieldName,
+          `${fieldName} must have at most ${maxLength} items`,
+          value,
+          `length <= ${maxLength}`
+        ),
+      ],
     };
   }
 
@@ -370,10 +347,10 @@ export const validateArray = <T>(
       validatedItems.push(result.data);
     } else {
       // Prefix field names with array index
-      result.errors.forEach(error => {
+      result.errors.forEach((error) => {
         errors.push({
           ...error,
-          field: `${fieldName}[${index}].${error.field}`
+          field: `${fieldName}[${index}].${error.field}`,
         });
       });
     }
@@ -411,12 +388,7 @@ export const createValidator = <T>(
     if (!value || typeof value !== 'object') {
       return {
         success: false,
-        errors: [createValidationError(
-          'root',
-          'Value must be an object',
-          value,
-          'object'
-        )]
+        errors: [createValidationError('root', 'Value must be an object', value, 'object')],
       };
     }
 
@@ -454,9 +426,9 @@ export const formatValidationErrors = (errors: ValidationError[]): string => {
     return errors[0].message;
   }
 
-  return `Multiple validation errors:\n${errors.map(error =>
-    `• ${error.field}: ${error.message}`
-  ).join('\n')}`;
+  return `Multiple validation errors:\n${errors
+    .map((error) => `• ${error.field}: ${error.message}`)
+    .join('\n')}`;
 };
 
 /**

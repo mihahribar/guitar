@@ -48,11 +48,7 @@ export const RhythmPanel: React.FC<RhythmPanelProps> = ({
         className={`
           absolute top-2 left-2
           text-xs font-bold
-          ${
-            isActive
-              ? 'text-blue-600 dark:text-blue-300'
-              : 'text-gray-400 dark:text-gray-500'
-          }
+          ${isActive ? 'text-blue-600 dark:text-blue-300' : 'text-gray-400 dark:text-gray-500'}
         `}
       >
         {beatNumber}
@@ -74,11 +70,7 @@ export const RhythmPanel: React.FC<RhythmPanelProps> = ({
           absolute bottom-2 left-1/2 -translate-x-1/2
           text-[10px] sm:text-xs
           truncate max-w-[90%]
-          ${
-            isActive
-              ? 'text-blue-600 dark:text-blue-300'
-              : 'text-gray-500 dark:text-gray-400'
-          }
+          ${isActive ? 'text-blue-600 dark:text-blue-300' : 'text-gray-500 dark:text-gray-400'}
         `}
       >
         {pattern.name}

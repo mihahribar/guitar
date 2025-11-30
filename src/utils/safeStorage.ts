@@ -279,7 +279,7 @@ export class SafeStorage {
           : this.config.retryDelay;
 
         // Wait before retrying
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 

@@ -21,11 +21,7 @@ interface RhythmGridProps {
 /**
  * 2x2 grid of rhythm panels
  */
-export const RhythmGrid: React.FC<RhythmGridProps> = ({
-  panels,
-  currentBeat,
-  onPanelClick,
-}) => {
+export const RhythmGrid: React.FC<RhythmGridProps> = ({ panels, currentBeat, onPanelClick }) => {
   return (
     <div
       className="grid grid-cols-2 gap-3 sm:gap-4 w-full max-w-md mx-auto"
