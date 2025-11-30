@@ -1,10 +1,12 @@
 # Task Breakdown: Rhythm Game
 
 ## Overview
+
 Total Tasks: 28 tasks across 6 task groups
 Assigned Implementers: api-engineer, ui-designer
 
 ## Dependencies Graph
+
 ```
 Task Group 1 (Types & Constants)
       |
@@ -29,6 +31,7 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
 ### Foundation Layer
 
 #### Task Group 1: Types and Constants
+
 **Assigned implementer:** api-engineer
 **Dependencies:** None
 
@@ -66,6 +69,7 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
     - Ensure all types are properly exported
 
 **Acceptance Criteria:**
+
 - All types compile without errors
 - Pattern durations are mathematically valid (sum to 1.0)
 - Constants follow existing project naming conventions
@@ -76,6 +80,7 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
 ### Core Logic Layer
 
 #### Task Group 2: Core Logic Hooks
+
 **Assigned implementer:** api-engineer
 **Dependencies:** Task Group 1
 
@@ -121,9 +126,10 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
     - Verify timing calculations are correct
 
 **Acceptance Criteria:**
+
 - Hooks compile without TypeScript errors
 - Beat cycling logic advances 0-1-2-3-0 correctly
-- Timing calculations match BPM (60/bpm * 1000 for beat interval)
+- Timing calculations match BPM (60/bpm \* 1000 for beat interval)
 - Random change triggers at cycle start (beat 0)
 - Audio hooks handle AudioContext lifecycle properly
 
@@ -132,6 +138,7 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
 ### Notation Layer
 
 #### Task Group 3: Music Notation SVG Components
+
 **Assigned implementer:** ui-designer
 **Dependencies:** Task Group 1
 
@@ -167,6 +174,7 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
     - Verify dark mode appearance
 
 **Acceptance Criteria:**
+
 - SVG symbols render at correct proportions
 - Beamed notes display with proper beam connections
 - Triplet bracket with "3" marking displays correctly
@@ -179,6 +187,7 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
 ### UI Components Layer
 
 #### Task Group 4: UI Components
+
 **Assigned implementer:** ui-designer
 **Dependencies:** Task Groups 2, 3
 
@@ -234,6 +243,7 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
     - Verify responsive behavior on tablet width
 
 **Acceptance Criteria:**
+
 - Panels display correct active/inactive visual states
 - Grid renders as 2x2 with proper spacing
 - Pattern selector shows all patterns grouped by category
@@ -246,6 +256,7 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
 ### Integration Layer
 
 #### Task Group 5: Page Integration and Navigation
+
 **Assigned implementer:** ui-designer
 **Dependencies:** Task Group 4
 
@@ -282,11 +293,13 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
     - Add lazy import: `const RhythmPage = lazy(() => import("@/systems/rhythm-game/components/RhythmPage"))`
     - Add route condition in AppContent:
       ```tsx
-      {currentPage === 'rhythm' && (
-        <Suspense fallback={<LoadingFallback message="Loading rhythm game..." size="large" />}>
-          <RhythmPage />
-        </Suspense>
-      )}
+      {
+        currentPage === 'rhythm' && (
+          <Suspense fallback={<LoadingFallback message="Loading rhythm game..." size="large" />}>
+            <RhythmPage />
+          </Suspense>
+        );
+      }
       ```
   - [ ] 5.6 Verify navigation and page loading
     - Run `npm run dev`
@@ -295,6 +308,7 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
     - Verify lazy loading works (loading fallback shows briefly)
 
 **Acceptance Criteria:**
+
 - Navigation button appears in nav bar alongside CAGED and Quiz
 - Clicking "Rhythm" navigates to rhythm game page
 - Page lazy loads correctly with loading fallback
@@ -307,6 +321,7 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
 ### Verification Layer
 
 #### Task Group 6: Manual Testing and Verification
+
 **Assigned implementer:** ui-designer
 **Dependencies:** Task Group 5
 
@@ -368,6 +383,7 @@ Task Group 2 (Core Logic Hooks) ---> Task Group 3 (Notation SVG Components)
     - [ ] Notation remains readable at smaller sizes
 
 **Acceptance Criteria:**
+
 - All visual states render correctly in both themes
 - Beat cycling is precisely synchronized with BPM
 - Pattern selection works for all panels
@@ -419,6 +435,7 @@ Recommended implementation sequence:
 ## File Inventory
 
 ### New Files to Create
+
 ```
 src/systems/rhythm-game/
   index.ts                           # System barrel exports
@@ -446,6 +463,7 @@ src/systems/rhythm-game/
 ```
 
 ### Existing Files to Modify
+
 ```
 src/types/navigation.ts              # Add 'rhythm' to AppPage type
 src/shared/components/AppNavigation.tsx  # Add rhythm nav button

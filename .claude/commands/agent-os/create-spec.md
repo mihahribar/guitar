@@ -1,6 +1,6 @@
 # Create Spec Process
 
-You are creating a comprehensive specification for a new feature along with a tasks breakdown.  This process will follow 3 main phases, each with their own workflows:
+You are creating a comprehensive specification for a new feature along with a tasks breakdown. This process will follow 3 main phases, each with their own workflows:
 
 Process overview (details to follow)
 
@@ -18,6 +18,7 @@ Follow each of these phases and their individual workflows IN SEQUENCE:
 Use the **spec-writer** subagent to create the specification document for this spec:
 
 Provide the spec-writer with:
+
 - The spec folder path (find the current one or the most recent in `agent-os/specs/*/`)
 - The requirements from `planning/requirements.md`
 - Any visual assets in `planning/visuals/`
@@ -31,6 +32,7 @@ Wait until the spec-writer has created `spec.md` before proceeding with PHASE 2 
 Once `spec.md` has been created, use the **tasks-list-creator** subagent to break down the spec into an actionable tasks list with strategic grouping and ordering.
 
 Provide the tasks-list-creator:
+
 - The spec folder path (find the current one or the most recent in `agent-os/specs/*/`)
 - The `spec.md` file that was just created.
 - The original requirement from `planning/requirements.md`
@@ -43,6 +45,7 @@ The tasks-list-creator will create `tasks.md` inside the spec folder.
 Use the **spec-verifier** subagent to verify accuracy:
 
 Provide the spec-verifier with:
+
 - ALL of the questions that were asked to the user during requirements gathering (from earlier in this conversation)
 - ALL of the user's raw responses to those questions (from earlier in this conversation)
 - The spec folder path
@@ -52,6 +55,7 @@ The spec-verifier will run its verifications and produce a report in `verificati
 ### PHASE 4: Display Results
 
 DISPLAY to the user:
+
 - The spec creation summary from spec-writer
 - The tasks list creation summary from tasks-list-creator
 - The verification summary from spec-verifier

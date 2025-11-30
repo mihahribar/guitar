@@ -1,6 +1,7 @@
 # Spec Requirements: Site-Wide Metronome
 
 ## Initial Description
+
 Add a site-wide metronome feature that can be toggled on/off, with adjustable BPM settings. Add it to the top row next to quiz button.
 
 **Context:**
@@ -41,22 +42,27 @@ This is for the CAGED Visualizer project - a React + TypeScript guitar learning 
 **Answer:** Focus on simplicity - just the beat, nothing else
 
 ### Existing Code to Reference
+
 No similar existing features identified for reference.
 
 ### Follow-up Questions
+
 None required.
 
 ## Visual Assets
 
 ### Files Provided:
+
 No visual assets provided.
 
 ### Visual Insights:
+
 No visual assets to analyze.
 
 ## Requirements Summary
 
 ### Functional Requirements
+
 - **Metronome Toggle**: Start/stop button to activate metronome
 - **BPM Control**: Numeric input field for tempo adjustment
 - **Audio Output**: Metronome click sound generated via Web Audio API
@@ -65,12 +71,14 @@ No visual assets to analyze.
 - **Default BPM**: Should have a sensible default BPM value (typically 120 BPM)
 
 ### Non-Functional Requirements
+
 - **Audio Accuracy**: Web Audio API for precise timing
 - **Performance**: Must not impact page performance when running
 - **Simplicity**: Minimal feature set - focus on core beat functionality only
 - **Integration**: Seamless integration into existing AppNavigation component
 
 ### UI/UX Requirements
+
 - **Placement**: Inline control group in navigation bar next to quiz button
 - **Layout**: Always-visible controls (not hidden in dropdown/popover)
 - **Components**:
@@ -81,11 +89,13 @@ No visual assets to analyze.
 - **Styling**: Follow existing TailwindCSS patterns in AppNavigation
 
 ### State Management
+
 - **No Persistence**: BPM resets to default on page reload
 - **No localStorage**: State maintained in memory only during session
 - **Component State**: Local state management (likely React hooks)
 
 ### Interaction Requirements
+
 - **No Keyboard Shortcuts**: Mouse/touch interaction only
 - **Simple Controls**: Click to start/stop, type to change BPM
 - **BPM Range**: Typical metronome range (suggest 40-240 BPM with validation)
@@ -93,6 +103,7 @@ No visual assets to analyze.
 ### Scope Boundaries
 
 **In Scope:**
+
 - Basic metronome with start/stop functionality
 - BPM adjustment via numeric input
 - Web Audio API implementation for click sound
@@ -101,6 +112,7 @@ No visual assets to analyze.
 - Basic input validation for BPM range
 
 **Out of Scope:**
+
 - Visual beat indicators or animations
 - BPM slider control
 - Subdivision patterns (eighth notes, triplets, etc.)
@@ -115,6 +127,7 @@ No visual assets to analyze.
 - LookAhead scheduling optimization
 
 ### Technical Considerations
+
 - **Audio Implementation**: Web Audio API (OscillatorNode or AudioBufferSource for click sound)
 - **React Integration**: Will integrate into existing AppNavigation.tsx component
 - **TypeScript**: Must follow strict typing patterns used throughout project
@@ -125,6 +138,7 @@ No visual assets to analyze.
 - **Browser Compatibility**: Web Audio API is well-supported in modern browsers (aligns with project's modern browser requirement)
 
 ### Implementation Notes
+
 - Default BPM should be set to a commonly used tempo (recommend 120 BPM)
 - BPM input should validate against reasonable range (40-240 BPM typical)
 - Audio context should handle browser autoplay policies (may require user interaction to start)
@@ -133,6 +147,7 @@ No visual assets to analyze.
 - Metronome should continue running when navigating between pages (site-wide functionality)
 
 ### Future Enhancement Potential
+
 - Time signature variations (mentioned as potential extension)
 - Volume control
 - Visual feedback options

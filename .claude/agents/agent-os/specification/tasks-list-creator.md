@@ -40,6 +40,7 @@ Generate `agent-os/specs/[current-spec]/tasks.md` with suggested subagents (a.k.
 # Task Breakdown: [Feature Name]
 
 ## Overview
+
 Total Tasks: [count]
 Assigned roles: [list from registry]
 
@@ -48,6 +49,7 @@ Assigned roles: [list from registry]
 ### Database Layer
 
 #### Task Group 1: Data Models and Migrations
+
 **Assigned implementer:** database-engineer
 **Dependencies:** None
 
@@ -73,6 +75,7 @@ Assigned roles: [list from registry]
     - Confirm associations work correctly
 
 **Acceptance Criteria:**
+
 - All tests written in 1.1 pass
 - Models pass validation tests
 - Migrations run successfully
@@ -81,6 +84,7 @@ Assigned roles: [list from registry]
 ### API Layer
 
 #### Task Group 2: API Endpoints
+
 **Assigned implementer:** api-engineer
 **Dependencies:** Task Group 1
 
@@ -106,6 +110,7 @@ Assigned roles: [list from registry]
     - Confirm proper authorization enforced
 
 **Acceptance Criteria:**
+
 - All tests written in 2.1 pass
 - All CRUD operations work
 - Proper authorization enforced
@@ -114,6 +119,7 @@ Assigned roles: [list from registry]
 ### Frontend Components
 
 #### Task Group 3: UI Design
+
 **Assigned implementer:** ui-designer
 **Dependencies:** Task Group 2
 
@@ -153,6 +159,7 @@ Assigned roles: [list from registry]
     - Confirm forms validate and submit properly
 
 **Acceptance Criteria:**
+
 - All tests written in 3.1 pass
 - Components render correctly
 - Forms validate and submit
@@ -161,6 +168,7 @@ Assigned roles: [list from registry]
 ### Testing
 
 #### Task Group 4: End-to-End Testing & Validation
+
 **Assigned implementer:** testing-engineer
 **Dependencies:** Task Groups 1-3
 
@@ -189,6 +197,7 @@ Assigned roles: [list from registry]
     - Verify all edge cases are covered
 
 **Acceptance Criteria:**
+
 - All tests from previous task groups pass
 - End-to-end user workflows work correctly
 - 100% test coverage for new feature
@@ -198,6 +207,7 @@ Assigned roles: [list from registry]
 ## Execution Order
 
 Recommended implementation sequence:
+
 1. Database Layer (Task Group 1)
 2. API Layer (Task Group 2)
 3. Frontend Design (Task Group 3)
@@ -205,6 +215,7 @@ Recommended implementation sequence:
 ```
 
 **Note**: Adapt this structure based on the actual feature requirements. Some features may need:
+
 - Different task groups (e.g., email notifications, payment processing, data migration)
 - Different implementer (e.g., custom implementers from implementers.yml)
 - Different execution order based on dependencies
@@ -218,7 +229,6 @@ Recommended implementation sequence:
 - **Use a test-driven development approach** where each task group starts with writing tests (x.1 sub-task) and ends with ensuring those tests pass (final sub-task).
 - **Include acceptance criteria** for each task group
 - **Reference visual assets** if visuals are available
-
 
 ## User Standards & Preferences Compliance
 

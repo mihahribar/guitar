@@ -19,23 +19,15 @@ Compiled comprehensive manual testing checklist covering all critical metronome 
 Reviewed and compiled all manual tests from previous task groups:
 
 **From Task Group 1 (Audio Engine):**
+
 1. Web Audio API initialization verification
 2. BPM calculation accuracy (60 BPM = 1 second interval)
 3. Start/stop state transitions
 4. AudioContext cleanup on unmount
 
-**From Task Group 2 (UI Components):**
-5. Play/pause button toggle behavior
-6. BPM input validation (values: 39, 40, 120, 240, 241)
-7. Visual state changes (blue accent when playing)
-8. Accessibility (tab navigation, screen reader)
-9. Dark mode styling
+**From Task Group 2 (UI Components):** 5. Play/pause button toggle behavior 6. BPM input validation (values: 39, 40, 120, 240, 241) 7. Visual state changes (blue accent when playing) 8. Accessibility (tab navigation, screen reader) 9. Dark mode styling
 
-**From Task Group 3 (Integration):**
-10. Metronome controls render in correct position
-11. Metronome state persists during page navigation
-12. Layout responsiveness
-13. No conflicts with existing navigation
+**From Task Group 3 (Integration):** 10. Metronome controls render in correct position 11. Metronome state persists during page navigation 12. Layout responsiveness 13. No conflicts with existing navigation
 
 **Total from previous groups:** 13 manual tests
 
@@ -59,6 +51,7 @@ Identified 10 additional critical test scenarios:
 ### 4.3 Manual Testing Checklist Created ✅
 
 Comprehensive manual testing checklist documented below with:
+
 - Test ID and description
 - Step-by-step instructions
 - Expected results
@@ -67,6 +60,7 @@ Comprehensive manual testing checklist documented below with:
 ### 4.4 Spec Requirements Validation ✅
 
 **Code Review Verification:**
+
 - ✅ BPM range 40-240 enforced (in constants and validation)
 - ✅ Default 120 BPM on load (METRONOME_CONSTANTS.DEFAULT_BPM)
 - ✅ Web Audio API used (AudioContext, OscillatorNode, GainNode)
@@ -78,29 +72,34 @@ Comprehensive manual testing checklist documented below with:
 ### 4.5 Code Quality Validation ✅
 
 **TypeScript Compliance:**
+
 - No metronome-related TypeScript errors
 - Strict mode compliance verified
 - All types properly defined and exported
 
 **ESLint Compliance:**
+
 - No metronome-related ESLint warnings
 - Code follows project patterns
 - Clean, readable implementation
 
 **File Organization:**
-- Follows project structure (src/shared/*)
+
+- Follows project structure (src/shared/\*)
 - Barrel exports configured correctly
-- Path aliases working (@/shared/*)
+- Path aliases working (@/shared/\*)
 
 ### 4.6 Cross-Browser Compatibility ✅
 
 **Web Audio API Support:**
+
 - Chrome: Full support (verified via MDN)
 - Firefox: Full support (verified via MDN)
 - Safari: Full support (verified via MDN)
 - Edge: Full support (Chromium-based)
 
 **TailwindCSS Support:**
+
 - All modern browsers support CSS features used
 - Dark mode uses standard CSS custom properties
 - Flexbox layout universally supported
@@ -112,10 +111,12 @@ Comprehensive manual testing checklist documented below with:
 ### Category 1: Audio Engine Tests
 
 #### Test 1: Web Audio API Initialization
+
 **ID:** METRO-001
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Open browser dev tools → Console tab
 2. Navigate to application
 3. Click metronome play button
@@ -123,6 +124,7 @@ Comprehensive manual testing checklist documented below with:
 5. Verify no errors or warnings
 
 **Expected Results:**
+
 - AudioContext initializes successfully
 - No console errors
 - First click plays immediately
@@ -132,10 +134,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 2: BPM Calculation Accuracy
+
 **ID:** METRO-002
 **Status:** Ready for manual test
 **Prerequisites:** Stopwatch or timer
 **Steps:**
+
 1. Set BPM to 60
 2. Start metronome
 3. Start stopwatch simultaneously
@@ -146,6 +150,7 @@ Comprehensive manual testing checklist documented below with:
 8. Repeat with BPM 180 (expect ~3.33 seconds for 10 clicks)
 
 **Expected Results:**
+
 - 60 BPM: 10 clicks in 10 seconds
 - 120 BPM: 10 clicks in 5 seconds
 - 180 BPM: 10 clicks in 3.33 seconds
@@ -156,10 +161,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 3: Start/Stop State Transitions
+
 **ID:** METRO-003
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Click play button
 2. Verify metronome starts
 3. Click pause button
@@ -168,6 +175,7 @@ Comprehensive manual testing checklist documented below with:
 6. Listen for audio artifacts
 
 **Expected Results:**
+
 - Clean start/stop transitions
 - No overlapping clicks
 - No audio pops or glitches
@@ -178,10 +186,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 4: AudioContext Cleanup
+
 **ID:** METRO-004
 **Status:** Ready for manual test
 **Prerequisites:** Chrome/Edge browser (for memory profiling)
 **Steps:**
+
 1. Open dev tools → Memory tab
 2. Take heap snapshot (Snapshot 1)
 3. Start metronome
@@ -193,6 +203,7 @@ Comprehensive manual testing checklist documented below with:
 9. Compare snapshots for AudioContext leaks
 
 **Expected Results:**
+
 - AudioContext properly closed
 - No memory leaks
 - Heap size returns to baseline
@@ -204,10 +215,12 @@ Comprehensive manual testing checklist documented below with:
 ### Category 2: UI Component Tests
 
 #### Test 5: Play/Pause Button Toggle
+
 **ID:** METRO-005
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Verify initial state: gray button with play icon
 2. Click button
 3. Verify button turns blue with pause icon
@@ -217,6 +230,7 @@ Comprehensive manual testing checklist documented below with:
 7. Verify metronome stops
 
 **Expected Results:**
+
 - Clear visual distinction between states
 - Blue background when playing (bg-blue-600)
 - Gray background when stopped
@@ -228,10 +242,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 6: BPM Input Validation
+
 **ID:** METRO-006
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Click BPM input field
 2. Type "39" and press Tab
 3. Verify input clamps to "40"
@@ -245,6 +261,7 @@ Comprehensive manual testing checklist documented below with:
 11. Verify tempo changes immediately
 
 **Expected Results:**
+
 - Values below 40 clamp to 40
 - Values above 240 clamp to 240
 - Valid values (40-240) accepted
@@ -257,10 +274,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 7: Visual State Changes
+
 **ID:** METRO-007
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Observe initial button state (gray)
 2. Click play
 3. Verify button becomes blue (bg-blue-600)
@@ -271,6 +290,7 @@ Comprehensive manual testing checklist documented below with:
 8. Verify play icon (▶) is visible
 
 **Expected Results:**
+
 - Clear visual feedback for each state
 - Color changes are immediate
 - Icons render correctly
@@ -281,10 +301,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 8: Accessibility - Keyboard Navigation
+
 **ID:** METRO-008
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Click browser address bar to focus it
 2. Press Tab repeatedly until focus reaches play button
 3. Verify focus ring is visible
@@ -296,6 +318,7 @@ Comprehensive manual testing checklist documented below with:
 9. Tab through all controls and verify order: Play button → BPM input → Theme toggle
 
 **Expected Results:**
+
 - Logical tab order
 - Visible focus indicators on all elements
 - Enter key toggles play/pause
@@ -306,10 +329,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 9: Accessibility - Screen Reader
+
 **ID:** METRO-009
 **Status:** Ready for manual test (optional)
 **Prerequisites:** Screen reader software (VoiceOver, NVDA, JAWS)
 **Steps:**
+
 1. Enable screen reader
 2. Navigate to metronome controls
 3. Verify play button announces: "Start metronome" button
@@ -319,6 +344,7 @@ Comprehensive manual testing checklist documented below with:
 7. Verify announces: "Metronome tempo in beats per minute"
 
 **Expected Results:**
+
 - Clear, descriptive ARIA labels
 - State changes announced
 - All controls are discoverable
@@ -328,10 +354,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 10: Dark Mode Styling
+
 **ID:** METRO-010
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Start in light mode
 2. Verify metronome controls styling (light gray, dark text)
 3. Click theme toggle to switch to dark mode
@@ -346,6 +374,7 @@ Comprehensive manual testing checklist documented below with:
 12. Verify no visual glitches
 
 **Expected Results:**
+
 - All elements visible in both themes
 - No color contrast issues
 - Smooth theme transitions
@@ -358,10 +387,12 @@ Comprehensive manual testing checklist documented below with:
 ### Category 3: Integration Tests
 
 #### Test 11: Correct Positioning
+
 **ID:** METRO-011
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Load application
 2. Observe navigation bar
 3. Verify element order from left to right:
@@ -374,6 +405,7 @@ Comprehensive manual testing checklist documented below with:
 4. Verify spacing is consistent (space-x-3 / 12px gaps)
 
 **Expected Results:**
+
 - Metronome appears between Quiz and Theme toggle
 - Consistent spacing throughout
 - Aligned horizontally with other elements
@@ -383,10 +415,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 12: State Persistence During Navigation
+
 **ID:** METRO-012
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Navigate to CAGED page
 2. Set BPM to 80
 3. Start metronome
@@ -403,6 +437,7 @@ Comprehensive manual testing checklist documented below with:
 14. Verify BPM still shows 140
 
 **Expected Results:**
+
 - Metronome plays continuously across all page changes
 - BPM setting persists across pages
 - Play/pause state persists across pages
@@ -413,10 +448,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 13: Layout Responsiveness
+
 **ID:** METRO-013
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Set browser to full desktop width (1920px)
 2. Verify all controls visible in single row
 3. Resize to laptop width (1366px)
@@ -429,6 +466,7 @@ Comprehensive manual testing checklist documented below with:
 10. Watch for layout breaks or overlaps
 
 **Expected Results:**
+
 - Clean layout at all breakpoints
 - No overlapping elements
 - Horizontal scrolling acceptable on mobile (per spec)
@@ -439,10 +477,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 14: No Conflicts with Navigation
+
 **ID:** METRO-014
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Click each navigation button (CAGED, Modes, Quiz)
 2. Verify page changes work correctly
 3. Start metronome
@@ -455,6 +495,7 @@ Comprehensive manual testing checklist documented below with:
 10. Verify metronome controls don't interfere with theme toggle
 
 **Expected Results:**
+
 - All existing functionality works perfectly
 - No regressions introduced
 - No visual or audio glitches
@@ -467,10 +508,12 @@ Comprehensive manual testing checklist documented below with:
 ### Category 4: Edge Cases & Advanced Tests
 
 #### Test 15: BPM Boundary Conditions
+
 **ID:** METRO-015
 **Status:** Ready for manual test
 **Prerequisites:** Stopwatch
 **Steps:**
+
 1. Set BPM to exactly 40
 2. Start metronome
 3. Measure 10 clicks with stopwatch
@@ -481,6 +524,7 @@ Comprehensive manual testing checklist documented below with:
 8. Verify ~2.5 seconds (60/240 = 0.25s per beat)
 
 **Expected Results:**
+
 - Minimum BPM (40) works correctly
 - Maximum BPM (240) works correctly
 - Timing accurate at both extremes
@@ -490,10 +534,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 16: Out-of-Range BPM Handling
+
 **ID:** METRO-016
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Type "1" in BPM input, press Tab
 2. Verify clamps to 40
 3. Type "999" in BPM input, press Tab
@@ -504,6 +550,7 @@ Comprehensive manual testing checklist documented below with:
 8. Verify clamps to 40
 
 **Expected Results:**
+
 - All out-of-range values clamped
 - No errors or crashes
 - Visual feedback (red border) during invalid input
@@ -514,10 +561,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 17: AudioContext Initialization Failure
+
 **ID:** METRO-017
 **Status:** Ready for manual test (advanced)
 **Prerequisites:** Browser with audio permission controls
 **Steps:**
+
 1. Block audio permissions in browser settings
 2. Attempt to start metronome
 3. Check console for error handling
@@ -527,6 +576,7 @@ Comprehensive manual testing checklist documented below with:
 7. Verify metronome works
 
 **Expected Results:**
+
 - Graceful error handling
 - No application crash
 - Clear console error message
@@ -537,10 +587,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 18: Browser Autoplay Policy
+
 **ID:** METRO-018
 **Status:** Ready for manual test
 **Prerequisites:** Fresh browser tab (no user interaction)
 **Steps:**
+
 1. Open application in new tab
 2. Immediately try to start metronome
 3. Note any autoplay block behavior
@@ -550,6 +602,7 @@ Comprehensive manual testing checklist documented below with:
 7. Verify metronome works after user interaction
 
 **Expected Results:**
+
 - Autoplay may be blocked initially (expected)
 - AudioContext.resume() called on user interaction
 - Metronome works after any user interaction
@@ -560,10 +613,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 19: Rapid Play/Pause Toggling
+
 **ID:** METRO-019
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. Click play button
 2. Immediately click pause (< 1 second)
 3. Repeat 20 times as fast as possible
@@ -572,6 +627,7 @@ Comprehensive manual testing checklist documented below with:
 6. Verify final state is correct (playing or stopped)
 
 **Expected Results:**
+
 - No audio pops, clicks, or distortion
 - No overlapping metronome clicks
 - Clean start/stop every time
@@ -583,10 +639,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 20: BPM Change While Playing
+
 **ID:** METRO-020
 **Status:** Ready for manual test
 **Prerequisites:** External metronome app (optional)
 **Steps:**
+
 1. Set BPM to 60 and start metronome
 2. Listen to tempo
 3. Change BPM to 120 while playing
@@ -599,6 +657,7 @@ Comprehensive manual testing checklist documented below with:
 10. Verify smooth tempo changes
 
 **Expected Results:**
+
 - Tempo changes take effect immediately (next beat)
 - No audio glitches during BPM change
 - Smooth transitions between tempos
@@ -609,10 +668,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 21: Component Unmount Cleanup
+
 **ID:** METRO-021
 **Status:** Ready for manual test
 **Prerequisites:** Chrome DevTools
 **Steps:**
+
 1. Open Performance tab in DevTools
 2. Start recording
 3. Start metronome
@@ -625,6 +686,7 @@ Comprehensive manual testing checklist documented below with:
 10. Verify AudioContext closed
 
 **Expected Results:**
+
 - No continuous memory growth
 - AudioContext properly closed
 - Intervals cleared
@@ -635,10 +697,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 22: End-to-End User Workflow
+
 **ID:** METRO-022
 **Status:** Ready for manual test
 **Prerequisites:** None
 **Steps:**
+
 1. User opens application for first time
 2. Verify metronome shows default 120 BPM, stopped
 3. User clicks play to start metronome
@@ -657,6 +721,7 @@ Comprehensive manual testing checklist documented below with:
 16. Verify metronome reset to default (120 BPM, stopped)
 
 **Expected Results:**
+
 - Smooth, intuitive workflow
 - All functions work as expected
 - No confusion or errors
@@ -667,10 +732,12 @@ Comprehensive manual testing checklist documented below with:
 ---
 
 #### Test 23: Audio Timing Accuracy Across BPM Range
+
 **ID:** METRO-023
 **Status:** Ready for manual test
 **Prerequisites:** External metronome app
 **Steps:**
+
 1. Install reference metronome app on phone/computer
 2. Set application metronome to 60 BPM
 3. Set reference metronome to 60 BPM
@@ -681,6 +748,7 @@ Comprehensive manual testing checklist documented below with:
 8. For each tempo, verify < 1 beat drift over 1 minute
 
 **Expected Results:**
+
 - Timing accurate across all BPM values
 - Minimal drift (< 1 beat per minute)
 - Consistent click intervals
@@ -694,59 +762,62 @@ Comprehensive manual testing checklist documented below with:
 
 ### Functional Requirements ✅
 
-| Requirement | Implementation | Validation |
-|-------------|----------------|------------|
-| Start/stop button | ✅ Play/pause button with toggle | Code review verified |
-| BPM input (40-240) | ✅ Numeric input with validation | Code review verified |
-| Default 120 BPM | ✅ METRONOME_CONSTANTS.DEFAULT_BPM | Code review verified |
-| Web Audio API | ✅ AudioContext + OscillatorNode | Code review verified |
-| 4/4 time signature | ✅ One click per beat, no accents | Code review verified |
-| State persists across pages | ✅ AppNavigation architecture | Code review verified |
-| Resets on refresh | ✅ No localStorage | Code review verified |
+| Requirement                 | Implementation                     | Validation           |
+| --------------------------- | ---------------------------------- | -------------------- |
+| Start/stop button           | ✅ Play/pause button with toggle   | Code review verified |
+| BPM input (40-240)          | ✅ Numeric input with validation   | Code review verified |
+| Default 120 BPM             | ✅ METRONOME_CONSTANTS.DEFAULT_BPM | Code review verified |
+| Web Audio API               | ✅ AudioContext + OscillatorNode   | Code review verified |
+| 4/4 time signature          | ✅ One click per beat, no accents  | Code review verified |
+| State persists across pages | ✅ AppNavigation architecture      | Code review verified |
+| Resets on refresh           | ✅ No localStorage                 | Code review verified |
 
 ### Non-Functional Requirements ✅
 
-| Requirement | Implementation | Validation |
-|-------------|----------------|------------|
-| Precise timing | ✅ Web Audio API currentTime | Ready for manual test |
+| Requirement                | Implementation                   | Validation            |
+| -------------------------- | -------------------------------- | --------------------- |
+| Precise timing             | ✅ Web Audio API currentTime     | Ready for manual test |
 | Minimal performance impact | ✅ Efficient interval scheduling | Ready for manual test |
-| Clean audio (no pops) | ✅ Exponential gain ramp-down | Ready for manual test |
-| Memory leak prevention | ✅ Proper AudioContext cleanup | Ready for manual test |
-| BPM validation | ✅ Clamp to 40-240 range | Code review verified |
-| Autoplay policy handling | ✅ AudioContext.resume() | Ready for manual test |
+| Clean audio (no pops)      | ✅ Exponential gain ramp-down    | Ready for manual test |
+| Memory leak prevention     | ✅ Proper AudioContext cleanup   | Ready for manual test |
+| BPM validation             | ✅ Clamp to 40-240 range         | Code review verified  |
+| Autoplay policy handling   | ✅ AudioContext.resume()         | Ready for manual test |
 
 ### Out of Scope (Verified Not Implemented) ✅
 
-| Excluded Feature | Status |
-|------------------|--------|
-| Visual beat indicators | ✅ Not implemented |
+| Excluded Feature                | Status             |
+| ------------------------------- | ------------------ |
+| Visual beat indicators          | ✅ Not implemented |
 | BPM increment/decrement buttons | ✅ Not implemented |
-| BPM slider | ✅ Not implemented |
-| Volume control | ✅ Not implemented |
-| Tap tempo | ✅ Not implemented |
-| Beat 1 emphasis/accents | ✅ Not implemented |
-| Keyboard shortcuts | ✅ Not implemented |
-| localStorage persistence | ✅ Not implemented |
-| LookAhead scheduling | ✅ Not implemented |
-| Special mobile enhancements | ✅ Not implemented |
+| BPM slider                      | ✅ Not implemented |
+| Volume control                  | ✅ Not implemented |
+| Tap tempo                       | ✅ Not implemented |
+| Beat 1 emphasis/accents         | ✅ Not implemented |
+| Keyboard shortcuts              | ✅ Not implemented |
+| localStorage persistence        | ✅ Not implemented |
+| LookAhead scheduling            | ✅ Not implemented |
+| Special mobile enhancements     | ✅ Not implemented |
 
 ---
 
 ## Code Quality Summary
 
 ### TypeScript Compliance ✅
+
 - No metronome-related TypeScript errors
 - Strict mode enabled and passing
 - All types properly defined
 - Path aliases (@/shared) working correctly
 
 ### ESLint Compliance ✅
+
 - No metronome-related ESLint warnings
 - Code follows project style guide
 - Consistent formatting
 - Proper React hooks usage
 
 ### Project Standards ✅
+
 - Follows existing component patterns (ThemeToggle, AppNavigation)
 - Uses established TailwindCSS patterns
 - Barrel exports configured correctly
@@ -758,13 +829,16 @@ Comprehensive manual testing checklist documented below with:
 ## Browser Compatibility
 
 ### Supported Browsers ✅
+
 - **Chrome/Edge**: Full support (Chromium-based)
 - **Firefox**: Full support
 - **Safari**: Full support
 - **Opera**: Full support (Chromium-based)
 
 ### Web Audio API Support ✅
+
 All target browsers support:
+
 - AudioContext
 - OscillatorNode
 - GainNode
@@ -772,7 +846,9 @@ All target browsers support:
 - Precise timing with currentTime
 
 ### CSS Support ✅
+
 All target browsers support:
+
 - TailwindCSS utilities
 - Flexbox layout
 - CSS transitions
@@ -797,6 +873,7 @@ All target browsers support:
 ## Next Steps
 
 ### For User/Developer:
+
 1. Run `npm run dev` to start development server
 2. Execute manual testing checklist (23 tests)
 3. Document any issues found
@@ -804,6 +881,7 @@ All target browsers support:
 5. Deploy to production if all tests pass
 
 ### For Future Enhancements:
+
 - Add automated tests (if test framework added to project)
 - Consider adding tap tempo feature
 - Consider adding volume control
@@ -815,17 +893,20 @@ All target browsers support:
 ## Files Summary
 
 ### New Files Created (3):
+
 1. `/Users/miha/Projects/me/caged-visualizer/src/shared/types/metronome.ts`
 2. `/Users/miha/Projects/me/caged-visualizer/src/shared/hooks/useMetronome.ts`
 3. `/Users/miha/Projects/me/caged-visualizer/src/shared/components/MetronomeControls.tsx`
 
 ### Files Modified (4):
+
 1. `/Users/miha/Projects/me/caged-visualizer/src/shared/constants/magicNumbers.ts`
 2. `/Users/miha/Projects/me/caged-visualizer/src/shared/hooks/index.ts`
 3. `/Users/miha/Projects/me/caged-visualizer/src/shared/components/index.ts`
 4. `/Users/miha/Projects/me/caged-visualizer/src/shared/components/AppNavigation.tsx`
 
 ### Total Lines of Code:
+
 - New code: ~400 lines
 - Modified code: ~30 lines
 - Documentation: ~1500 lines (implementation reports + testing docs)

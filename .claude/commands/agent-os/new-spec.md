@@ -1,6 +1,6 @@
 # New Spec Process
 
-You are initiating a new spec for a new feature.  This process will follow 3 main phases, each with their own workflow steps:
+You are initiating a new spec for a new feature. This process will follow 3 main phases, each with their own workflow steps:
 
 Process overview (details to follow)
 
@@ -25,13 +25,16 @@ The spec-initializer will provide the path to the dated spec folder (YYYY-MM-DD-
 After spec-initializer completes, immediately use the **spec-researcher** subagent:
 
 Provide the spec-researcher with:
+
 - The spec folder path from spec-initializer
 
 The spec-researcher will give you several separate responses that you MUST show to the user. These include:
+
 1. Numbered clarifying questions along with a request for visual assets (show these to user, wait for user's response)
 2. Follow-up questions if needed (based on user's answers and provided visuals)
 
 **IMPORTANT**:
+
 - Display these questions to the user and wait for their response
 - The spec-researcher may ask you to relay follow-up questions that you must present to user
 

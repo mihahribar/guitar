@@ -44,12 +44,14 @@ Create a rhythm practice tool that displays a 2x2 grid of rhythm panels, each sh
 Visual requirements derived from requirements:
 
 ### Layout Structure
+
 - 2x2 grid centered on page
 - Each panel displays music notation for one beat
 - Controls positioned below or beside the grid
 - Navigation button in main nav bar alongside "CAGED" and "Quiz"
 
 ### Panel Design
+
 - Each panel sized consistently (suggested: 150-200px square)
 - Music notation centered within panel
 - Clear border/background to distinguish panels
@@ -58,6 +60,7 @@ Visual requirements derived from requirements:
 - Smooth transition animation when switching active panel
 
 ### Controls Layout
+
 - Pattern selector for each panel (dropdown showing notation preview)
 - "Randomize All" button - prominent, easily accessible
 - "Random Change Mode" toggle switch
@@ -65,6 +68,7 @@ Visual requirements derived from requirements:
 - Start/Stop button - large, primary action
 
 ### Music Notation Display
+
 - SVG-based rendering for scalability
 - Standard notation symbols: filled/hollow note heads, stems, flags, beams, dots
 - Rest symbols where applicable
@@ -75,25 +79,30 @@ Visual requirements derived from requirements:
 ### Existing Code to Leverage
 
 **Hooks:**
+
 - `src/shared/hooks/useMetronome.ts` - Web Audio API metronome implementation
   - Provides: `isPlaying`, `bpm`, `togglePlay`, `setBpm`, `isValid`
   - Already handles AudioContext lifecycle and click sound generation
   - Can extend for subdivision clicks
 
 **Components:**
+
 - `src/shared/components/MetronomeControls.tsx` - Reference for UI patterns (not directly used, as BPM controlled from nav)
 - `src/shared/components/AppNavigation.tsx` - Add new navigation button here
 - `src/shared/components/ThemeToggle.tsx` - Reference for toggle switch styling
 - `src/shared/components/LoadingFallback.tsx` - For lazy loading fallback
 
 **Constants:**
+
 - `src/shared/constants/magicNumbers.ts` - METRONOME_CONSTANTS for BPM limits, click config
 
 **Types:**
+
 - `src/shared/types/metronome.ts` - MetronomeHookReturn interface
 - `src/types/navigation.ts` - AppPage type (needs extension)
 
 **Patterns from Quiz System:**
+
 - `src/systems/quiz/` - Complete reference for system architecture
 - Barrel exports pattern in `index.ts`
 - Component/hook separation pattern
@@ -103,12 +112,14 @@ Visual requirements derived from requirements:
 ### New Components Required
 
 **Why new components are needed:**
+
 - No existing music notation rendering capability
 - No rhythm pattern data structures exist
 - No beat cycling/timing synchronization exists
 - Quiz system patterns don't apply to continuous cycling UI
 
 **New components to create:**
+
 1. `RhythmPanel` - Single panel showing music notation for one beat
 2. `RhythmGrid` - 2x2 grid container managing panel layout
 3. `RhythmControls` - Control panel with Start/Stop, toggles, Randomize button
@@ -152,11 +163,11 @@ src/systems/rhythm-game/
 ```typescript
 // Main game state in useRhythmGame hook
 interface RhythmGameState {
-  panels: RhythmPattern[];        // 4 patterns, one per panel
-  isPlaying: boolean;             // Whether cycling is active
-  currentBeat: number;            // 0-3, which panel is active
-  randomChangeMode: boolean;      // Auto-change one panel each cycle
-  playAudio: boolean;             // Whether to play subdivision clicks
+  panels: RhythmPattern[]; // 4 patterns, one per panel
+  isPlaying: boolean; // Whether cycling is active
+  currentBeat: number; // 0-3, which panel is active
+  randomChangeMode: boolean; // Auto-change one panel each cycle
+  playAudio: boolean; // Whether to play subdivision clicks
 }
 ```
 
@@ -175,6 +186,7 @@ interface RhythmGameState {
 ### Timing Implementation
 
 **Beat timing calculation:**
+
 ```typescript
 // Interval between beats in ms
 const beatInterval = (60 / bpm) * 1000;
@@ -184,6 +196,7 @@ const subdivisionInterval = beatInterval / subdivisionCount;
 ```
 
 **Synchronization approach:**
+
 - Use `setInterval` for beat advancement (like existing metronome)
 - Start timing when user clicks Start
 - Reset to beat 0 when stopping
@@ -192,6 +205,7 @@ const subdivisionInterval = beatInterval / subdivisionCount;
 ### Audio Implementation
 
 **Extend existing metronome audio pattern:**
+
 - Reuse `AudioContext` initialization from `useMetronome`
 - Create separate click scheduling for subdivisions
 - Different frequency or volume for subdivisions vs main beat (optional distinction)
@@ -200,6 +214,7 @@ const subdivisionInterval = beatInterval / subdivisionCount;
 ### Navigation Integration
 
 **Files to modify:**
+
 1. `src/types/navigation.ts` - Add `'rhythm'` to `AppPage` union type
 2. `src/shared/components/AppNavigation.tsx` - Add nav item for rhythm game
 3. `src/App.tsx` - Add lazy import and route for `RhythmPage`
@@ -213,10 +228,10 @@ const subdivisionInterval = beatInterval / subdivisionCount;
  * Subdivision types representing how a beat can be divided
  */
 export type SubdivisionType =
-  | 'quarter'      // 1 note filling the beat
-  | 'eighths'      // 2 equal subdivisions
-  | 'sixteenths'   // 4 equal subdivisions
-  | 'triplets';    // 3 equal subdivisions
+  | 'quarter' // 1 note filling the beat
+  | 'eighths' // 2 equal subdivisions
+  | 'sixteenths' // 4 equal subdivisions
+  | 'triplets'; // 3 equal subdivisions
 
 /**
  * Individual note within a beat pattern
@@ -299,17 +314,20 @@ export interface UseRhythmGameReturn extends RhythmGameState, RhythmGameActions 
 ### Navigation System
 
 **Modify `src/types/navigation.ts`:**
+
 ```typescript
 export type AppPage = 'caged' | 'quiz' | 'rhythm';
 ```
 
 **Modify `src/shared/components/AppNavigation.tsx`:**
 Add to `navItems` array:
+
 ```typescript
 { page: 'rhythm', label: 'Rhythm', description: 'Practice rhythm patterns' }
 ```
 
 **Modify `src/App.tsx`:**
+
 ```typescript
 // Add lazy import
 const RhythmPage = lazy(() => import("@/systems/rhythm-game/components/RhythmPage"));
@@ -344,15 +362,16 @@ export function useRhythmCycler() {
 
 ### Panel Visual States
 
-| State | Background | Border | Opacity |
-|-------|------------|--------|---------|
-| Inactive | gray-100 / gray-800 (dark) | gray-300 / gray-600 (dark) | 100% |
-| Active | blue-500 / blue-600 (dark) | blue-600 / blue-500 (dark) | 100% |
-| Transition | CSS transition 100-150ms | - | - |
+| State      | Background                 | Border                     | Opacity |
+| ---------- | -------------------------- | -------------------------- | ------- |
+| Inactive   | gray-100 / gray-800 (dark) | gray-300 / gray-600 (dark) | 100%    |
+| Active     | blue-500 / blue-600 (dark) | blue-600 / blue-500 (dark) | 100%    |
+| Transition | CSS transition 100-150ms   | -                          | -       |
 
 ### Control Button Styles
 
 Follow existing button patterns from `AppNavigation.tsx` and `MetronomeControls.tsx`:
+
 - Primary action (Start/Stop): `bg-blue-600 hover:bg-blue-700 text-white`
 - Secondary actions (Randomize): `bg-gray-100 dark:bg-gray-800 hover:bg-gray-200`
 - Toggles: Similar to ThemeToggle switch style
@@ -360,6 +379,7 @@ Follow existing button patterns from `AppNavigation.tsx` and `MetronomeControls.
 ### Music Notation Requirements
 
 **Note symbols to implement:**
+
 - Quarter note: filled oval head with stem
 - Eighth notes: paired with beam, or single with flag
 - Sixteenth notes: paired with double beam, or single with double flag
@@ -369,6 +389,7 @@ Follow existing button patterns from `AppNavigation.tsx` and `MetronomeControls.
 - Sixteenth rest: standard rest symbol
 
 **Sizing:**
+
 - Notes should be clearly visible at panel size
 - Consistent sizing across all pattern types
 - SVG viewBox allows scaling without quality loss
@@ -376,6 +397,7 @@ Follow existing button patterns from `AppNavigation.tsx` and `MetronomeControls.
 ### Pattern Selector UX
 
 **Dropdown approach (recommended):**
+
 - Click panel to open pattern selector
 - Show pattern name + small notation preview
 - Group by category (quarters, eighths, sixteenths, triplets, mixed)
@@ -384,16 +406,19 @@ Follow existing button patterns from `AppNavigation.tsx` and `MetronomeControls.
 ### Responsive Behavior
 
 **Desktop (default):**
+
 - 2x2 grid with generous spacing
 - Controls beside or below grid
 - Full-size notation display
 
 **Tablet (min-width: 768px):**
+
 - Grid may stack or reduce spacing
 - Controls stack vertically below grid
 - Slightly smaller notation
 
 **Mobile (out of scope):**
+
 - Basic functionality should work but not optimized
 - Panels may be too small for comfortable use
 
@@ -404,16 +429,19 @@ Follow existing button patterns from `AppNavigation.tsx` and `MetronomeControls.
 Patterns should be defined in `src/systems/rhythm-game/constants/patterns.ts`:
 
 **Quarter patterns:**
+
 - Quarter note (1 note)
 - Quarter rest (silence)
 
 **Eighth patterns:**
+
 - Two eighth notes
 - Eighth + eighth rest
 - Eighth rest + eighth
 - Two eighth rests
 
 **Sixteenth patterns:**
+
 - Four sixteenth notes
 - Sixteenth-sixteenth-eighth (common pattern)
 - Eighth-sixteenth-sixteenth (common pattern)
@@ -421,16 +449,19 @@ Patterns should be defined in `src/systems/rhythm-game/constants/patterns.ts`:
 - Various rest combinations
 
 **Triplet patterns:**
+
 - Three triplet notes
 - Triplet with rest variations
 
 **Mixed patterns (advanced):**
+
 - Combinations that add up to one beat
 - Must be mathematically valid (durations sum to 1.0)
 
 ### Pattern Validation
 
 All patterns must:
+
 1. Have note durations that sum to exactly 1.0 (one beat)
 2. Not mix triplet subdivisions with binary subdivisions (musically invalid)
 3. Have unique IDs for selection tracking

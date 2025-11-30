@@ -40,6 +40,7 @@ Generate `agent-os/specs/[current-spec]/tasks.md` with suggested subagents (a.k.
 # Task Breakdown: [Feature Name]
 
 ## Overview
+
 Total Tasks: [count]
 Assigned roles: [list from registry]
 
@@ -48,6 +49,7 @@ Assigned roles: [list from registry]
 ### Database Layer
 
 #### Task Group 1: Data Models and Migrations
+
 **Assigned implementer:** database-engineer
 **Dependencies:** None
 
@@ -72,6 +74,7 @@ Assigned roles: [list from registry]
     - Do NOT run the entire test suite at this stage
 
 **Acceptance Criteria:**
+
 - The 2-8 tests written in 1.1 pass
 - Models pass validation tests
 - Migrations run successfully
@@ -80,6 +83,7 @@ Assigned roles: [list from registry]
 ### API Layer
 
 #### Task Group 2: API Endpoints
+
 **Assigned implementer:** api-engineer
 **Dependencies:** Task Group 1
 
@@ -104,6 +108,7 @@ Assigned roles: [list from registry]
     - Do NOT run the entire test suite at this stage
 
 **Acceptance Criteria:**
+
 - The 2-8 tests written in 2.1 pass
 - All CRUD operations work
 - Proper authorization enforced
@@ -112,6 +117,7 @@ Assigned roles: [list from registry]
 ### Frontend Components
 
 #### Task Group 3: UI Design
+
 **Assigned implementer:** ui-designer
 **Dependencies:** Task Group 2
 
@@ -149,6 +155,7 @@ Assigned roles: [list from registry]
     - Do NOT run the entire test suite at this stage
 
 **Acceptance Criteria:**
+
 - The 2-8 tests written in 3.1 pass
 - Components render correctly
 - Forms validate and submit
@@ -157,6 +164,7 @@ Assigned roles: [list from registry]
 ### Testing
 
 #### Task Group 4: Test Review & Gap Analysis
+
 **Assigned implementer:** testing-engineer
 **Dependencies:** Task Groups 1-3
 
@@ -183,6 +191,7 @@ Assigned roles: [list from registry]
     - Verify critical workflows pass
 
 **Acceptance Criteria:**
+
 - All feature-specific tests pass (approximately 16-34 tests total)
 - Critical user workflows for this feature are covered
 - No more than 10 additional tests added by testing-engineer
@@ -191,6 +200,7 @@ Assigned roles: [list from registry]
 ## Execution Order
 
 Recommended implementation sequence:
+
 1. Database Layer (Task Group 1)
 2. API Layer (Task Group 2)
 3. Frontend Design (Task Group 3)
@@ -198,6 +208,7 @@ Recommended implementation sequence:
 ```
 
 **Note**: Adapt this structure based on the actual feature requirements. Some features may need:
+
 - Different task groups (e.g., email notifications, payment processing, data migration)
 - Different implementer (e.g., custom implementers from implementers.yml)
 - Different execution order based on dependencies
@@ -217,7 +228,6 @@ Recommended implementation sequence:
 - **Use a focused test-driven approach** where each task group starts with writing 2-8 tests (x.1 sub-task) and ends with running ONLY those tests (final sub-task)
 - **Include acceptance criteria** for each task group
 - **Reference visual assets** if visuals are available
-
 
 ## User Standards & Preferences Compliance
 

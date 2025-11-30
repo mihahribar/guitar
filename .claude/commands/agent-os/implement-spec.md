@@ -14,6 +14,7 @@ Follow each of these phases and their individual workflows IN SEQUENCE:
 ### PHASE 1: Plan subagents assignments
 
 Read the following files:
+
 - `agent-os/specs/[this-spec]/tasks.md`
 - `agent-os/roles/implementers.yml`
 
@@ -21,16 +22,17 @@ Create `agent-os/specs/[this-spec]/planning/task-assignments.yml` with this stru
 
 ```yaml
 task_assignments:
-  - task_group: "Task Group 1: [Title from tasks.md]"
-    assigned_subagent: "[implementer-id-from-implementers.yml]"
+  - task_group: 'Task Group 1: [Title from tasks.md]'
+    assigned_subagent: '[implementer-id-from-implementers.yml]'
 
-  - task_group: "Task Group 2: [Title from tasks.md]"
-    assigned_subagent: "[implementer-id-from-implementers.yml]"
+  - task_group: 'Task Group 2: [Title from tasks.md]'
+    assigned_subagent: '[implementer-id-from-implementers.yml]'
 
   # Continue for all task groups found in tasks.md
 ```
 
 Ensure each assigned subagent exists in both of these locations:
+
 - In implementers.yml there must be an implementer with this role ID.
 - In `.claude/agents/agent-os` there must be a file named by this implementer ID.
 
@@ -39,6 +41,7 @@ Ensure each assigned subagent exists in both of these locations:
 Loop through each task group in `agent-os/specs/[this-spec]/tasks.md` and delegate its implementation to the assigned subagent specified in `task-assignments.yml`.
 
 For each delegation, provide the subagent with:
+
 - The task group (including the parent task and all sub-tasks)
 - The spec file: `agent-os/specs/[this-spec]/spec.md`
 - Instruct subagent to:
@@ -70,7 +73,8 @@ For each delegation, provide the subagent with:
 Use the **implementation-verifier** subagent to do its implementation verification and produce its final verification report.
 
 Provide to the subagent the following:
+
 - The path to this spec: `agent-os/specs/[this-spec]`
-Instruct the subagent to do the following:
+  Instruct the subagent to do the following:
   1. Run all of its final verifications according to its built-in workflow
   2. Produce the final verification report in `agent-os/specs/[this-spec]/verifications/final-verification.md`.

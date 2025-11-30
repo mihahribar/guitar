@@ -3,7 +3,7 @@
 
 verifiers:
   - id: frontend-verifier
-    description: "Verifies UI components, styling, responsive design, user experience"
+    description: 'Verifies UI components, styling, responsive design, user experience'
     verifies:
       - ui-designer
     capabilities:
@@ -14,7 +14,7 @@ verifiers:
       - Dark mode verification
 
   - id: backend-verifier
-    description: "Verifies hooks, business logic, API implementations"
+    description: 'Verifies hooks, business logic, API implementations'
     verifies:
       - api-engineer
     capabilities:

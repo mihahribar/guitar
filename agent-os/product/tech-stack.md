@@ -1,6 +1,7 @@
 # Tech Stack
 
 ## Framework & Runtime
+
 - **Application Framework:** React 19.1.1 (single-page application)
 - **Language/Runtime:** TypeScript 5.8.3 with strict mode enabled
 - **Build Tool:** Vite 7.1.2 with React plugin and TypeScript path aliases
@@ -9,12 +10,14 @@
 ## Frontend
 
 ### Core Framework & Libraries
+
 - **JavaScript Framework:** React 19.1.1 with functional components and hooks
 - **Type System:** TypeScript 5.8.3 with strict type checking
 - **State Management:** React hooks (useState, useMemo, useCallback) with Context API for global state (theme, navigation)
 - **Routing:** Single-page routing with lazy-loaded code splitting (quiz system loaded on demand)
 
 ### Styling & UI
+
 - **CSS Framework:** TailwindCSS 4.1.12 (latest version with native CSS support via @tailwindcss/vite)
 - **Styling Approach:** Utility-first with TailwindCSS classes, CSS custom properties for complex layouts
 - **Theme System:** Custom dark/light mode implementation with system preference detection
@@ -23,6 +26,7 @@
 - **UI Components:** Custom-built components, no third-party UI library
 
 ### Architecture Patterns
+
 - **Pattern:** Modular multi-system architecture with complete system isolation
 - **Project Structure:**
   - `src/systems/[system]/` - Self-contained learning system modules (caged, quiz, modes)
@@ -38,6 +42,7 @@
 - **Barrel Exports:** Each module provides clean barrel exports for easy consumption
 
 ## Database & Storage
+
 - **Local Storage:** Browser localStorage for theme preferences and future user progress tracking
 - **State Persistence:** safeStorage utility wrapper for error-safe localStorage operations
 - **No Backend:** Fully static site with no server-side database requirements
@@ -45,6 +50,7 @@
 ## Testing & Quality
 
 ### Code Quality
+
 - **Linting:** ESLint 9.33.0 with TypeScript ESLint integration
 - **ESLint Plugins:**
   - eslint-plugin-react-hooks (enforce React hooks rules)
@@ -54,6 +60,7 @@
 - **Type Checking:** TypeScript strict mode with comprehensive type coverage
 
 ### Testing Strategy
+
 - **Current:** Manual testing across browsers and devices
 - **Browser Testing:** Chrome, Firefox, Safari compatibility verification
 - **Device Testing:** Desktop and mobile responsive layout testing
@@ -63,6 +70,7 @@
 ## Deployment & Infrastructure
 
 ### Hosting & CI/CD
+
 - **Hosting:** GitHub Pages (static site hosting)
 - **Domain:** Custom domain (caged.hribar.org) configured via CNAME
 - **CI/CD:** GitHub Actions workflow (`.github/workflows/deploy.yml`)
@@ -72,6 +80,7 @@
 - **CDN:** Global CDN distribution through GitHub Pages infrastructure
 
 ### Build & Bundling
+
 - **Build Tool:** Vite 7.1.2 with optimized production builds
 - **Bundle Optimization:**
   - Code splitting with lazy-loaded quiz system
@@ -87,6 +96,7 @@
 ## Performance Optimization
 
 ### Frontend Performance
+
 - **React Optimization:** useMemo for expensive calculations (CAGED shape calculations, chord transpositions)
 - **Rendering Optimization:** useCallback to prevent unnecessary re-renders
 - **Minimal Re-renders:** Targeted state updates within system boundaries
@@ -94,12 +104,14 @@
 - **Tree Shaking:** Modular architecture enables excellent tree shaking
 
 ### Loading Performance
+
 - **Bundle Size:** Optimized bundles load in under 3 seconds on typical connections
 - **Lazy Loading:** Quiz system loaded on demand (~18kB additional)
 - **Asset Caching:** Vite content hashing enables long-term browser caching
 - **Fast Refresh:** Vite HMR provides instant development feedback
 
 ### Runtime Performance
+
 - **60fps Target:** Smooth animations and interactions
 - **Gradient Generation:** Efficient dynamic CSS generation for shape overlays
 - **State Management:** Context-minimal approach reduces unnecessary provider re-renders
@@ -108,6 +120,7 @@
 ## Error Handling & Monitoring
 
 ### Error Management
+
 - **Error Boundaries:** React ErrorBoundary components catch rendering errors
 - **Safe Component Wrapper:** SafeComponent wrapper for critical components
 - **Error Logging:** errorLogger utility for consistent error handling
@@ -115,11 +128,13 @@
 - **Storage Safety:** safeStorage wrapper prevents localStorage errors
 
 ### Monitoring
+
 - **Performance Monitor:** Custom performanceMonitor utility for tracking metrics
 - **Current Monitoring:** Client-side error logging only
 - **Future Considerations:** Consider adding Sentry or similar for production error tracking
 
 ## Security Considerations
+
 - **Static Site:** No server-side attack vectors
 - **No User Data:** No data collection or storage of personal information
 - **XSS Prevention:** React's built-in JSX escaping protects against XSS
@@ -128,6 +143,7 @@
 - **No API Keys:** No secrets or API keys in codebase
 
 ## Browser Compatibility
+
 - **Target Browsers:** Modern browsers (Chrome, Firefox, Safari, Edge)
 - **JavaScript Features:** ES6+ features (arrow functions, destructuring, async/await)
 - **CSS Requirements:** CSS Grid support required for fretboard layout
@@ -137,12 +153,14 @@
 ## Development Environment
 
 ### Development Tools
+
 - **Dev Server:** Vite dev server with Hot Module Replacement (HMR)
 - **TypeScript Checking:** Continuous type checking during development
 - **Fast Refresh:** React Fast Refresh for instant component updates
 - **Source Maps:** Full source map support for debugging
 
 ### Development Workflow
+
 - **Local Development:** `npm run dev` starts dev server on http://localhost:5173
 - **Type Checking:** `tsc -b` validates TypeScript before builds
 - **Linting:** `npm run lint` runs ESLint checks
@@ -150,6 +168,7 @@
 - **Build:** `npm run build` creates optimized production bundle
 
 ## Third-Party Services
+
 - **Authentication:** None (no user accounts)
 - **Email:** None (no email functionality)
 - **Monitoring:** None currently (manual monitoring)
@@ -159,6 +178,7 @@
 ## Future Technical Considerations
 
 ### Potential Additions
+
 - **Audio Library:** Tone.js or Web Audio API for chord sound playback
 - **Testing Framework:** Jest + React Testing Library for automated testing
 - **E2E Testing:** Playwright or Cypress for end-to-end testing
@@ -169,6 +189,7 @@
 - **Mobile Framework:** React Native or Capacitor for native mobile apps (future)
 
 ### Scalability Considerations
+
 - **Current:** Static site scales infinitely via GitHub Pages CDN
 - **Module Addition:** Architecture supports adding new learning systems without refactoring
 - **Performance:** Current bundle sizes remain optimal with modular code splitting
@@ -176,6 +197,7 @@
 - **Mobile Native:** Would require separate mobile app development pipeline
 
 ### Technical Debt & Improvements
+
 - **Automated Testing:** Add unit and integration tests for core music theory calculations
 - **Performance Monitoring:** Implement real-time performance tracking in production
 - **Accessibility Audit:** Comprehensive accessibility testing with screen readers

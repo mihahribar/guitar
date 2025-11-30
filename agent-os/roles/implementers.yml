@@ -3,7 +3,7 @@
 
 implementers:
   - id: ui-designer
-    description: "Handles UI components, views, layouts, styling, responsive design"
+    description: 'Handles UI components, views, layouts, styling, responsive design'
     verified_by: frontend-verifier
     capabilities:
       - React component development
@@ -13,7 +13,7 @@ implementers:
       - Dark mode support
 
   - id: api-engineer
-    description: "Handles API endpoints, controllers, business logic, hooks, utilities"
+    description: 'Handles API endpoints, controllers, business logic, hooks, utilities'
     verified_by: backend-verifier
     capabilities:
       - Custom React hooks

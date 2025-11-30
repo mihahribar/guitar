@@ -1,9 +1,11 @@
 # Specification: Site-Wide Metronome
 
 ## Goal
+
 Add a simple, always-accessible metronome to the CAGED Visualizer application that provides precise timing for guitar practice across all learning systems with minimal UI footprint.
 
 ## User Stories
+
 - As a guitar student, I want to practice chord changes with a metronome so that I can develop consistent timing
 - As a user exploring different pages, I want the metronome to continue running when navigating between CAGED, Modes, and Quiz pages so that my practice flow is uninterrupted
 - As a user, I want to quickly adjust the tempo with a numeric input so that I can match the metronome to my practice speed
@@ -12,6 +14,7 @@ Add a simple, always-accessible metronome to the CAGED Visualizer application th
 ## Core Requirements
 
 ### Functional Requirements
+
 - Start/stop button to toggle metronome on/off
 - Numeric BPM input field for tempo adjustment (range: 40-240 BPM)
 - Default BPM of 120 when application loads
@@ -21,6 +24,7 @@ Add a simple, always-accessible metronome to the CAGED Visualizer application th
 - Metronome stops when user closes/refreshes the browser
 
 ### Non-Functional Requirements
+
 - Precise timing using Web Audio API for accuracy
 - Minimal performance impact on the application
 - Clean audio generation without clicks or pops
@@ -31,6 +35,7 @@ Add a simple, always-accessible metronome to the CAGED Visualizer application th
 ## Visual Design
 
 ### UI Layout
+
 - **Placement**: Inline in AppNavigation component, positioned after navigation buttons and before ThemeToggle
 - **Components**:
   - Play/Pause button with icon (play ▶ / pause ⏸)
@@ -40,12 +45,14 @@ Add a simple, always-accessible metronome to the CAGED Visualizer application th
 - **Dark Mode**: Full support using existing dark: prefixes
 
 ### Visual States
+
 - **Play button**: Static icon (no beat animation or visual feedback)
 - **Pause button**: Static icon when metronome is running
 - **BPM input**: Standard input field with validation styling
 - **No visual beat indicators**: Purely audio feedback
 
 ### Responsive Behavior
+
 - Standard responsive behavior (no special mobile enhancements per requirements)
 - Components stack naturally with existing navigation on smaller screens
 - Input field maintains minimum usable width
@@ -53,6 +60,7 @@ Add a simple, always-accessible metronome to the CAGED Visualizer application th
 ## Reusable Components
 
 ### Existing Code to Leverage
+
 - **AppNavigation.tsx**: Host component for metronome controls
   - File: `/Users/miha/Projects/me/caged-visualizer/src/shared/components/AppNavigation.tsx`
   - Pattern: Horizontal flex layout with space-x-3 spacing
@@ -75,6 +83,7 @@ Add a simple, always-accessible metronome to the CAGED Visualizer application th
   - Location for metronome-specific constants (BPM ranges, defaults)
 
 ### New Components Required
+
 - **MetronomeControls.tsx**: Main metronome UI component
   - Why new: No existing metronome-specific component
   - Renders play/pause button and BPM input
@@ -91,6 +100,7 @@ Add a simple, always-accessible metronome to the CAGED Visualizer application th
 ### Component Structure
 
 **File Organization:**
+
 ```
 src/shared/
 ├── components/
@@ -107,12 +117,14 @@ src/shared/
 ```
 
 ### State Management
+
 - **Local component state** (useState): BPM value, isPlaying boolean
 - **Custom hook encapsulation** (useMetronome): Web Audio API logic
 - **No global context needed**: State lives in AppNavigation component
 - **No localStorage**: State resets on page reload per requirements
 
 ### Data Flow
+
 1. User clicks play button → MetronomeControls updates isPlaying state
 2. isPlaying change triggers useMetronome hook effect
 3. useMetronome initializes AudioContext and starts scheduling beats
@@ -124,24 +136,28 @@ src/shared/
 ### Web Audio API Implementation
 
 **Audio Architecture:**
+
 - **AudioContext**: Single instance created on first play (respects autoplay policy)
 - **OscillatorNode**: Short burst oscillator for click sound
 - **GainNode**: Envelope for click to prevent audio pops
 - **Timing**: Uses AudioContext.currentTime for precise scheduling
 
 **Click Sound Generation:**
+
 - Frequency: ~1000-1200Hz for clear, audible click
 - Duration: 10-20ms for short, percussive sound
 - Envelope: Exponential gain ramp-down to prevent clicks
 - Volume: Fixed moderate level (no volume control per requirements)
 
 **Beat Scheduling:**
+
 - Calculate interval: 60 / BPM = seconds per beat
 - Schedule beats slightly ahead using currentTime + interval
 - No lookAhead scheduling (per requirements - simple timing)
 - Clear scheduled beats when stopping
 
 **Cleanup:**
+
 - Stop all oscillators on pause/unmount
 - Close AudioContext on component unmount
 - Handle browser autoplay policy gracefully
@@ -149,6 +165,7 @@ src/shared/
 ### TypeScript Types
 
 **Core Types:**
+
 ```typescript
 interface MetronomeState {
   isPlaying: boolean;
@@ -167,6 +184,7 @@ interface MetronomeHookReturn {
 ### Constants
 
 **Metronome Constants (in magicNumbers.ts):**
+
 ```typescript
 METRONOME_CONSTANTS: {
   DEFAULT_BPM: 120,
@@ -179,6 +197,7 @@ METRONOME_CONSTANTS: {
 ```
 
 ### BPM Input Validation
+
 - Type: number (integer only)
 - Range: 40-240 BPM (standard metronome range)
 - Pattern: Follow existing validation utilities
@@ -188,6 +207,7 @@ METRONOME_CONSTANTS: {
 ## Integration Points
 
 ### AppNavigation.tsx Modification
+
 - **Import**: Add MetronomeControls component
 - **Layout**: Insert between navigation buttons and ThemeToggle
 - **Markup**:
@@ -201,20 +221,24 @@ METRONOME_CONSTANTS: {
 - **No state changes**: AppNavigation remains stateless
 
 ### Shared Components Barrel Export
+
 - Update `/Users/miha/Projects/me/caged-visualizer/src/shared/components/index.ts`
 - Export MetronomeControls component
 
 ### Shared Hooks Barrel Export
+
 - Update `/Users/miha/Projects/me/caged-visualizer/src/shared/hooks/index.ts`
 - Export useMetronome hook
 
 ### Constants Update
+
 - Add METRONOME_CONSTANTS to magicNumbers.ts
 - Follow existing pattern with const assertion
 
 ## UI/UX Specifications
 
 ### Button Design
+
 - **Size**: Consistent with navigation buttons (px-4 py-2)
 - **Icon**: SVG play (▶) and pause (⏸) icons
 - **States**:
@@ -225,6 +249,7 @@ METRONOME_CONSTANTS: {
 - **ARIA**: `aria-label="Start metronome"` / `"Stop metronome"`
 
 ### BPM Input Design
+
 - **Type**: `<input type="number">`
 - **Size**: Compact width (w-20 or similar)
 - **Label**: "BPM" text label or placeholder
@@ -234,6 +259,7 @@ METRONOME_CONSTANTS: {
 - **ARIA**: `aria-label="Metronome tempo in beats per minute"`
 
 ### Accessibility
+
 - **Keyboard**: Tab navigation between play button and BPM input
 - **Screen readers**: Clear ARIA labels on all controls
 - **Focus indicators**: Visible focus ring on interactive elements
@@ -242,6 +268,7 @@ METRONOME_CONSTANTS: {
 ## Audio Implementation Details
 
 ### Web Audio API Setup
+
 ```typescript
 // Initialization
 const audioContext = new AudioContext();
@@ -254,12 +281,13 @@ gainNode.connect(audioContext.destination);
 
 // Configure
 oscillator.frequency.value = 1000; // Hz
-gainNode.gain.value = 0.3;        // Moderate volume
+gainNode.gain.value = 0.3; // Moderate volume
 oscillator.start(time);
-oscillator.stop(time + 0.01);     // 10ms duration
+oscillator.stop(time + 0.01); // 10ms duration
 ```
 
 ### Timing Calculation
+
 ```typescript
 // Interval calculation
 const intervalInSeconds = 60 / bpm;
@@ -269,11 +297,13 @@ const nextBeatTime = audioContext.currentTime + intervalInSeconds;
 ```
 
 ### Browser Compatibility
+
 - **Web Audio API**: Supported in all modern browsers
 - **Autoplay Policy**: Handle AudioContext resume() requirement
 - **Fallback**: User must interact (click play) to start - acceptable per modern browser standards
 
 ### Error Handling
+
 - AudioContext creation failure: Log error, disable metronome
 - Invalid BPM input: Clamp to valid range, don't crash
 - Browser autoplay block: Resume AudioContext on user interaction
@@ -309,6 +339,7 @@ While not in scope for this implementation, the architecture supports:
 - **Persistence**: localStorage integration straightforward to add
 
 **Design Decisions to Support Extension:**
+
 - Separate constants for time signature (currently fixed at 4)
 - Clean separation of audio logic in custom hook
 - Modular component structure allows adding features without refactoring
@@ -316,6 +347,7 @@ While not in scope for this implementation, the architecture supports:
 ## Success Criteria
 
 ### Functional Success
+
 - Metronome starts/stops reliably on button click
 - BPM adjustments take effect immediately
 - Audio clicks are audible and consistent
@@ -323,6 +355,7 @@ While not in scope for this implementation, the architecture supports:
 - Invalid BPM inputs are handled gracefully
 
 ### Technical Success
+
 - No memory leaks from AudioContext
 - No performance degradation when metronome is running
 - TypeScript strict mode compliance with no type errors
@@ -330,6 +363,7 @@ While not in scope for this implementation, the architecture supports:
 - Code follows established project patterns and conventions
 
 ### User Experience Success
+
 - Controls are intuitive and require no explanation
 - Click sound is clear and unobtrusive
 - Dark mode styling is consistent with app theme
@@ -337,6 +371,7 @@ While not in scope for this implementation, the architecture supports:
 - Accessibility standards met (ARIA labels, keyboard navigation)
 
 ### Code Quality Success
+
 - ESLint passes with no warnings
 - Component follows single responsibility principle
 - Custom hook encapsulates complex logic cleanly

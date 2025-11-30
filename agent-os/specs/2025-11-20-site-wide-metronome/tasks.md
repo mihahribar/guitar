@@ -1,6 +1,7 @@
 # Task Breakdown: Site-Wide Metronome
 
 ## Overview
+
 Total Tasks: 18 (organized into 4 task groups)
 Assigned roles: frontend-engineer (all tasks)
 
@@ -11,6 +12,7 @@ Assigned roles: frontend-engineer (all tasks)
 ### Core Audio Logic & Types
 
 #### Task Group 1: Audio Engine & Type Definitions
+
 **Assigned implementer:** frontend-engineer
 **Dependencies:** None
 
@@ -54,6 +56,7 @@ Assigned roles: frontend-engineer (all tasks)
     - Document results and any issues found
 
 **Acceptance Criteria:**
+
 - All manual tests from checklist in 1.1 pass
 - TypeScript types are properly defined and exported
 - Constants follow existing magicNumbers.ts pattern
@@ -62,6 +65,7 @@ Assigned roles: frontend-engineer (all tasks)
 - BPM-to-interval calculation is mathematically correct
 
 **Technical Notes:**
+
 - Web Audio API pattern: AudioContext -> OscillatorNode -> GainNode -> destination
 - Click sound: 1000Hz oscillator with 10ms duration and exponential gain ramp-down
 - Timing: Use `audioContext.currentTime` for precise scheduling
@@ -73,6 +77,7 @@ Assigned roles: frontend-engineer (all tasks)
 ### UI Components
 
 #### Task Group 2: Metronome UI Controls
+
 **Assigned implementer:** frontend-engineer
 **Dependencies:** Task Group 1
 
@@ -118,6 +123,7 @@ Assigned roles: frontend-engineer (all tasks)
     - Document results and any issues found
 
 **Acceptance Criteria:**
+
 - All manual tests from checklist in 2.1 pass
 - MetronomeControls component renders correctly
 - Play/pause button toggles metronome state
@@ -128,6 +134,7 @@ Assigned roles: frontend-engineer (all tasks)
 - Component is exported via barrel export
 
 **Technical Notes:**
+
 - Reference component: ThemeToggle.tsx for button pattern
 - Reference component: AppNavigation.tsx for layout and styling
 - SVG icons: Use simple inline SVG for play (triangle) and pause (two bars)
@@ -139,6 +146,7 @@ Assigned roles: frontend-engineer (all tasks)
 ### Integration & Navigation
 
 #### Task Group 3: AppNavigation Integration
+
 **Assigned implementer:** frontend-engineer
 **Dependencies:** Task Group 2
 
@@ -173,6 +181,7 @@ Assigned roles: frontend-engineer (all tasks)
     - Document results and any issues found
 
 **Acceptance Criteria:**
+
 - All manual tests from checklist in 3.1 pass
 - MetronomeControls renders in AppNavigation between nav buttons and ThemeToggle
 - Layout maintains consistent spacing with existing elements
@@ -182,6 +191,7 @@ Assigned roles: frontend-engineer (all tasks)
 - No conflicts with existing navigation functionality
 
 **Technical Notes:**
+
 - AppNavigation is already stateless; metronome state lives in MetronomeControls
 - React component tree: AppNavigation wraps all pages, so metronome persists
 - Layout insertion point: Line 44-45 in current AppNavigation.tsx
@@ -192,6 +202,7 @@ Assigned roles: frontend-engineer (all tasks)
 ### Testing & Validation
 
 #### Task Group 4: Feature Testing & Quality Assurance
+
 **Assigned implementer:** frontend-engineer
 **Dependencies:** Task Groups 1-3
 
@@ -239,6 +250,7 @@ Assigned roles: frontend-engineer (all tasks)
     - Verify timing accuracy with external metronome app
 
 **Acceptance Criteria:**
+
 - All manual tests pass (approximately 15-25 test scenarios total)
 - No more than 10 additional test scenarios added by testing phase
 - All spec requirements validated and verified
@@ -250,6 +262,7 @@ Assigned roles: frontend-engineer (all tasks)
 - TypeScript strict mode compliance
 
 **Technical Notes:**
+
 - Testing approach: Manual testing only (no automated test framework)
 - Browser compatibility: Web Audio API supported in all modern browsers
 - Manual timing verification: Compare with external metronome app at various BPMs
@@ -290,18 +303,22 @@ Recommended implementation sequence:
 ## File Summary
 
 ### New Files Created
+
 1. `/Users/miha/Projects/me/caged-visualizer/src/shared/types/metronome.ts` - TypeScript type definitions
 2. `/Users/miha/Projects/me/caged-visualizer/src/shared/hooks/useMetronome.ts` - Web Audio API hook
 3. `/Users/miha/Projects/me/caged-visualizer/src/shared/components/MetronomeControls.tsx` - UI component
 
 ### Modified Files
+
 1. `/Users/miha/Projects/me/caged-visualizer/src/shared/constants/magicNumbers.ts` - Add METRONOME_CONSTANTS
 2. `/Users/miha/Projects/me/caged-visualizer/src/shared/hooks/index.ts` - Export useMetronome
 3. `/Users/miha/Projects/me/caged-visualizer/src/shared/components/index.ts` - Export MetronomeControls
 4. `/Users/miha/Projects/me/caged-visualizer/src/shared/components/AppNavigation.tsx` - Add MetronomeControls
 
 ### Testing Approach
+
 **Manual Testing Only** - This project does not have an automated test framework. All testing is performed manually through:
+
 - Browser console verification
 - Manual user interaction testing
 - Cross-browser compatibility testing
@@ -313,13 +330,16 @@ Recommended implementation sequence:
 ## Implementation Notes
 
 ### TypeScript Path Aliases
+
 Use established path aliases for clean imports:
+
 - `@/shared/components` - Shared UI components
 - `@/shared/hooks` - Shared custom hooks
 - `@/shared/constants` - Shared constants
 - `@/shared/types` - Shared TypeScript types
 
 ### Code Quality Checklist
+
 - [ ] All TypeScript strict mode checks pass
 - [ ] ESLint passes with no warnings
 - [ ] Follow existing naming conventions (PascalCase components, camelCase hooks)
@@ -330,6 +350,7 @@ Use established path aliases for clean imports:
 - [ ] Dark mode support on all styled elements
 
 ### Web Audio API Best Practices
+
 - Initialize AudioContext only on user interaction (browser autoplay policy)
 - Use AudioContext.currentTime for precise timing (not Date.now())
 - Always disconnect and close AudioContext on component unmount
@@ -338,6 +359,7 @@ Use established path aliases for clean imports:
 - Set moderate volume (gain ~0.3) to avoid distortion
 
 ### Accessibility Requirements
+
 - Keyboard navigation: Tab between play button and BPM input
 - ARIA labels: Descriptive labels for all controls
 - Focus indicators: Visible focus ring on all interactive elements
@@ -345,6 +367,7 @@ Use established path aliases for clean imports:
 - Screen reader support: Controls announce current state
 
 ### Performance Considerations
+
 - Memoize expensive calculations (if any) with useMemo
 - Use useCallback for event handlers to prevent re-renders
 - Minimize re-renders by keeping state updates targeted
@@ -356,17 +379,20 @@ Use established path aliases for clean imports:
 ## Dependencies & Integration Points
 
 ### External Dependencies
+
 - **Web Audio API**: Built into all modern browsers (no npm package needed)
 - **React 19.1.1**: Uses latest React patterns
 - **TailwindCSS 4.1.12**: For styling utilities
 
 ### Internal Dependencies
+
 - Uses existing ThemeContext for dark mode detection (optional, TailwindCSS handles via `dark:`)
 - Uses existing NavigationContext (metronome persists due to AppNavigation staying mounted)
 - Follows patterns from ThemeToggle.tsx for button styling
 - Follows patterns from useTheme.ts for custom hook structure
 
 ### No Breaking Changes
+
 - All changes are additive (no modifications to existing component logic)
 - No changes to existing types or interfaces
 - No changes to existing navigation behavior
@@ -377,6 +403,7 @@ Use established path aliases for clean imports:
 ## Success Metrics
 
 ### Functional Success
+
 - [ ] Metronome starts and stops reliably on button click
 - [ ] BPM adjustments take effect immediately (or on next beat)
 - [ ] Audio clicks are audible, clear, and consistent
@@ -385,6 +412,7 @@ Use established path aliases for clean imports:
 - [ ] Metronome resets on browser refresh (no localStorage)
 
 ### Technical Success
+
 - [ ] No memory leaks from AudioContext (verified with dev tools)
 - [ ] No performance degradation when metronome is running
 - [ ] TypeScript strict mode compliance with no type errors
@@ -393,6 +421,7 @@ Use established path aliases for clean imports:
 - [ ] All tests pass (approximately 16-34 feature-specific tests)
 
 ### User Experience Success
+
 - [ ] Controls are intuitive and require no explanation
 - [ ] Click sound is clear and unobtrusive
 - [ ] Dark mode styling is consistent with app theme
@@ -401,6 +430,7 @@ Use established path aliases for clean imports:
 - [ ] No visual or audio glitches during operation
 
 ### Code Quality Success
+
 - [ ] ESLint passes with no warnings
 - [ ] Component follows single responsibility principle
 - [ ] Custom hook encapsulates complex logic cleanly

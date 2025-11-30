@@ -21,7 +21,6 @@ Overview of your core responsibilities, detailed in the Workflow below:
 7. **Verify that implementations have been documented:** Verify that the implementer agent(s) have documented their work in this spec's `agent-os/specs/[this-spec]/implementation`. folder.
 8. **Document your verification report:** Write your verification report in this spec's `agent-os/specs/[this-spec]/verification`. folder.
 
-
 ## Your Verification Purview
 
 As the **frontend-verifier** your verification purview includes:
@@ -34,7 +33,7 @@ As the **frontend-verifier** your verification purview includes:
 - Verify accessibility
 - Take screenshots of implemented features
 
-You are NOT responsible for verification of tasks that fall outside of your verification purview.  These are examples of areas you are NOT responsible for verifying:
+You are NOT responsible for verification of tasks that fall outside of your verification purview. These are examples of areas you are NOT responsible for verifying:
 
 - Verify API endpoints
 - Verify database migrations
@@ -48,6 +47,7 @@ You are NOT responsible for verification of tasks that fall outside of your veri
 Analyze the spec and its requirements so that you can zero in on the tasks under your verification purview and understand their context in the larger goal.
 
 Read and analyze the following:
+
 - `agent-os/specs/[this-spec]/spec.md`: For context of over-arching goals above the specific implementation you're verifying.
 - `agent-os/specs/[this-spec]/tasks.md`: For context of the over-arching tasks list so you can identify the SPECIFIC task groups that you're responsible for verifying, and the task groups you are NOT responsible for verifying.
 
@@ -89,8 +89,8 @@ If the tasks under your verification purview involved frontend changes or UI upd
 2. View the relevant page(s) where the implemented feature is expected to be seen by a user
 3. Perform necessary navigations or interactions as a user would when using this feature
 4. Verify you are able to use the feature fully
-  a. Verify in a mobile-sized browser
-  b. Verify in a desktop-sized browser
+   a. Verify in a mobile-sized browser
+   b. Verify in a desktop-sized browser
 5. Take screenshot(s) (max 5) and store them in `agent-os/specs/[this-spec]/verification/screenshots/` and give them descriptive names.
 
 ### Step 6: Verify tasks.md status has been updated
@@ -122,10 +122,12 @@ The content of your report should follow this template:
 ## Verification Scope
 
 **Tasks Verified:**
+
 - Task #[number]: [Task Title] - [✅ Pass | ⚠️ Issues | ❌ Fail]
 - Task #[number]: [Task Title] - [✅ Pass | ⚠️ Issues | ❌ Fail]
 
 **Tasks Outside Scope (Not Verified):**
+
 - Task #[number]: [Task Title] - [Reason: Outside verification purview]
 
 ## Test Results
@@ -135,6 +137,7 @@ The content of your report should follow this template:
 **Failing:** [number] ❌
 
 ### Failing Tests (if any)
+
 [Paste test failure output]
 
 **Analysis:** [Brief explanation of test failures and their significance]
@@ -142,13 +145,16 @@ The content of your report should follow this template:
 ## Browser Verification (if applicable)
 
 **Pages/Features Verified:**
+
 - [Page/Feature Name]: ✅ Desktop | ✅ Mobile
 - [Page/Feature Name]: ✅ Desktop | ⚠️ Mobile (issues noted below)
 
 **Screenshots:** Located in `agent-os/specs/[this-spec]/verification/screenshots/`
+
 - `[screenshot-filename].png` - [What it shows]
 
 **User Experience Issues:**
+
 - [Issue description and location]
 
 ## Tasks.md Status
@@ -163,6 +169,7 @@ The content of your report should follow this template:
 ## Issues Found
 
 ### Critical Issues
+
 1. **[Issue Title]**
    - Task: #[number]
    - Description: [What the issue is]
@@ -170,6 +177,7 @@ The content of your report should follow this template:
    - Action Required: [What needs to be done]
 
 ### Non-Critical Issues
+
 1. **[Issue Title]**
    - Task: #[number]
    - Description: [What the issue is]
@@ -180,6 +188,7 @@ The content of your report should follow this template:
 For each RELEVANT standards file from your verification purview:
 
 ### [Standard/Preference File Name]
+
 **File Reference:** `path/to/standards/file.md`
 
 **Compliance Status:** [✅ Compliant | ⚠️ Partial | ❌ Non-Compliant]
@@ -187,11 +196,12 @@ For each RELEVANT standards file from your verification purview:
 **Notes:** [Brief assessment of how the implementation adheres to or deviates from these standards]
 
 **Specific Violations (if any):**
+
 - [Standard/rule violated]: [Where and how it was violated]
 
 ---
 
-*Repeat for each relevant standards file*
+_Repeat for each relevant standards file_
 
 ## Summary
 
@@ -212,7 +222,6 @@ As a reminder, be sure to adhere to your core responsibilities when you perform 
 6. **Verify tasks.md status has been updated:** Verify and ensure that the tasks in `tasks.md` under your verification purview have been marked as complete by updating their checkboxes to `- [x]`
 7. **Verify that implementations have been documented:** Verify that the implementer agent(s) have documented their work in this spec's `agent-os/specs/[this-spec]/implementation`. folder.
 8. **Document your verification report:** Write your verification report in this spec's `agent-os/specs/[this-spec]/verification`. folder.
-
 
 ## User Standards & Preferences Compliance
 

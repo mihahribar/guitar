@@ -1,6 +1,7 @@
 # Spec Requirements: Rhythm Game
 
 ## Initial Description
+
 Create a Rhythm Game that has a simple 2x2 grid, each panel is a 1/4 of a 4/4 rhythm. Each panel has combinations of notes (1 quarter, 2 eighths, 4 sixteenths, 3 triplets, and any combinations of all those that make sense). Before the game starts the user can select a BPM tempo using the built-in metronome feature. User can either pick combination for each panel, randomize it, and even a mode where on each cycle one panel randomly changes. There is no need to record the user, but there should be an option to "play" the tempo (but the default is to just cycle through panels). Based on the metronome speed, the panels should light up so the user knows which notes are supposed to be played.
 
 **Context:**
@@ -35,6 +36,7 @@ This is for the CAGED Visualizer project - a React + TypeScript guitar learning 
 **Answer:** Main nav button (add button to main navigation bar alongside Quiz)
 
 ### Existing Code to Reference
+
 - **Metronome feature**: `src/shared/hooks/useMetronome.ts` - Web Audio API implementation for timing and click sounds
 - **MetronomeControls**: `src/shared/components/MetronomeControls.tsx` - UI controls for metronome
 - **AppNavigation**: `src/shared/components/AppNavigation.tsx` - Navigation bar where new button will be added
@@ -42,19 +44,23 @@ This is for the CAGED Visualizer project - a React + TypeScript guitar learning 
 - **Navigation context**: `src/contexts/NavigationContext.tsx` - For adding new page route
 
 ### Follow-up Questions
+
 None required.
 
 ## Visual Assets
 
 ### Files Provided:
+
 No visual assets provided.
 
 ### Visual Insights:
+
 No visual assets to analyze.
 
 ## Requirements Summary
 
 ### Functional Requirements
+
 - **2x2 Grid Layout**: Four panels arranged in a grid, each representing one beat of a 4/4 measure
 - **Note Pattern Display**: Standard music notation symbols for rhythm patterns
 - **Pattern Selection**: User can manually select pattern for each panel
@@ -66,7 +72,9 @@ No visual assets to analyze.
 - **Cycle Looping**: Continuously cycles through panels 1-2-3-4 and repeats
 
 ### Note Pattern Options
+
 All mathematically valid combinations that equal one beat, including:
+
 - **Quarter note**: 1 note filling the beat
 - **Eighth notes**: 2 equal subdivisions
 - **Sixteenth notes**: 4 equal subdivisions
@@ -75,12 +83,14 @@ All mathematically valid combinations that equal one beat, including:
 - **Rests**: Any pattern can include rest values (e.g., eighth + eighth-rest)
 
 ### Non-Functional Requirements
+
 - **Performance**: Smooth visual transitions synced to BPM
 - **Timing Accuracy**: Panel changes precisely aligned with metronome timing
 - **Simplicity**: Clean, focused UI without unnecessary complexity
 - **Accessibility**: Clear visual feedback for current beat
 
 ### UI/UX Requirements
+
 - **Placement**: Separate page accessible from main navigation
 - **Navigation**: New button in nav bar alongside Quiz button
 - **Layout**: 2x2 grid centered on page with controls below/beside
@@ -97,12 +107,14 @@ All mathematically valid combinations that equal one beat, including:
 - **Dark Mode**: Full dark mode support using existing theme system
 
 ### State Management
+
 - **No Persistence**: State resets on page reload
 - **No localStorage**: All state in memory only
 - **Component State**: Local state for panel patterns, play state, mode toggles
 - **Metronome Integration**: Read BPM from existing metronome, use its audio engine
 
 ### Interaction Requirements
+
 - **No User Recording**: Does not listen to or record user input
 - **No Scoring**: Not evaluating user performance
 - **Visual Only by Default**: Default mode just shows visual cycling
@@ -111,6 +123,7 @@ All mathematically valid combinations that equal one beat, including:
 ### Scope Boundaries
 
 **In Scope:**
+
 - 2x2 grid with 4 rhythm panels
 - Standard music notation display
 - Manual pattern selection per panel
@@ -124,6 +137,7 @@ All mathematically valid combinations that equal one beat, including:
 - Rest patterns included as options
 
 **Out of Scope:**
+
 - User input recording or detection
 - Scoring or performance evaluation
 - localStorage persistence
@@ -136,6 +150,7 @@ All mathematically valid combinations that equal one beat, including:
 - Mobile-specific optimizations
 
 ### Technical Considerations
+
 - **System Architecture**: Create new `src/systems/rhythm-game/` module following existing patterns
 - **Metronome Hook**: Leverage existing `useMetronome` hook for timing and audio
 - **Music Theory**: Need rhythm calculation utilities for valid pattern combinations
@@ -145,6 +160,7 @@ All mathematically valid combinations that equal one beat, including:
 - **Navigation**: Add route and nav button following Quiz pattern
 
 ### Implementation Notes
+
 - Pattern combinations must mathematically equal exactly one beat
 - Triplets divide the beat into 3 equal parts (not compatible with binary subdivisions in same panel)
 - Consider using a music notation library or custom SVG components
@@ -153,6 +169,7 @@ All mathematically valid combinations that equal one beat, including:
 - Metronome must be running for cycling to work (or auto-start when user starts game)
 
 ### Future Enhancement Potential
+
 - Different time signatures (3/4, 6/8)
 - More panels (3x3 grid for longer patterns)
 - Tap-along mode with accuracy feedback

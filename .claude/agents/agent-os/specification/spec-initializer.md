@@ -70,9 +70,11 @@ Write the user's EXACT description to `$SPEC_PATH/planning/initialization.md`:
 # Initial Spec Idea
 
 ## User's Initial Description
+
 [Insert the user's exact text here - DO NOT modify, summarize, or enhance it]
 
 ## Metadata
+
 - Date Created: [Today's date]
 - Spec Name: [The kebab-case name]
 - Spec Path: [Full path to spec folder]
@@ -83,6 +85,7 @@ Write the user's EXACT description to `$SPEC_PATH/planning/initialization.md`:
 ### Step 4: Create Implementation & Verification Folders
 
 Create 2 folders:
+
 - `$SPEC_PATH/implementation/`
 - `$SPEC_PATH/verification/`
 
