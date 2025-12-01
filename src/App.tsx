@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import CAGEDVisualizer from '@/systems/caged/components/CAGEDVisualizer';
 import { AppNavigation, LoadingFallback } from '@/shared/components';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { NavigationProvider } from './contexts/NavigationContext';
 import { useNavigation } from './hooks/useNavigation';
@@ -21,16 +22,24 @@ function AppContent() {
 
       {/* Main Content */}
       <main>
-        {currentPage === 'caged' && <CAGEDVisualizer />}
+        {currentPage === 'caged' && (
+          <ErrorBoundary componentName="CAGEDVisualizer">
+            <CAGEDVisualizer />
+          </ErrorBoundary>
+        )}
         {currentPage === 'quiz' && (
-          <Suspense fallback={<LoadingFallback message="Loading quiz..." size="large" />}>
-            <QuizPage />
-          </Suspense>
+          <ErrorBoundary componentName="QuizPage">
+            <Suspense fallback={<LoadingFallback message="Loading quiz..." size="large" />}>
+              <QuizPage />
+            </Suspense>
+          </ErrorBoundary>
         )}
         {currentPage === 'rhythm' && (
-          <Suspense fallback={<LoadingFallback message="Loading rhythm game..." size="large" />}>
-            <RhythmPage />
-          </Suspense>
+          <ErrorBoundary componentName="RhythmPage">
+            <Suspense fallback={<LoadingFallback message="Loading rhythm game..." size="large" />}>
+              <RhythmPage />
+            </Suspense>
+          </ErrorBoundary>
         )}
       </main>
     </div>

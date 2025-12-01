@@ -328,3 +328,75 @@ export const useSafeStorage = () => {
     setJSON: safeSetJSON,
   };
 };
+
+/**
+ * Synchronous localStorage utilities for simple use cases
+ * These are simpler versions without retry logic, suitable for theme persistence etc.
+ */
+
+/**
+ * Get an item from localStorage synchronously with fallback
+ * @param key - Storage key
+ * @returns Stored value or null if not found or on error
+ */
+export function getStoredItem(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    console.warn(`Failed to read from localStorage: ${key}`, error);
+    return null;
+  }
+}
+
+/**
+ * Set an item in localStorage synchronously with fallback
+ * @param key - Storage key
+ * @param value - Value to store
+ */
+export function setStoredItem(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch (error) {
+    console.warn(`Failed to write to localStorage: ${key}`, error);
+  }
+}
+
+/**
+ * Remove an item from localStorage synchronously
+ * @param key - Storage key
+ */
+export function removeStoredItem(key: string): void {
+  try {
+    localStorage.removeItem(key);
+  } catch (error) {
+    console.warn(`Failed to remove from localStorage: ${key}`, error);
+  }
+}
+
+/**
+ * Get and parse JSON from localStorage synchronously
+ * @param key - Storage key
+ * @returns Parsed object or null if not found or on error
+ */
+export function getStoredJSON<T>(key: string): T | null {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : null;
+  } catch (error) {
+    console.warn(`Failed to read/parse JSON from localStorage: ${key}`, error);
+    return null;
+  }
+}
+
+/**
+ * Stringify and set JSON in localStorage synchronously
+ * @param key - Storage key
+ * @param value - Value to serialize and store
+ */
+export function setStoredJSON<T>(key: string, value: T): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.warn(`Failed to write/stringify JSON to localStorage: ${key}`, error);
+  }
+}
