@@ -53,6 +53,8 @@ export default function CAGEDVisualizer() {
     showAllShapes,
     showPentatonic,
     showAllNotes,
+    showScale,
+    selectedScale,
   } = state;
 
   // Use custom hooks for music theory logic and calculations
@@ -63,9 +65,10 @@ export default function CAGEDVisualizer() {
     getShapesAtPosition,
     createGradientStyle,
     isPentatonicNote,
+    isScaleNote,
     getNoteNameAtFret,
     shouldShowNoteName,
-  } = useCAGEDLogic(selectedChord, chordQuality, cagedSequence);
+  } = useCAGEDLogic(selectedChord, chordQuality, cagedSequence, selectedScale);
   const currentShape = cagedSequence[currentPosition];
 
   // Check if a dot should be shown at this position
@@ -146,6 +149,40 @@ export default function CAGEDVisualizer() {
     [isPentatonicNote, showAllShapes, shapePositions, currentShape, chordQuality]
   );
 
+  // Check if a scale dot should be shown at this position
+  const shouldShowScaleDot = useCallback(
+    (stringIndex: number, fretNumber: number) => {
+      if (!isScaleNote(stringIndex, fretNumber)) {
+        return false;
+      }
+
+      // If showing all shapes, show all scale notes across entire fretboard
+      if (showAllShapes) {
+        return true;
+      }
+
+      // When showing single shape, scope to shape's fret range ±2 frets
+      const basePosition = shapePositions[currentShape];
+      const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][currentShape];
+      const shapeFrets = shape.pattern
+        .map((fret: number) => {
+          if (fret === -1) return -1;
+          if (fret === 0 && basePosition === 0) return 0;
+          if (fret === 0 && basePosition > 0) return basePosition;
+          return fret + basePosition;
+        })
+        .filter((f: number) => f >= 0);
+
+      if (shapeFrets.length === 0) return false;
+
+      const minFret = Math.max(0, Math.min(...shapeFrets) - 2);
+      const maxFret = Math.max(...shapeFrets) + 2;
+
+      return fretNumber >= minFret && fretNumber <= maxFret;
+    },
+    [isScaleNote, showAllShapes, shapePositions, currentShape, chordQuality]
+  );
+
   const nextPosition = useCallback(() => {
     actions.nextPosition(cagedSequence.length);
   }, [actions, cagedSequence.length]);
@@ -164,6 +201,7 @@ export default function CAGEDVisualizer() {
     onToggleShowAllShapes: actions.toggleShowAllShapes,
     onToggleShowPentatonic: actions.toggleShowPentatonic,
     onToggleShowAllNotes: actions.toggleShowAllNotes,
+    onToggleShowScale: actions.toggleShowScale,
   });
 
   return (
@@ -193,6 +231,8 @@ export default function CAGEDVisualizer() {
         shouldShowOverlayDot={shouldShowPentatonicDot}
         shouldShowNoteName={shouldShowNoteName}
         getNoteNameAtFret={getNoteNameAtFret}
+        showScaleOverlay={showScale}
+        shouldShowScaleDot={shouldShowScaleDot}
         ariaLabel={`Guitar fretboard showing ${selectedChord} ${chordQuality} chord${showAllShapes ? ' in all CAGED positions' : ''}`}
         keyNoteIndicator="R"
       />
@@ -203,9 +243,13 @@ export default function CAGEDVisualizer() {
         showAllShapes={showAllShapes}
         showPentatonic={showPentatonic}
         showAllNotes={showAllNotes}
+        showScale={showScale}
+        selectedScale={selectedScale}
         onToggleShowAllShapes={actions.toggleShowAllShapes}
         onToggleShowPentatonic={actions.toggleShowPentatonic}
         onToggleShowAllNotes={actions.toggleShowAllNotes}
+        onToggleShowScale={actions.toggleShowScale}
+        onSetScaleType={actions.setScaleType}
       />
     </div>
   );

@@ -1,11 +1,15 @@
 import { useMemo } from 'react';
 import type { ChordType, ChordQuality } from '@/shared/types/core';
+import type { ScaleType } from '../types';
 import { CHROMATIC_VALUES, CAGED_SHAPES_BY_QUALITY } from '../constants';
+import { SCALE_DEFINITIONS } from '../constants/scales';
 import {
   getNoteNameAtFret,
   shouldShowNoteName,
   isPentatonicNote,
   getPentatonicPositions,
+  isScaleNote,
+  getScalePositions,
 } from '@/shared/utils/musicTheory';
 import { getPentatonicIntervals } from '@/shared/utils/chordUtils';
 
@@ -55,7 +59,8 @@ import { getPentatonicIntervals } from '@/shared/utils/chordUtils';
 export function useCAGEDLogic(
   selectedChord: ChordType,
   chordQuality: ChordQuality,
-  cagedSequence: string[]
+  cagedSequence: string[],
+  selectedScale: ScaleType = 'major'
 ) {
   // Get the appropriate shape data based on chord quality (major vs minor patterns)
   const shapeData = useMemo(() => CAGED_SHAPES_BY_QUALITY[chordQuality], [chordQuality]);
@@ -161,6 +166,23 @@ export function useCAGEDLogic(
     };
   }, [selectedChord, chordQuality]);
 
+  // Scale note detection using selected scale type
+  const isScaleNoteAtPosition = useMemo(() => {
+    const rootNote = CHROMATIC_VALUES[selectedChord];
+    const intervals = SCALE_DEFINITIONS[selectedScale].intervals;
+
+    return (stringIndex: number, fretNumber: number) => {
+      return isScaleNote(stringIndex, fretNumber, rootNote, intervals);
+    };
+  }, [selectedChord, selectedScale]);
+
+  // All scale positions across the fretboard
+  const allScalePositions = useMemo(() => {
+    const rootNote = CHROMATIC_VALUES[selectedChord];
+    const intervals = SCALE_DEFINITIONS[selectedScale].intervals;
+    return getScalePositions(rootNote, intervals);
+  }, [selectedChord, selectedScale]);
+
   // Use shared pentatonic positions utility
   const allPentatonicPositions = useMemo(() => {
     const rootNote = CHROMATIC_VALUES[selectedChord];
@@ -175,6 +197,8 @@ export function useCAGEDLogic(
     createGradientStyle,
     isPentatonicNote: isPentatonicNoteAtPosition,
     getPentatonicPositions: allPentatonicPositions,
+    isScaleNote: isScaleNoteAtPosition,
+    getScalePositions: allScalePositions,
     getNoteNameAtFret,
     shouldShowNoteName,
   };

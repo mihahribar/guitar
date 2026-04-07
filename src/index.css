@@ -40,3 +40,17 @@ body {
 .fret-cell {
   height: 2rem;
 }
+
+/* Stacked ring colors for fretboard dots (key note, pentatonic, scale).
+   Used with box-shadow to layer multiple rings on a single dot. */
+.fretboard-rings {
+  --ring-key: #1f2937; /* gray-800 */
+  --ring-pent: #16a34a; /* green-600 */
+  --ring-scale: #7c3aed; /* violet-600 */
+}
+
+.dark .fretboard-rings {
+  --ring-key: #e5e7eb; /* gray-200 */
+  --ring-pent: #22c55e; /* green-500 */
+  --ring-scale: #8b5cf6; /* violet-500 */
+}

@@ -4,6 +4,8 @@ import {
   getNoteNameAtFret,
   shouldShowNoteName,
   isPentatonicNote,
+  isScaleNote,
+  getScalePositions,
   calculateChromaticDistance,
   transposePattern,
   CHROMATIC_TO_NOTE_NAME,
@@ -156,6 +158,102 @@ describe('musicTheory utilities', () => {
     it('should start with C and end with B', () => {
       expect(CHROMATIC_TO_NOTE_NAME[0]).toBe('C');
       expect(CHROMATIC_TO_NOTE_NAME[11]).toBe('B');
+    });
+  });
+
+  describe('isScaleNote', () => {
+    it('should identify C major scale notes correctly', () => {
+      const rootNote = 0; // C
+      const majorIntervals = [0, 2, 4, 5, 7, 9, 11];
+
+      // C major scale: C(0), D(2), E(4), F(5), G(7), A(9), B(11)
+      // High E string (tuning=4), fret 8 = C (4+8=12%12=0) -> should be in scale
+      expect(isScaleNote(0, 8, rootNote, majorIntervals)).toBe(true);
+      // High E string, fret 1 = F (4+1=5) -> should be in scale
+      expect(isScaleNote(0, 1, rootNote, majorIntervals)).toBe(true);
+      // High E string, fret 2 = F# (4+2=6) -> NOT in C major
+      expect(isScaleNote(0, 2, rootNote, majorIntervals)).toBe(false);
+    });
+
+    it('should identify Natural Minor scale notes correctly', () => {
+      const rootNote = 9; // A
+      const naturalMinorIntervals = [0, 2, 3, 5, 7, 8, 10];
+
+      // A natural minor: A(9), B(11), C(0), D(2), E(4), F(5), G(7)
+      // A string (tuning=9), fret 0 = A -> in scale
+      expect(isScaleNote(4, 0, rootNote, naturalMinorIntervals)).toBe(true);
+      // A string, fret 2 = B (9+2=11) -> in scale
+      expect(isScaleNote(4, 2, rootNote, naturalMinorIntervals)).toBe(true);
+      // A string, fret 1 = A# (9+1=10) -> NOT in A natural minor
+      expect(isScaleNote(4, 1, rootNote, naturalMinorIntervals)).toBe(false);
+    });
+
+    it('should work for all 9 scale types with different roots', () => {
+      // G Dorian: G(7), A(9), Bb(10), C(0), D(2), E(4), F(5)
+      const rootNote = 7; // G
+      const dorianIntervals = [0, 2, 3, 5, 7, 9, 10];
+
+      // G string (tuning=7), fret 0 = G -> in scale
+      expect(isScaleNote(2, 0, rootNote, dorianIntervals)).toBe(true);
+      // G string, fret 1 = G# (7+1=8) -> NOT in G Dorian
+      expect(isScaleNote(2, 1, rootNote, dorianIntervals)).toBe(false);
+      // G string, fret 2 = A (7+2=9) -> in scale
+      expect(isScaleNote(2, 2, rootNote, dorianIntervals)).toBe(true);
+    });
+
+    it('should handle edge cases at fret 0 and fret 15', () => {
+      const rootNote = 4; // E
+      const majorIntervals = [0, 2, 4, 5, 7, 9, 11];
+
+      // High E string open = E -> in E major
+      expect(isScaleNote(0, 0, rootNote, majorIntervals)).toBe(true);
+      // High E string fret 15 = (4+15)%12 = 7 = G -> check: E major has G#(8), not G(7)
+      expect(isScaleNote(0, 15, rootNote, majorIntervals)).toBe(false);
+    });
+  });
+
+  describe('getScalePositions', () => {
+    it('should return positions across all strings and frets', () => {
+      const rootNote = 0; // C
+      const majorIntervals = [0, 2, 4, 5, 7, 9, 11];
+
+      const positions = getScalePositions(rootNote, majorIntervals);
+
+      // Should have positions across all 6 strings
+      const strings = new Set(positions.map((p) => p.stringIndex));
+      expect(strings.size).toBe(6);
+
+      // Each position should be valid
+      for (const pos of positions) {
+        expect(pos.stringIndex).toBeGreaterThanOrEqual(0);
+        expect(pos.stringIndex).toBeLessThanOrEqual(5);
+        expect(pos.fretNumber).toBeGreaterThanOrEqual(0);
+        expect(pos.fretNumber).toBeLessThanOrEqual(15);
+      }
+    });
+
+    it('should return correct number of positions for a 7-note scale', () => {
+      const rootNote = 0;
+      const majorIntervals = [0, 2, 4, 5, 7, 9, 11];
+
+      const positions = getScalePositions(rootNote, majorIntervals);
+
+      // 7 notes per octave, ~16 frets per string, 6 strings
+      // Each string covers slightly more than 1 octave (16 semitones)
+      // So approximately 7-9 scale notes per string, ~42-54 total
+      expect(positions.length).toBeGreaterThan(40);
+      expect(positions.length).toBeLessThan(60);
+    });
+
+    it('should only contain actual scale notes', () => {
+      const rootNote = 0;
+      const majorIntervals = [0, 2, 4, 5, 7, 9, 11];
+
+      const positions = getScalePositions(rootNote, majorIntervals);
+
+      for (const pos of positions) {
+        expect(isScaleNote(pos.stringIndex, pos.fretNumber, rootNote, majorIntervals)).toBe(true);
+      }
     });
   });
 

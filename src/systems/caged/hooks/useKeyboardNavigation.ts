@@ -9,6 +9,7 @@ interface UseKeyboardNavigationProps {
   onToggleShowAllShapes: () => void;
   onToggleShowPentatonic: () => void;
   onToggleShowAllNotes: () => void;
+  onToggleShowScale: () => void;
 }
 
 /**
@@ -64,6 +65,7 @@ export function useKeyboardNavigation({
   onToggleShowAllShapes,
   onToggleShowPentatonic,
   onToggleShowAllNotes,
+  onToggleShowScale,
 }: UseKeyboardNavigationProps) {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -115,6 +117,12 @@ export function useKeyboardNavigation({
           event.preventDefault();
           onToggleShowAllNotes();
           break;
+        case 'm':
+        case 'M':
+          if (event.ctrlKey || event.metaKey) return;
+          event.preventDefault();
+          onToggleShowScale();
+          break;
       }
     };
 
@@ -129,5 +137,6 @@ export function useKeyboardNavigation({
     onToggleShowAllShapes,
     onToggleShowPentatonic,
     onToggleShowAllNotes,
+    onToggleShowScale,
   ]);
 }

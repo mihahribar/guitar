@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import type { ChordType, ChordQuality } from '../types';
+import type { ChordType, ChordQuality, ScaleType } from '../types';
+import { SCALE_DEFINITIONS } from '../constants/scales';
 
 interface ViewModeTogglesProps {
   selectedChord: ChordType;
@@ -7,9 +8,13 @@ interface ViewModeTogglesProps {
   showAllShapes: boolean;
   showPentatonic: boolean;
   showAllNotes: boolean;
+  showScale: boolean;
+  selectedScale: ScaleType;
   onToggleShowAllShapes: () => void;
   onToggleShowPentatonic: () => void;
   onToggleShowAllNotes: () => void;
+  onToggleShowScale: () => void;
+  onSetScaleType: (scaleType: ScaleType) => void;
 }
 
 function ViewModeToggles({
@@ -18,9 +23,13 @@ function ViewModeToggles({
   showAllShapes,
   showPentatonic,
   showAllNotes,
+  showScale,
+  selectedScale,
   onToggleShowAllShapes,
   onToggleShowPentatonic,
   onToggleShowAllNotes,
+  onToggleShowScale,
+  onSetScaleType,
 }: ViewModeTogglesProps) {
   return (
     <div className="mt-6">
@@ -96,6 +105,64 @@ function ViewModeToggles({
               {showAllNotes ? 'ON' : 'OFF'}
             </span>
           </div>
+
+          {/* Scale Overlay Toggle */}
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-700 dark:text-gray-300">Scale</span>
+            <button
+              onClick={onToggleShowScale}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 ${
+                showScale ? 'bg-violet-600 dark:bg-violet-500' : 'bg-gray-200 dark:bg-gray-600'
+              }`}
+              aria-pressed={showScale}
+              aria-label={
+                showScale ? 'Hide scale overlay on fretboard' : 'Show scale overlay on fretboard'
+              }
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+                  showScale ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+            {showScale && (
+              <select
+                value={selectedScale}
+                onChange={(e) => onSetScaleType(e.target.value as ScaleType)}
+                className="text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                aria-label="Select scale type"
+              >
+                <optgroup label="Major">
+                  {Object.entries(SCALE_DEFINITIONS)
+                    .filter(([, def]) => def.category === 'major')
+                    .map(([key, def]) => (
+                      <option key={key} value={key}>
+                        {def.name}
+                      </option>
+                    ))}
+                </optgroup>
+                <optgroup label="Minor">
+                  {Object.entries(SCALE_DEFINITIONS)
+                    .filter(([, def]) => def.category === 'minor')
+                    .map(([key, def]) => (
+                      <option key={key} value={key}>
+                        {def.name}
+                      </option>
+                    ))}
+                </optgroup>
+                <optgroup label="Modes">
+                  {Object.entries(SCALE_DEFINITIONS)
+                    .filter(([, def]) => def.category === 'mode')
+                    .map(([key, def]) => (
+                      <option key={key} value={key}>
+                        {def.name}
+                      </option>
+                    ))}
+                </optgroup>
+              </select>
+            )}
+            {!showScale && <span className="text-xs text-gray-500 dark:text-gray-400">OFF</span>}
+          </div>
         </div>
       </section>
 
@@ -139,6 +206,17 @@ function ViewModeToggles({
             </p>
             <p className="text-xs">
               Letter labels: natural notes (E,F,G,A,B,C,D) on all fret positions
+            </p>
+          </div>
+        )}
+
+        {showScale && (
+          <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
+            <p className="font-medium text-violet-600 dark:text-violet-400 text-sm">
+              {selectedChord} {SCALE_DEFINITIONS[selectedScale].name} Scale Active
+            </p>
+            <p className="text-xs">
+              Purple dots: scale notes • Split colors: chord + scale overlap
             </p>
           </div>
         )}

@@ -6,9 +6,10 @@
  */
 
 import type { ChordType, ChordQuality, MusicShape, ShapesByQuality } from '@/shared/types/core';
+import type { ScaleType } from '../constants/scales';
 
 // Re-export shared types for CAGED system use
-export type { ChordType, ChordQuality };
+export type { ChordType, ChordQuality, ScaleType };
 
 /**
  * Individual CAGED chord shape definition
@@ -61,6 +62,10 @@ export interface CAGEDState {
   showPentatonic: boolean;
   /** Whether to show all note names */
   showAllNotes: boolean;
+  /** Whether to show scale overlay */
+  showScale: boolean;
+  /** Currently selected scale type */
+  selectedScale: ScaleType;
 }
 
 /**
@@ -88,9 +93,13 @@ export interface CAGEDViewModeProps {
   showAllShapes: boolean;
   showPentatonic: boolean;
   showAllNotes: boolean;
+  showScale: boolean;
+  selectedScale: ScaleType;
   onToggleShowAllShapes: () => void;
   onToggleShowPentatonic: () => void;
   onToggleShowAllNotes: () => void;
+  onToggleShowScale: () => void;
+  onSetScaleType: (scaleType: ScaleType) => void;
 }
 
 /**

@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { useCAGEDLogic } from '../useCAGEDLogic';
 import type { ChordType, ChordQuality } from '@/shared/types/core';
+import type { ScaleType } from '../../constants/scales';
 
 describe('useCAGEDLogic', () => {
   describe('shape positions', () => {
@@ -308,6 +309,70 @@ describe('useCAGEDLogic', () => {
         expect(pos.fretNumber).toBeGreaterThanOrEqual(0);
         expect(pos.fretNumber).toBeLessThanOrEqual(15);
       });
+    });
+  });
+
+  describe('scale notes', () => {
+    it('should provide isScaleNote function', () => {
+      const { result } = renderHook(() => useCAGEDLogic('C', 'major', ['C'], 'major'));
+      expect(typeof result.current.isScaleNote).toBe('function');
+    });
+
+    it('should identify C major scale notes correctly', () => {
+      const { result } = renderHook(() => useCAGEDLogic('C', 'major', ['C'], 'major'));
+
+      // C is in C major scale: high E string fret 8 = C (4+8=12%12=0)
+      expect(result.current.isScaleNote(0, 8)).toBe(true);
+      // F# is NOT in C major: high E string fret 2 = F# (4+2=6)
+      expect(result.current.isScaleNote(0, 2)).toBe(false);
+    });
+
+    it('should identify Dorian scale notes correctly', () => {
+      const { result } = renderHook(() => useCAGEDLogic('C', 'major', ['C'], 'dorian'));
+
+      // C Dorian: C(0) D(2) Eb(3) F(5) G(7) A(9) Bb(10)
+      // High E string fret 8 = C -> in scale
+      expect(result.current.isScaleNote(0, 8)).toBe(true);
+      // High E string fret 9 = C# (1) -> NOT in C Dorian
+      expect(result.current.isScaleNote(0, 9)).toBe(false);
+    });
+
+    it('should return scale positions array', () => {
+      const { result } = renderHook(() => useCAGEDLogic('C', 'major', ['C'], 'major'));
+
+      const positions = result.current.getScalePositions;
+      expect(Array.isArray(positions)).toBe(true);
+      expect(positions.length).toBeGreaterThan(40);
+
+      positions.forEach((pos) => {
+        expect(pos.stringIndex).toBeGreaterThanOrEqual(0);
+        expect(pos.stringIndex).toBeLessThan(6);
+        expect(pos.fretNumber).toBeGreaterThanOrEqual(0);
+        expect(pos.fretNumber).toBeLessThanOrEqual(15);
+      });
+    });
+
+    it('should update scale notes when scale type changes', () => {
+      const { result, rerender } = renderHook(
+        ({ chord, quality, sequence, scale }) => useCAGEDLogic(chord, quality, sequence, scale),
+        {
+          initialProps: {
+            chord: 'C' as ChordType,
+            quality: 'major' as ChordQuality,
+            sequence: ['C'],
+            scale: 'major' as ScaleType,
+          },
+        }
+      );
+
+      const majorPositions = result.current.getScalePositions;
+
+      rerender({ chord: 'C', quality: 'major', sequence: ['C'], scale: 'dorian' as ScaleType });
+
+      const dorianPositions = result.current.getScalePositions;
+
+      // Major and Dorian have different notes
+      expect(majorPositions).not.toEqual(dorianPositions);
     });
   });
 
