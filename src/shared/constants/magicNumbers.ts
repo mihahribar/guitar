@@ -9,14 +9,14 @@
  * Fretboard dimensions and musical constants
  */
 export const FRETBOARD_CONSTANTS = {
-  /** Total number of frets displayed on the fretboard (0-based, so 0-15 = 16 positions) */
-  TOTAL_FRETS: 15,
+  /** Total number of frets displayed on the fretboard (matches a standard 21-fret electric neck) */
+  TOTAL_FRETS: 21,
 
   /** Number of strings on a standard guitar */
   STRING_COUNT: 6,
 
   /** Maximum fret number for calculations */
-  MAX_FRET: 15,
+  MAX_FRET: 21,
 
   /** Number of semitones in an octave */
   CHROMATIC_OCTAVE: 12,
@@ -50,7 +50,7 @@ export const MUSIC_THEORY_CONSTANTS = {
  */
 export const UI_CONSTANTS = {
   /** Fret positions that should show position markers */
-  FRET_MARKERS: [3, 5, 7, 9, 12] as const,
+  FRET_MARKERS: [3, 5, 7, 9, 12, 15, 17, 19, 21] as const,
 
   /** Delay in milliseconds for quiz auto-progression */
   QUIZ_AUTO_ADVANCE_DELAY: 1000,
@@ -110,7 +110,7 @@ export const VALIDATION_CONSTANTS = {
   STRING_INDEX_BOUNDS: { MIN: 0, MAX: 5 } as const,
 
   /** Fret number bounds */
-  FRET_NUMBER_BOUNDS: { MIN: 0, MAX: 15 } as const,
+  FRET_NUMBER_BOUNDS: { MIN: 0, MAX: 21 } as const,
 } as const;
 
 /**

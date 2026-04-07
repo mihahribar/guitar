@@ -50,7 +50,7 @@ describe('musicTheory utilities', () => {
 
     it('should throw error for invalid fret number', () => {
       expect(() => getNoteAtFret(0, -1)).toThrow('Invalid fret number');
-      expect(() => getNoteAtFret(0, 16)).toThrow('Invalid fret number');
+      expect(() => getNoteAtFret(0, 22)).toThrow('Invalid fret number');
     });
   });
 
@@ -201,7 +201,7 @@ describe('musicTheory utilities', () => {
       expect(isScaleNote(2, 2, rootNote, dorianIntervals)).toBe(true);
     });
 
-    it('should handle edge cases at fret 0 and fret 15', () => {
+    it('should handle edge cases at fret 0 and fret 21', () => {
       const rootNote = 4; // E
       const majorIntervals = [0, 2, 4, 5, 7, 9, 11];
 
@@ -209,6 +209,8 @@ describe('musicTheory utilities', () => {
       expect(isScaleNote(0, 0, rootNote, majorIntervals)).toBe(true);
       // High E string fret 15 = (4+15)%12 = 7 = G -> check: E major has G#(8), not G(7)
       expect(isScaleNote(0, 15, rootNote, majorIntervals)).toBe(false);
+      // High E string fret 21 = (4+21)%12 = 1 = C# -> in E major (E major has C#)
+      expect(isScaleNote(0, 21, rootNote, majorIntervals)).toBe(true);
     });
   });
 
@@ -228,7 +230,7 @@ describe('musicTheory utilities', () => {
         expect(pos.stringIndex).toBeGreaterThanOrEqual(0);
         expect(pos.stringIndex).toBeLessThanOrEqual(5);
         expect(pos.fretNumber).toBeGreaterThanOrEqual(0);
-        expect(pos.fretNumber).toBeLessThanOrEqual(15);
+        expect(pos.fretNumber).toBeLessThanOrEqual(21);
       }
     });
 
@@ -238,11 +240,11 @@ describe('musicTheory utilities', () => {
 
       const positions = getScalePositions(rootNote, majorIntervals);
 
-      // 7 notes per octave, ~16 frets per string, 6 strings
-      // Each string covers slightly more than 1 octave (16 semitones)
-      // So approximately 7-9 scale notes per string, ~42-54 total
-      expect(positions.length).toBeGreaterThan(40);
-      expect(positions.length).toBeLessThan(60);
+      // 7 notes per octave, 22 fret positions per string (0-21), 6 strings
+      // Each string covers ~1.83 octaves, so ~12-13 scale notes per string,
+      // giving roughly 70-80 total positions across the neck.
+      expect(positions.length).toBeGreaterThan(60);
+      expect(positions.length).toBeLessThan(90);
     });
 
     it('should only contain actual scale notes', () => {

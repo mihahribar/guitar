@@ -11,10 +11,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Fretboard Grid Layout */
+/* Fretboard Grid Layout
+   The fretboard renders 21 equal-width fret cells plus a 2rem string-label column.
+   On wide containers the table fills the available width. Below ~788px it locks to a
+   minimum width so that each fret stays readable (~36px) and the parent scroll
+   wrapper takes over with horizontal panning. */
 .fretboard-grid {
   display: table;
   width: 100%;
+  min-width: calc(2rem + 21 * 36px);
   table-layout: fixed;
 }
 
@@ -30,7 +35,7 @@ body {
 
 .fretboard-grid th:not(:first-child),
 .fretboard-grid td:not(:first-child) {
-  width: calc((100% - 2rem) / 15);
+  width: calc((100% - 2rem) / 21);
 }
 
 .string-row {

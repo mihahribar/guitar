@@ -69,13 +69,25 @@ export interface CAGEDState {
 }
 
 /**
+ * A single playable position in the CAGED sequence: a chord shape together with the
+ * fret it's anchored at. The same shape can appear at multiple positions on a 21-fret
+ * neck (e.g. G shape at fret 0 and again at fret 12).
+ */
+export interface CAGEDPosition {
+  /** Which CAGED shape (C/A/G/E/D) */
+  shape: ChordType;
+  /** Base fret the shape is anchored at (0 = open form) */
+  basePosition: number;
+}
+
+/**
  * CAGED navigation props
  */
 export interface CAGEDNavigationProps {
   selectedChord: ChordType;
   chordQuality: ChordQuality;
   currentPosition: number;
-  cagedSequence: string[];
+  cagedSequence: readonly CAGEDPosition[];
   showAllShapes: boolean;
   onChordChange: (chord: ChordType) => void;
   onChordQualityChange: (quality: ChordQuality) => void;

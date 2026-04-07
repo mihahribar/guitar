@@ -31,7 +31,7 @@ interface UseKeyboardNavigationProps {
  *
  * @keyboardShortcuts
  * - Arrow Left/Right: Navigate between CAGED shapes (when not showing all)
- * - 1-5: Jump directly to CAGED shape position (when not showing all)
+ * - 1-9: Jump directly to CAGED shape position (when not showing all)
  * - Space: Toggle show all shapes mode
  * - S: Toggle pentatonic scale overlay
  * - N: Toggle all notes display
@@ -91,7 +91,11 @@ export function useKeyboardNavigation({
         case '2':
         case '3':
         case '4':
-        case '5': {
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9': {
           if (!showAllShapes) {
             event.preventDefault();
             const position = parseInt(event.key) - 1;

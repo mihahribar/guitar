@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { ChordType, ChordQuality } from '@/shared/types/core';
-import type { ScaleType } from '../types';
+import type { CAGEDPosition, ScaleType } from '../types';
 import { CHROMATIC_VALUES, CAGED_SHAPES_BY_QUALITY } from '../constants';
 import { SCALE_DEFINITIONS } from '../constants/scales';
 import {
@@ -59,7 +59,7 @@ import { getPentatonicIntervals } from '@/shared/utils/chordUtils';
 export function useCAGEDLogic(
   selectedChord: ChordType,
   chordQuality: ChordQuality,
-  cagedSequence: string[],
+  cagedSequence: readonly CAGEDPosition[],
   selectedScale: ScaleType = 'major'
 ) {
   // Get the appropriate shape data based on chord quality (major vs minor patterns)
@@ -107,16 +107,16 @@ export function useCAGEDLogic(
   const getShapesAtPosition = useMemo(
     () => (stringIndex: number, fretNumber: number) => {
       const shapesHere: string[] = [];
-      for (const shapeKey of cagedSequence) {
-        const basePosition = shapePositions[shapeKey];
-        const shapeFret = getShapeFret(shapeKey, stringIndex, basePosition);
-        if (shapeFret === fretNumber && shapeFret > 0) {
-          shapesHere.push(shapeKey);
+      // Iterate the full tuple sequence so octave-up repeats are honored too.
+      for (const { shape, basePosition } of cagedSequence) {
+        const shapeFret = getShapeFret(shape, stringIndex, basePosition);
+        if (shapeFret === fretNumber && shapeFret > 0 && !shapesHere.includes(shape)) {
+          shapesHere.push(shape);
         }
       }
       return shapesHere;
     },
-    [cagedSequence, shapePositions, getShapeFret]
+    [cagedSequence, getShapeFret]
   );
 
   /**

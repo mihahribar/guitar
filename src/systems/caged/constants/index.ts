@@ -111,16 +111,7 @@ export const CHROMATIC_VALUES: ChromaticValues = {
   D: 2,
 };
 
-// Natural starting shapes for each CAGED chord
-export const NATURAL_STARTING_SHAPES = {
-  C: 'C',
-  A: 'A',
-  G: 'G',
-  E: 'E',
-  D: 'D',
-} as const;
-
-// Complete CAGED sequence order
+// Complete CAGED sequence order — canonical iteration order for the five shapes.
 export const FULL_CAGED_SEQUENCE = ['C', 'A', 'G', 'E', 'D'] as const;
 
 // Pentatonic box patterns based on guitar theory diagrams

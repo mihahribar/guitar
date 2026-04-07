@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useCAGEDLogic } from '../hooks/useCAGEDLogic';
 import { useCAGEDSequence } from '../hooks/useCAGEDSequence';
 import { useCAGEDState } from '../hooks/useCAGEDState';
@@ -11,6 +11,23 @@ import {
   PENTATONIC_BOX_PATTERNS,
   CAGED_TO_PENTATONIC_BOX,
 } from '../constants';
+
+/**
+ * Expand a CAGED shape pattern into its absolute fret numbers.
+ * Returns only the playable (non-muted) frets, with the same offset semantics
+ * used throughout the visualizer (open string when basePosition === 0, otherwise
+ * the barre falls on basePosition).
+ */
+function expandShapeFrets(pattern: readonly number[], basePosition: number): number[] {
+  return pattern
+    .map((fret) => {
+      if (fret === -1) return -1;
+      if (fret === 0 && basePosition === 0) return 0;
+      if (fret === 0 && basePosition > 0) return basePosition;
+      return fret + basePosition;
+    })
+    .filter((f) => f >= 0);
+}
 
 /**
  * Main CAGED chord system visualizer component
@@ -60,7 +77,6 @@ export default function CAGEDVisualizer() {
   // Use custom hooks for music theory logic and calculations
   const cagedSequence = useCAGEDSequence(selectedChord);
   const {
-    shapePositions,
     getShapeFret,
     getShapesAtPosition,
     createGradientStyle,
@@ -69,7 +85,13 @@ export default function CAGEDVisualizer() {
     getNoteNameAtFret,
     shouldShowNoteName,
   } = useCAGEDLogic(selectedChord, chordQuality, cagedSequence, selectedScale);
-  const currentShape = cagedSequence[currentPosition];
+
+  // Active entry in the (extended) CAGED walk. The shape letter and the actual base
+  // fret both come from the tuple — the same shape can appear multiple times across
+  // the neck so we can't look base position up by shape letter alone.
+  const currentEntry = cagedSequence[currentPosition] ?? cagedSequence[0];
+  const currentShape = currentEntry.shape;
+  const currentBasePosition = currentEntry.basePosition;
 
   // Check if a dot should be shown at this position
   const shouldShowDot = useCallback(
@@ -78,12 +100,11 @@ export default function CAGEDVisualizer() {
         return getShapesAtPosition(stringIndex, fretNumber).length > 0;
       } else {
         // Show only current shape
-        const basePosition = shapePositions[currentShape];
-        const shapeFret = getShapeFret(currentShape, stringIndex, basePosition);
+        const shapeFret = getShapeFret(currentShape, stringIndex, currentBasePosition);
         return shapeFret === fretNumber && shapeFret > 0;
       }
     },
-    [showAllShapes, getShapesAtPosition, shapePositions, currentShape, getShapeFret]
+    [showAllShapes, getShapesAtPosition, currentShape, currentBasePosition, getShapeFret]
   );
 
   // Get color/style for a dot at this position
@@ -132,7 +153,6 @@ export default function CAGEDVisualizer() {
 
       // When showing single shape, use the specific pentatonic box pattern
       // that corresponds to the current CAGED shape
-      const basePosition = shapePositions[currentShape];
       const boxNumber = CAGED_TO_PENTATONIC_BOX[currentShape];
       const boxPattern = PENTATONIC_BOX_PATTERNS[chordQuality][boxNumber];
 
@@ -141,12 +161,12 @@ export default function CAGEDVisualizer() {
       }
 
       // Calculate the actual fret range for this pentatonic box
-      const boxStartFret = Math.max(0, basePosition + boxPattern.startFret);
-      const boxEndFret = basePosition + boxPattern.endFret;
+      const boxStartFret = Math.max(0, currentBasePosition + boxPattern.startFret);
+      const boxEndFret = currentBasePosition + boxPattern.endFret;
 
       return fretNumber >= boxStartFret && fretNumber <= boxEndFret;
     },
-    [isPentatonicNote, showAllShapes, shapePositions, currentShape, chordQuality]
+    [isPentatonicNote, showAllShapes, currentShape, currentBasePosition, chordQuality]
   );
 
   // Check if a scale dot should be shown at this position
@@ -162,16 +182,8 @@ export default function CAGEDVisualizer() {
       }
 
       // When showing single shape, scope to shape's fret range ±2 frets
-      const basePosition = shapePositions[currentShape];
       const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][currentShape];
-      const shapeFrets = shape.pattern
-        .map((fret: number) => {
-          if (fret === -1) return -1;
-          if (fret === 0 && basePosition === 0) return 0;
-          if (fret === 0 && basePosition > 0) return basePosition;
-          return fret + basePosition;
-        })
-        .filter((f: number) => f >= 0);
+      const shapeFrets = expandShapeFrets(shape.pattern, currentBasePosition);
 
       if (shapeFrets.length === 0) return false;
 
@@ -180,8 +192,19 @@ export default function CAGEDVisualizer() {
 
       return fretNumber >= minFret && fretNumber <= maxFret;
     },
-    [isScaleNote, showAllShapes, shapePositions, currentShape, chordQuality]
+    [isScaleNote, showAllShapes, currentShape, currentBasePosition, chordQuality]
   );
+
+  // Compute the horizontal scroll target for the fretboard: the center fret of the
+  // currently active CAGED shape. Skipped when "show all shapes" is on, since there is
+  // no single active shape to follow.
+  const activeCenterFret = useMemo(() => {
+    if (showAllShapes) return undefined;
+    const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][currentShape];
+    const frets = expandShapeFrets(shape.pattern, currentBasePosition);
+    if (frets.length === 0) return undefined;
+    return (Math.min(...frets) + Math.max(...frets)) / 2;
+  }, [showAllShapes, currentShape, currentBasePosition, chordQuality]);
 
   const nextPosition = useCallback(() => {
     actions.nextPosition(cagedSequence.length);
@@ -235,6 +258,7 @@ export default function CAGEDVisualizer() {
         shouldShowScaleDot={shouldShowScaleDot}
         ariaLabel={`Guitar fretboard showing ${selectedChord} ${chordQuality} chord${showAllShapes ? ' in all CAGED positions' : ''}`}
         keyNoteIndicator="R"
+        scrollToFret={activeCenterFret}
       />
 
       <ViewModeToggles

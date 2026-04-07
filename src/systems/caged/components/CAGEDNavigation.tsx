@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import type { ChordType, ChordQuality } from '../types';
+import type { ChordType, ChordQuality, CAGEDPosition } from '../types';
 import { CAGED_SHAPES_BY_QUALITY } from '../constants';
 import ChordQualityToggle from './ChordQualityToggle';
 
@@ -7,7 +7,7 @@ interface ConsolidatedNavigationProps {
   selectedChord: ChordType;
   chordQuality: ChordQuality;
   currentPosition: number;
-  cagedSequence: string[];
+  cagedSequence: readonly CAGEDPosition[];
   showAllShapes: boolean;
   onChordChange: (chord: ChordType) => void;
   onChordQualityChange: (quality: ChordQuality) => void;
@@ -111,10 +111,14 @@ function CAGEDNavigation({
               </button>
 
               {/* Shape Position Selector */}
-              <div className="flex gap-1.5" role="tablist" aria-label="CAGED shape selector">
-                {cagedSequence.map((shape, index) => (
+              <div
+                className="flex flex-wrap justify-center gap-1.5"
+                role="tablist"
+                aria-label="CAGED shape selector"
+              >
+                {cagedSequence.map(({ shape, basePosition }, index) => (
                   <button
-                    key={shape}
+                    key={`${shape}-${basePosition}`}
                     onClick={() => onSetPosition(index)}
                     className={`relative w-10 h-10 rounded-md text-white text-sm font-bold transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none cursor-pointer ${
                       index === currentPosition
@@ -124,10 +128,13 @@ function CAGEDNavigation({
                     style={{ backgroundColor: CAGED_SHAPES_BY_QUALITY[chordQuality][shape].color }}
                     role="tab"
                     aria-selected={index === currentPosition}
-                    aria-label={`${shape} shape position ${index + 1} of ${cagedSequence.length}`}
-                    title={`${shape} shape (${index + 1})`}
+                    aria-label={`${shape} shape at fret ${basePosition}, position ${index + 1} of ${cagedSequence.length}`}
+                    title={`${shape} shape — fret ${basePosition}`}
                   >
-                    <div className="text-sm">{shape}</div>
+                    <div className="text-sm leading-none">{shape}</div>
+                    <div className="absolute bottom-0.5 right-1 text-[9px] leading-none opacity-90 font-mono">
+                      {basePosition}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -153,7 +160,7 @@ function CAGEDNavigation({
               <span>CAGED positions - use</span>
               <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs">←→</kbd>
               <span>or</span>
-              <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs">1-5</kbd>
+              <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs">1-9</kbd>
             </div>
           </div>
         )}

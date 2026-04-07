@@ -1,7 +1,10 @@
-import { memo } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import type { StringIndex, FretNumber } from '../types/core';
 import { STRING_NAMES } from '../utils/musicTheory';
-import { FRETBOARD_CONSTANTS } from '../constants/magicNumbers';
+import { FRETBOARD_CONSTANTS, UI_CONSTANTS } from '../constants/magicNumbers';
+
+/** Pixel width of the string-label column (Tailwind w-8 / 2rem). */
+const LABEL_COLUMN_WIDTH = 32;
 
 /**
  * Props interface for shared FretboardDisplay component
@@ -40,6 +43,12 @@ interface FretboardDisplayProps {
   ariaLabel?: string;
   /** Optional key note indicator text */
   keyNoteIndicator?: string;
+  /**
+   * Fret number (1-based, may be fractional for "between two frets") to smooth-scroll
+   * into the horizontal center of the viewport whenever this value changes.
+   * No-op when undefined or when the table already fits the container.
+   */
+  scrollToFret?: number;
 }
 
 /**
@@ -68,7 +77,7 @@ interface FretboardDisplayProps {
  * @performance
  * - Uses React.memo for props-based re-rendering optimization
  * - Minimal DOM updates through conditional rendering of overlays
- * - Efficient iteration over fixed fretboard dimensions (6 strings × 15 frets)
+ * - Efficient iteration over fixed fretboard dimensions (6 strings × 21 frets)
  */
 function FretboardDisplay({
   selectedRoot,
@@ -86,147 +95,175 @@ function FretboardDisplay({
   shouldShowScaleDot,
   ariaLabel,
   keyNoteIndicator = 'R',
+  scrollToFret,
 }: FretboardDisplayProps) {
   const defaultAriaLabel =
     ariaLabel ||
     `Guitar fretboard showing ${selectedRoot} ${currentPattern || 'pattern'}${showAllPatterns ? ' in all positions' : ''}`;
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Smooth-scroll the active fret into the horizontal center of the viewport when
+  // `scrollToFret` changes. No-op if the table already fits inside the container, so
+  // desktop users (where the whole neck is visible) never see a jump.
+  useEffect(() => {
+    if (scrollToFret == null) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const { clientWidth, scrollWidth } = container;
+    const overflow = scrollWidth - clientWidth;
+    if (overflow <= 0) return; // already fully visible
+
+    const fretAreaWidth = scrollWidth - LABEL_COLUMN_WIDTH;
+    const fretWidth = fretAreaWidth / FRETBOARD_CONSTANTS.TOTAL_FRETS;
+    // Center of fret N (1-based) sits at LABEL_COLUMN_WIDTH + (N - 0.5) * fretWidth.
+    const fretCenterX = LABEL_COLUMN_WIDTH + (scrollToFret - 0.5) * fretWidth;
+    const target = Math.max(0, Math.min(overflow, fretCenterX - clientWidth / 2));
+
+    container.scrollTo({ left: target, behavior: 'smooth' });
+  }, [scrollToFret]);
 
   return (
     <section
       className="bg-amber-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm"
       aria-label="Guitar fretboard"
     >
-      <table
-        className="fretboard-grid w-full border-collapse"
-        role="grid"
-        aria-label={defaultAriaLabel}
-      >
-        <thead>
-          <tr>
-            <th className="w-8"></th>
-            {Array.from({ length: FRETBOARD_CONSTANTS.TOTAL_FRETS }, (_, i) => (
-              <th key={i} className="text-center pb-2 relative">
-                {[3, 5, 7, 9, 12].includes(i + 1) && (
-                  <div className="text-xs text-gray-400 dark:text-gray-500 font-mono">{i + 1}</div>
-                )}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {STRING_NAMES.map((stringName, stringIndex) => (
-            <tr key={stringIndex} className="string-row">
-              <th
-                className="w-8 text-right pr-2 text-sm font-mono text-gray-600 dark:text-gray-300 font-medium"
-                scope="row"
-                aria-label={`${stringName} string`}
-              >
-                {stringName}
-              </th>
-
-              {Array.from({ length: FRETBOARD_CONSTANTS.TOTAL_FRETS }, (_, fretIndex) => (
-                <td
-                  key={fretIndex}
-                  className="fret-cell relative h-8 border-l border-gray-300 dark:border-gray-600 first:border-l-0"
-                  role="gridcell"
-                  aria-label={`${stringName} string, fret ${fretIndex + 1}`}
+      <div ref={scrollContainerRef} className="overflow-x-auto">
+        <table
+          className="fretboard-grid w-full border-collapse"
+          role="grid"
+          aria-label={defaultAriaLabel}
+        >
+          <thead>
+            <tr>
+              <th className="w-8"></th>
+              {Array.from({ length: FRETBOARD_CONSTANTS.TOTAL_FRETS }, (_, i) => (
+                <th key={i} className="text-center pb-2 relative">
+                  {(UI_CONSTANTS.FRET_MARKERS as readonly number[]).includes(i + 1) && (
+                    <div className="text-xs text-gray-400 dark:text-gray-500 font-mono">
+                      {i + 1}
+                    </div>
+                  )}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {STRING_NAMES.map((stringName, stringIndex) => (
+              <tr key={stringIndex} className="string-row">
+                <th
+                  className="w-8 text-right pr-2 text-sm font-mono text-gray-600 dark:text-gray-300 font-medium"
+                  scope="row"
+                  aria-label={`${stringName} string`}
                 >
-                  {/* String line */}
-                  <div
-                    className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 border-t border-gray-400 dark:border-gray-500 pointer-events-none"
-                    aria-hidden="true"
-                  />
+                  {stringName}
+                </th>
 
-                  {(() => {
-                    const si = stringIndex as StringIndex;
-                    const fi = (fretIndex + 1) as FretNumber;
-                    const hasMain = shouldShowDot(si, fi);
-                    const isKey = isKeyNote(si, fi);
-                    const isPent = showOverlay && shouldShowOverlayDot(si, fi);
-                    const isScale = showScaleOverlay && !!shouldShowScaleDot?.(si, fi);
+                {Array.from({ length: FRETBOARD_CONSTANTS.TOTAL_FRETS }, (_, fretIndex) => (
+                  <td
+                    key={fretIndex}
+                    className="fret-cell relative h-8 border-l border-gray-300 dark:border-gray-600 first:border-l-0"
+                    role="gridcell"
+                    aria-label={`${stringName} string, fret ${fretIndex + 1}`}
+                  >
+                    {/* String line */}
+                    <div
+                      className="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 border-t border-gray-400 dark:border-gray-500 pointer-events-none"
+                      aria-hidden="true"
+                    />
 
-                    // Build stacked rings via box-shadow (each ring +2px wider than previous).
-                    // Order: innermost = key note, then pentatonic, then scale.
-                    const buildRings = (startOffset: number) => {
-                      const shadows: string[] = [];
-                      let offset = startOffset;
-                      if (isKey) {
-                        shadows.push(`0 0 0 2px var(--ring-key)`);
-                        offset += 2;
+                    {(() => {
+                      const si = stringIndex as StringIndex;
+                      const fi = (fretIndex + 1) as FretNumber;
+                      const hasMain = shouldShowDot(si, fi);
+                      const isKey = isKeyNote(si, fi);
+                      const isPent = showOverlay && shouldShowOverlayDot(si, fi);
+                      const isScale = showScaleOverlay && !!shouldShowScaleDot?.(si, fi);
+
+                      // Build stacked rings via box-shadow (each ring +2px wider than previous).
+                      // Order: innermost = key note, then pentatonic, then scale.
+                      const buildRings = (startOffset: number) => {
+                        const shadows: string[] = [];
+                        let offset = startOffset;
+                        if (isKey) {
+                          shadows.push(`0 0 0 2px var(--ring-key)`);
+                          offset += 2;
+                        }
+                        if (isPent) {
+                          shadows.push(`0 0 0 ${offset + 2}px var(--ring-pent)`);
+                          offset += 2;
+                        }
+                        if (isScale) {
+                          shadows.push(`0 0 0 ${offset + 2}px var(--ring-scale)`);
+                          offset += 2;
+                        }
+                        return shadows.join(', ');
+                      };
+
+                      if (hasMain) {
+                        const baseStyle = getDotStyle(si, fi) || {};
+                        const ringShadow = buildRings(0);
+                        return (
+                          <div
+                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium shadow-sm fretboard-rings"
+                            style={ringShadow ? { ...baseStyle, boxShadow: ringShadow } : baseStyle}
+                            aria-label={`${isKey ? 'Key note' : 'Pattern note'}${isPent ? ' (also overlay note)' : ''}${isScale ? ' (also scale note)' : ''} on ${stringName} string, fret ${fretIndex + 1}`}
+                          >
+                            {isKey ? keyNoteIndicator : ''}
+                          </div>
+                        );
                       }
+
+                      // No main dot — render standalone overlay dot if pentatonic and/or scale present
+                      if (!isPent && !isScale) return null;
+
+                      // Standalone dot: pentatonic takes precedence as the visible body color.
+                      // If scale is also present, add a violet ring around it.
                       if (isPent) {
-                        shadows.push(`0 0 0 ${offset + 2}px var(--ring-pent)`);
-                        offset += 2;
+                        const ringShadow = isScale ? `0 0 0 2px var(--ring-scale)` : undefined;
+                        return (
+                          <div
+                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-green-600 dark:border-green-500 bg-green-600/30 dark:bg-green-500/30 fretboard-rings"
+                            style={ringShadow ? { boxShadow: ringShadow } : undefined}
+                            aria-label={`Overlay note${isScale ? ' (also scale note)' : ''} on ${stringName} string, fret ${fretIndex + 1}`}
+                          />
+                        );
                       }
-                      if (isScale) {
-                        shadows.push(`0 0 0 ${offset + 2}px var(--ring-scale)`);
-                        offset += 2;
-                      }
-                      return shadows.join(', ');
-                    };
 
-                    if (hasMain) {
-                      const baseStyle = getDotStyle(si, fi) || {};
-                      const ringShadow = buildRings(0);
+                      // Scale only
                       return (
                         <div
-                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium shadow-sm fretboard-rings"
-                          style={ringShadow ? { ...baseStyle, boxShadow: ringShadow } : baseStyle}
-                          aria-label={`${isKey ? 'Key note' : 'Pattern note'}${isPent ? ' (also overlay note)' : ''}${isScale ? ' (also scale note)' : ''} on ${stringName} string, fret ${fretIndex + 1}`}
-                        >
-                          {isKey ? keyNoteIndicator : ''}
-                        </div>
-                      );
-                    }
-
-                    // No main dot — render standalone overlay dot if pentatonic and/or scale present
-                    if (!isPent && !isScale) return null;
-
-                    // Standalone dot: pentatonic takes precedence as the visible body color.
-                    // If scale is also present, add a violet ring around it.
-                    if (isPent) {
-                      const ringShadow = isScale ? `0 0 0 2px var(--ring-scale)` : undefined;
-                      return (
-                        <div
-                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-green-600 dark:border-green-500 bg-green-600/30 dark:bg-green-500/30 fretboard-rings"
-                          style={ringShadow ? { boxShadow: ringShadow } : undefined}
-                          aria-label={`Overlay note${isScale ? ' (also scale note)' : ''} on ${stringName} string, fret ${fretIndex + 1}`}
+                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-violet-600 dark:border-violet-500 bg-violet-500/30 dark:bg-violet-500/30"
+                          aria-label={`Scale note on ${stringName} string, fret ${fretIndex + 1}`}
                         />
                       );
-                    }
+                    })()}
 
-                    // Scale only
-                    return (
-                      <div
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-violet-600 dark:border-violet-500 bg-violet-500/30 dark:bg-violet-500/30"
-                        aria-label={`Scale note on ${stringName} string, fret ${fretIndex + 1}`}
-                      />
-                    );
-                  })()}
-
-                  {/* Note name overlay */}
-                  {showNoteNames &&
-                    shouldShowNoteName(stringIndex as StringIndex, fretIndex + 1) && (
-                      <div
-                        className="absolute top-0.5 left-0.5 text-xs font-semibold text-gray-600 dark:text-gray-300
+                    {/* Note name overlay */}
+                    {showNoteNames &&
+                      shouldShowNoteName(stringIndex as StringIndex, fretIndex + 1) && (
+                        <div
+                          className="absolute top-0.5 left-0.5 text-xs font-semibold text-gray-600 dark:text-gray-300
                                  bg-white/90 dark:bg-gray-800/90 rounded px-1 border border-gray-300 dark:border-gray-600
                                  pointer-events-none z-20 leading-tight min-w-[1rem] text-center
                                  sm:top-1 sm:left-1"
-                        aria-label={`Note ${getNoteNameAtFret(stringIndex as StringIndex, fretIndex + 1)} on ${stringName} string, fret ${fretIndex + 1}`}
-                      >
-                        {getNoteNameAtFret(stringIndex as StringIndex, fretIndex + 1)}
-                      </div>
-                    )}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                          aria-label={`Note ${getNoteNameAtFret(stringIndex as StringIndex, fretIndex + 1)} on ${stringName} string, fret ${fretIndex + 1}`}
+                        >
+                          {getNoteNameAtFret(stringIndex as StringIndex, fretIndex + 1)}
+                        </div>
+                      )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }
 
 // Memoize FretboardDisplay to prevent unnecessary re-renders when props haven't changed
-// This is especially important since the component renders 90 cells (6 strings × 15 frets)
+// This is especially important since the component renders 126 cells (6 strings × 21 frets)
 export default memo(FretboardDisplay);
