@@ -32,6 +32,10 @@ interface FretboardDisplayProps {
   shouldShowNoteName: (stringIndex: StringIndex, fretNumber: FretNumber) => boolean;
   /** Function to get note name string for specific position */
   getNoteNameAtFret: (stringIndex: StringIndex, fretNumber: FretNumber) => string;
+  /** Whether to show scale overlay dots */
+  showScaleOverlay?: boolean;
+  /** Function to determine if scale dot should be shown at position */
+  shouldShowScaleDot?: (stringIndex: StringIndex, fretNumber: FretNumber) => boolean;
   /** Optional custom aria label for the fretboard */
   ariaLabel?: string;
   /** Optional key note indicator text */
@@ -78,6 +82,8 @@ function FretboardDisplay({
   shouldShowOverlayDot,
   shouldShowNoteName,
   getNoteNameAtFret,
+  showScaleOverlay = false,
+  shouldShowScaleDot,
   ariaLabel,
   keyNoteIndicator = 'R',
 }: FretboardDisplayProps) {
@@ -131,35 +137,72 @@ function FretboardDisplay({
                     aria-hidden="true"
                   />
 
-                  {/* Main pattern dot */}
-                  {shouldShowDot(stringIndex as StringIndex, fretIndex + 1) && (
-                    <div
-                      className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium shadow-sm ${
-                        isKeyNote(stringIndex as StringIndex, fretIndex + 1)
-                          ? 'ring-2 ring-gray-800 dark:ring-gray-200'
-                          : ''
-                      } ${
-                        showOverlay &&
-                        shouldShowOverlayDot(stringIndex as StringIndex, fretIndex + 1)
-                          ? 'ring-2 ring-green-600 dark:ring-green-500'
-                          : ''
-                      }`}
-                      style={getDotStyle(stringIndex as StringIndex, fretIndex + 1)}
-                      aria-label={`${isKeyNote(stringIndex as StringIndex, fretIndex + 1) ? 'Key note' : 'Pattern note'}${showOverlay && shouldShowOverlayDot(stringIndex as StringIndex, fretIndex + 1) ? ' (also overlay note)' : ''} on ${stringName} string, fret ${fretIndex + 1}`}
-                    >
-                      {isKeyNote(stringIndex as StringIndex, fretIndex + 1) ? keyNoteIndicator : ''}
-                    </div>
-                  )}
+                  {(() => {
+                    const si = stringIndex as StringIndex;
+                    const fi = (fretIndex + 1) as FretNumber;
+                    const hasMain = shouldShowDot(si, fi);
+                    const isKey = isKeyNote(si, fi);
+                    const isPent = showOverlay && shouldShowOverlayDot(si, fi);
+                    const isScale = showScaleOverlay && !!shouldShowScaleDot?.(si, fi);
 
-                  {/* Overlay dot (when not covered by main dot) */}
-                  {showOverlay &&
-                    shouldShowOverlayDot(stringIndex as StringIndex, fretIndex + 1) &&
-                    !shouldShowDot(stringIndex as StringIndex, fretIndex + 1) && (
+                    // Build stacked rings via box-shadow (each ring +2px wider than previous).
+                    // Order: innermost = key note, then pentatonic, then scale.
+                    const buildRings = (startOffset: number) => {
+                      const shadows: string[] = [];
+                      let offset = startOffset;
+                      if (isKey) {
+                        shadows.push(`0 0 0 2px var(--ring-key)`);
+                        offset += 2;
+                      }
+                      if (isPent) {
+                        shadows.push(`0 0 0 ${offset + 2}px var(--ring-pent)`);
+                        offset += 2;
+                      }
+                      if (isScale) {
+                        shadows.push(`0 0 0 ${offset + 2}px var(--ring-scale)`);
+                        offset += 2;
+                      }
+                      return shadows.join(', ');
+                    };
+
+                    if (hasMain) {
+                      const baseStyle = getDotStyle(si, fi) || {};
+                      const ringShadow = buildRings(0);
+                      return (
+                        <div
+                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium shadow-sm fretboard-rings"
+                          style={ringShadow ? { ...baseStyle, boxShadow: ringShadow } : baseStyle}
+                          aria-label={`${isKey ? 'Key note' : 'Pattern note'}${isPent ? ' (also overlay note)' : ''}${isScale ? ' (also scale note)' : ''} on ${stringName} string, fret ${fretIndex + 1}`}
+                        >
+                          {isKey ? keyNoteIndicator : ''}
+                        </div>
+                      );
+                    }
+
+                    // No main dot — render standalone overlay dot if pentatonic and/or scale present
+                    if (!isPent && !isScale) return null;
+
+                    // Standalone dot: pentatonic takes precedence as the visible body color.
+                    // If scale is also present, add a violet ring around it.
+                    if (isPent) {
+                      const ringShadow = isScale ? `0 0 0 2px var(--ring-scale)` : undefined;
+                      return (
+                        <div
+                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-green-600 dark:border-green-500 bg-green-600/30 dark:bg-green-500/30 fretboard-rings"
+                          style={ringShadow ? { boxShadow: ringShadow } : undefined}
+                          aria-label={`Overlay note${isScale ? ' (also scale note)' : ''} on ${stringName} string, fret ${fretIndex + 1}`}
+                        />
+                      );
+                    }
+
+                    // Scale only
+                    return (
                       <div
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-green-600 dark:border-green-500 bg-green-600/30 dark:bg-green-500/30"
-                        aria-label={`Overlay note on ${stringName} string, fret ${fretIndex + 1}`}
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-violet-600 dark:border-violet-500 bg-violet-500/30 dark:bg-violet-500/30"
+                        aria-label={`Scale note on ${stringName} string, fret ${fretIndex + 1}`}
                       />
-                    )}
+                    );
+                  })()}
 
                   {/* Note name overlay */}
                   {showNoteNames &&

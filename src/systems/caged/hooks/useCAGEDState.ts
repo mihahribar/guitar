@@ -1,5 +1,5 @@
 import { useReducer } from 'react';
-import type { ChordType, ChordQuality } from '../types';
+import type { ChordType, ChordQuality, ScaleType } from '../types';
 
 interface CAGEDState {
   selectedChord: ChordType;
@@ -8,6 +8,8 @@ interface CAGEDState {
   showAllShapes: boolean;
   showPentatonic: boolean;
   showAllNotes: boolean;
+  showScale: boolean;
+  selectedScale: ScaleType;
 }
 
 type CAGEDAction =
@@ -18,7 +20,9 @@ type CAGEDAction =
   | { type: 'SET_POSITION'; payload: number }
   | { type: 'TOGGLE_SHOW_ALL_SHAPES' }
   | { type: 'TOGGLE_SHOW_PENTATONIC' }
-  | { type: 'TOGGLE_SHOW_ALL_NOTES' };
+  | { type: 'TOGGLE_SHOW_ALL_NOTES' }
+  | { type: 'TOGGLE_SHOW_SCALE' }
+  | { type: 'SET_SCALE_TYPE'; payload: ScaleType };
 
 function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
   switch (action.type) {
@@ -28,12 +32,20 @@ function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
         selectedChord: action.payload,
         currentPosition: 0, // Reset to first position when changing chord
       };
-    case 'SET_CHORD_QUALITY':
+    case 'SET_CHORD_QUALITY': {
+      let selectedScale = state.selectedScale;
+      // Auto-switch Major↔Natural Minor when chord quality changes
+      if (action.payload === 'minor' && state.selectedScale === 'major') {
+        selectedScale = 'naturalMinor';
+      } else if (action.payload === 'major' && state.selectedScale === 'naturalMinor') {
+        selectedScale = 'major';
+      }
       return {
         ...state,
         chordQuality: action.payload,
-        // Maintain current position when switching between major/minor
+        selectedScale,
       };
+    }
     case 'NEXT_POSITION':
       return {
         ...state,
@@ -66,6 +78,16 @@ function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
         ...state,
         showAllNotes: !state.showAllNotes,
       };
+    case 'TOGGLE_SHOW_SCALE':
+      return {
+        ...state,
+        showScale: !state.showScale,
+      };
+    case 'SET_SCALE_TYPE':
+      return {
+        ...state,
+        selectedScale: action.payload,
+      };
     default:
       return state;
   }
@@ -78,6 +100,8 @@ const initialState: CAGEDState = {
   showAllShapes: false,
   showPentatonic: false,
   showAllNotes: false,
+  showScale: false,
+  selectedScale: 'major',
 };
 
 /**
@@ -125,6 +149,8 @@ export function useCAGEDState(): {
     toggleShowAllShapes: () => void;
     toggleShowPentatonic: () => void;
     toggleShowAllNotes: () => void;
+    toggleShowScale: () => void;
+    setScaleType: (scaleType: ScaleType) => void;
   };
 } {
   const [state, dispatch] = useReducer(cagedReducer, initialState);
@@ -141,6 +167,9 @@ export function useCAGEDState(): {
     toggleShowAllShapes: () => dispatch({ type: 'TOGGLE_SHOW_ALL_SHAPES' }),
     toggleShowPentatonic: () => dispatch({ type: 'TOGGLE_SHOW_PENTATONIC' }),
     toggleShowAllNotes: () => dispatch({ type: 'TOGGLE_SHOW_ALL_NOTES' }),
+    toggleShowScale: () => dispatch({ type: 'TOGGLE_SHOW_SCALE' }),
+    setScaleType: (scaleType: ScaleType) =>
+      dispatch({ type: 'SET_SCALE_TYPE', payload: scaleType }),
   };
 
   return {

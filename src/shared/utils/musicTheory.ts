@@ -129,6 +129,50 @@ export function getPentatonicPositions(
 }
 
 /**
+ * Calculate if a note at a specific position is part of a scale
+ * @param stringIndex - Guitar string index
+ * @param fretNumber - Fret number
+ * @param rootNote - Root note chromatic value (0-11)
+ * @param intervals - Scale intervals array (e.g., [0, 2, 4, 5, 7, 9, 11] for major)
+ * @returns True if the note is part of the scale
+ */
+export function isScaleNote(
+  stringIndex: number,
+  fretNumber: number,
+  rootNote: number,
+  intervals: readonly number[]
+): boolean {
+  const noteAtFret = getNoteAtFret(stringIndex, fretNumber);
+  const scaleNotes = intervals.map(
+    (interval) => (rootNote + interval) % FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE
+  );
+  return scaleNotes.includes(noteAtFret);
+}
+
+/**
+ * Get all scale note positions across the fretboard
+ * @param rootNote - Root note chromatic value (0-11)
+ * @param intervals - Scale intervals array
+ * @returns Array of positions containing scale notes
+ */
+export function getScalePositions(
+  rootNote: number,
+  intervals: readonly number[]
+): Array<{ stringIndex: number; fretNumber: number }> {
+  const positions: Array<{ stringIndex: number; fretNumber: number }> = [];
+
+  for (let stringIndex = 0; stringIndex < STANDARD_TUNING.length; stringIndex++) {
+    for (let fretNumber = 0; fretNumber <= FRETBOARD_CONSTANTS.MAX_FRET; fretNumber++) {
+      if (isScaleNote(stringIndex, fretNumber, rootNote, intervals)) {
+        positions.push({ stringIndex, fretNumber });
+      }
+    }
+  }
+
+  return positions;
+}
+
+/**
  * Calculate chromatic distance between two notes
  * @param fromNote - Starting note chromatic value (0-11)
  * @param toNote - Target note chromatic value (0-11)
