@@ -15,7 +15,9 @@
       "Bash(npm run test:*)",
       "Bash(npm run format:*)",
       "Bash(wc:*)",
-      "Bash(npm run test:coverage:*)"
+      "Bash(npm run test:coverage:*)",
+      "Bash(npx vitest:*)",
+      "Bash(gh pr:*)"
     ],
     "deny": [],
     "ask": []

@@ -50,6 +50,3 @@ export const SCALE_DEFINITIONS: Record<ScaleType, ScaleDefinition> = {
   mixolydian: { name: 'Mixolydian', intervals: [0, 2, 4, 5, 7, 9, 10], category: 'mode' },
   locrian: { name: 'Locrian', intervals: [0, 1, 3, 5, 6, 8, 10], category: 'mode' },
 };
-
-/** Scale overlay dot color */
-export const SCALE_DOT_COLOR = '#8B5CF6';
