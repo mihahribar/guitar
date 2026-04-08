@@ -181,14 +181,14 @@ export default function CAGEDVisualizer() {
         return true;
       }
 
-      // When showing single shape, scope to shape's fret range ±2 frets
+      // When showing single shape, scope to shape's fret range ±1 fret
       const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][currentShape];
       const shapeFrets = expandShapeFrets(shape.pattern, currentBasePosition);
 
       if (shapeFrets.length === 0) return false;
 
-      const minFret = Math.max(0, Math.min(...shapeFrets) - 2);
-      const maxFret = Math.max(...shapeFrets) + 2;
+      const minFret = Math.max(0, Math.min(...shapeFrets) - 1);
+      const maxFret = Math.max(...shapeFrets) + 1;
 
       return fretNumber >= minFret && fretNumber <= maxFret;
     },
