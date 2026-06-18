@@ -6,11 +6,13 @@ import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import CAGEDNavigation from './CAGEDNavigation';
 import ViewModeToggles from './ViewModeToggles';
 import { FretboardDisplay } from '@/shared';
+import { STANDARD_TUNING } from '@/shared/utils/musicTheory';
 import {
   CAGED_SHAPES_BY_QUALITY,
   PENTATONIC_BOX_PATTERNS,
   CAGED_TO_PENTATONIC_BOX,
 } from '../constants';
+import { dedupeUnisonsByLowestFret, positionKey } from '../utils/scaleOverlay';
 
 /**
  * Expand a CAGED shape pattern into its absolute fret numbers.
@@ -169,6 +171,37 @@ export default function CAGEDVisualizer() {
     [isPentatonicNote, showAllShapes, currentShape, currentBasePosition, chordQuality]
   );
 
+  // Pre-compute which scale dots the current single-shape box should render.
+  // Scale notes are collected within the shape's fret range ±1, then unison
+  // duplicates (same pitch reachable on two strings, e.g. G fret 13 == B fret 9)
+  // are removed, keeping the lowest-fret occurrence so the box stays tight.
+  // Returns null in "show all shapes" mode, where the full-neck map is intended.
+  const scaleDotKeys = useMemo(() => {
+    if (showAllShapes) return null;
+
+    const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][currentShape];
+    const shapeFrets = expandShapeFrets(shape.pattern, currentBasePosition);
+    if (shapeFrets.length === 0) return new Set<string>();
+
+    const minFret = Math.max(0, Math.min(...shapeFrets) - 1);
+    const maxFret = Math.max(...shapeFrets) + 1;
+
+    const candidates: { stringIndex: number; fretNumber: number }[] = [];
+    for (let stringIndex = 0; stringIndex < STANDARD_TUNING.length; stringIndex++) {
+      for (let fretNumber = minFret; fretNumber <= maxFret; fretNumber++) {
+        if (isScaleNote(stringIndex, fretNumber)) {
+          candidates.push({ stringIndex, fretNumber });
+        }
+      }
+    }
+
+    return new Set(
+      dedupeUnisonsByLowestFret(candidates).map(({ stringIndex, fretNumber }) =>
+        positionKey(stringIndex, fretNumber)
+      )
+    );
+  }, [showAllShapes, chordQuality, currentShape, currentBasePosition, isScaleNote]);
+
   // Check if a scale dot should be shown at this position
   const shouldShowScaleDot = useCallback(
     (stringIndex: number, fretNumber: number) => {
@@ -181,18 +214,10 @@ export default function CAGEDVisualizer() {
         return true;
       }
 
-      // When showing single shape, scope to shape's fret range ±1 fret
-      const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][currentShape];
-      const shapeFrets = expandShapeFrets(shape.pattern, currentBasePosition);
-
-      if (shapeFrets.length === 0) return false;
-
-      const minFret = Math.max(0, Math.min(...shapeFrets) - 1);
-      const maxFret = Math.max(...shapeFrets) + 1;
-
-      return fretNumber >= minFret && fretNumber <= maxFret;
+      // Single shape: only the de-duplicated box positions
+      return scaleDotKeys?.has(positionKey(stringIndex, fretNumber)) ?? false;
     },
-    [isScaleNote, showAllShapes, currentShape, currentBasePosition, chordQuality]
+    [isScaleNote, showAllShapes, scaleDotKeys]
   );
 
   // Compute the horizontal scroll target for the fretboard: the center fret of the
