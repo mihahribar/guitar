@@ -6,11 +6,12 @@ import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import CAGEDNavigation from './CAGEDNavigation';
 import ViewModeToggles from './ViewModeToggles';
 import { FretboardDisplay } from '@/shared';
-import { STANDARD_TUNING } from '@/shared/utils/musicTheory';
+import { STANDARD_TUNING, getNoteAtFret } from '@/shared/utils/musicTheory';
 import {
   CAGED_SHAPES_BY_QUALITY,
   PENTATONIC_BOX_PATTERNS,
   CAGED_TO_PENTATONIC_BOX,
+  CHROMATIC_VALUES,
 } from '../constants';
 import { dedupeUnisonsByLowestFret, positionKey } from '../utils/scaleOverlay';
 
@@ -122,23 +123,17 @@ export default function CAGEDVisualizer() {
     [showAllShapes, getShapesAtPosition, createGradientStyle, chordQuality, currentShape]
   );
 
-  // Check if this is a root note for the current shape
+  // Check if this is a root note. Any shown note whose pitch class matches the
+  // chord root is a root — this marks every octave of the root within a shape
+  // (e.g. the C shape carries the root on two strings), not just one.
   const isRootNote = useCallback(
     (stringIndex: number, fretNumber: number) => {
-      if (showAllShapes) {
-        // When showing all shapes, check if any shape has a root note at this position
-        const shapesHere = getShapesAtPosition(stringIndex, fretNumber);
-        return shapesHere.some((shapeKey) => {
-          const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][shapeKey];
-          return shape.rootNotes.includes(stringIndex);
-        });
-      } else {
-        // For single shape view, check if current shape has root note here
-        const shape = CAGED_SHAPES_BY_QUALITY[chordQuality][currentShape];
-        return shape.rootNotes.includes(stringIndex) && shouldShowDot(stringIndex, fretNumber);
+      if (!shouldShowDot(stringIndex, fretNumber)) {
+        return false;
       }
+      return getNoteAtFret(stringIndex, fretNumber) === CHROMATIC_VALUES[selectedChord];
     },
-    [showAllShapes, getShapesAtPosition, chordQuality, currentShape, shouldShowDot]
+    [shouldShowDot, selectedChord]
   );
 
   // Check if a pentatonic dot should be shown at this position
