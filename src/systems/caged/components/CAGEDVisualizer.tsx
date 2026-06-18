@@ -102,9 +102,10 @@ export default function CAGEDVisualizer() {
       if (showAllShapes) {
         return getShapesAtPosition(stringIndex, fretNumber).length > 0;
       } else {
-        // Show only current shape
+        // Show only current shape. shapeFret >= 0 includes open strings (fret 0);
+        // getShapeFret returns -1 for muted strings.
         const shapeFret = getShapeFret(currentShape, stringIndex, currentBasePosition);
-        return shapeFret === fretNumber && shapeFret > 0;
+        return shapeFret === fretNumber && shapeFret >= 0;
       }
     },
     [showAllShapes, getShapesAtPosition, currentShape, currentBasePosition, getShapeFret]

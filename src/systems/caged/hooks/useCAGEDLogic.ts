@@ -110,7 +110,8 @@ export function useCAGEDLogic(
       // Iterate the full tuple sequence so octave-up repeats are honored too.
       for (const { shape, basePosition } of cagedSequence) {
         const shapeFret = getShapeFret(shape, stringIndex, basePosition);
-        if (shapeFret === fretNumber && shapeFret > 0 && !shapesHere.includes(shape)) {
+        // shapeFret >= 0 keeps open strings (fret 0); -1 means the string is muted.
+        if (shapeFret === fretNumber && shapeFret >= 0 && !shapesHere.includes(shape)) {
           shapesHere.push(shape);
         }
       }

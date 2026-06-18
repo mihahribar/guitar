@@ -193,9 +193,19 @@ describe('useCAGEDLogic', () => {
     it('should return empty array when no shapes at position', () => {
       const { result } = renderHook(() => useCAGEDLogic('C', 'major', C_MAJOR_SEQUENCE));
 
-      // Fret 0 should not have any shapes (open strings excluded)
-      const shapes = result.current.getShapesAtPosition(0, 0);
-      expect(shapes).toEqual([]);
+      // A high fret well beyond every shape in the walk has nothing.
+      expect(result.current.getShapesAtPosition(0, 20)).toEqual([]);
+    });
+
+    it('should include open strings (fret 0) played by a shape', () => {
+      const { result } = renderHook(() => useCAGEDLogic('C', 'major', C_MAJOR_SEQUENCE));
+
+      // The open C major C-shape plays the high-E (index 0) and G (index 2)
+      // strings open, so fret 0 there belongs to the C shape.
+      expect(result.current.getShapesAtPosition(0, 0)).toEqual(['C']);
+      expect(result.current.getShapesAtPosition(2, 0)).toEqual(['C']);
+      // The low-E string (index 5) is muted in the C shape -> still nothing.
+      expect(result.current.getShapesAtPosition(5, 0)).toEqual([]);
     });
 
     it('should find overlapping shapes', () => {
