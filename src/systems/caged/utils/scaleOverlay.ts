@@ -1,33 +1,11 @@
-import { STANDARD_TUNING } from '@/shared/utils/musicTheory';
+import { STANDARD_TUNING, absoluteOpenPitches } from '@/shared/utils/musicTheory';
+
+// Re-exported for existing CAGED consumers; the implementation lives in shared.
+export { absoluteOpenPitches };
 
 export interface FretPosition {
   stringIndex: number;
   fretNumber: number;
-}
-
-/**
- * Absolute (octave-aware) open-string semitone values derived from a tuning
- * supplied as pitch classes.
- *
- * `STANDARD_TUNING` stores pitch classes (mod 12), so a naive `tuning[s] + fret`
- * conflates octaves on the high-E/B and A/D string boundaries — two notes an
- * octave apart would look identical, while a genuine unison would be missed.
- * We walk from the lowest string upward, adding the minimal positive interval to
- * reach the next pitch class, which reproduces standard tuning's real octave
- * layout (perfect-fourth gaps with the major-third G→B exception).
- *
- * @param tuning - Open-string pitch classes (0-11), low string last
- * @returns Absolute open-string semitone values (arbitrary but consistent base)
- */
-export function absoluteOpenPitches(tuning: readonly number[] = STANDARD_TUNING): number[] {
-  const last = tuning.length - 1;
-  const abs: number[] = [];
-  abs[last] = tuning[last];
-  for (let i = last - 1; i >= 0; i--) {
-    const interval = (tuning[i] - tuning[i + 1] + 12) % 12;
-    abs[i] = abs[i + 1] + interval;
-  }
-  return abs;
 }
 
 /**

@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import type { ChordType, ChordQuality, ScaleType } from '../types';
 import { SCALE_DEFINITIONS } from '../constants/scales';
+import ToggleSwitch from '@/shared/components/ToggleSwitch';
 
 interface ViewModeTogglesProps {
   selectedChord: ChordType;
@@ -35,134 +36,76 @@ function ViewModeToggles({
     <div className="mt-6">
       {/* View Mode Toggle Controls */}
       <section className="mb-4" aria-label="View mode controls">
-        <div className="flex items-center justify-center gap-8">
-          {/* Show All Shapes Toggle */}
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-700 dark:text-gray-300">Show All Shapes</span>
-            <button
-              onClick={onToggleShowAllShapes}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 ${
-                showAllShapes ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-gray-200 dark:bg-gray-600'
-              }`}
-              aria-pressed={showAllShapes}
-              aria-label={showAllShapes ? 'Switch to single CAGED shape' : 'Show all CAGED shapes'}
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          <ToggleSwitch
+            label="Show All Shapes"
+            checked={showAllShapes}
+            onToggle={onToggleShowAllShapes}
+            color="indigo"
+            ariaLabel={showAllShapes ? 'Switch to single CAGED shape' : 'Show all CAGED shapes'}
+          />
+          <ToggleSwitch
+            label="Pentatonic Scale"
+            checked={showPentatonic}
+            onToggle={onToggleShowPentatonic}
+            color="green"
+            ariaLabel={
+              showPentatonic ? 'Hide pentatonic scale overlay' : 'Show pentatonic scale overlay'
+            }
+          />
+          <ToggleSwitch
+            label="All Notes"
+            checked={showAllNotes}
+            onToggle={onToggleShowAllNotes}
+            color="blue"
+            ariaLabel={
+              showAllNotes ? 'Hide note names on fretboard' : 'Show note names on fretboard'
+            }
+          />
+          <ToggleSwitch
+            label="Scale"
+            checked={showScale}
+            onToggle={onToggleShowScale}
+            color="violet"
+            ariaLabel={
+              showScale ? 'Hide scale overlay on fretboard' : 'Show scale overlay on fretboard'
+            }
+          >
+            <select
+              value={selectedScale}
+              onChange={(e) => onSetScaleType(e.target.value as ScaleType)}
+              className="text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-500"
+              aria-label="Select scale type"
             >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                  showAllShapes ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {showAllShapes ? 'ON' : 'OFF'}
-            </span>
-          </div>
-
-          {/* Pentatonic Scale Toggle */}
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-700 dark:text-gray-300">Pentatonic Scale</span>
-            <button
-              onClick={onToggleShowPentatonic}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 ${
-                showPentatonic ? 'bg-green-600 dark:bg-green-500' : 'bg-gray-200 dark:bg-gray-600'
-              }`}
-              aria-pressed={showPentatonic}
-              aria-label={
-                showPentatonic ? 'Hide pentatonic scale overlay' : 'Show pentatonic scale overlay'
-              }
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                  showPentatonic ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {showPentatonic ? 'ON' : 'OFF'}
-            </span>
-          </div>
-
-          {/* All Notes Toggle */}
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-700 dark:text-gray-300">All Notes</span>
-            <button
-              onClick={onToggleShowAllNotes}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 ${
-                showAllNotes ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'
-              }`}
-              aria-pressed={showAllNotes}
-              aria-label={
-                showAllNotes ? 'Hide note names on fretboard' : 'Show note names on fretboard'
-              }
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                  showAllNotes ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {showAllNotes ? 'ON' : 'OFF'}
-            </span>
-          </div>
-
-          {/* Scale Overlay Toggle */}
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-700 dark:text-gray-300">Scale</span>
-            <button
-              onClick={onToggleShowScale}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 ${
-                showScale ? 'bg-violet-600 dark:bg-violet-500' : 'bg-gray-200 dark:bg-gray-600'
-              }`}
-              aria-pressed={showScale}
-              aria-label={
-                showScale ? 'Hide scale overlay on fretboard' : 'Show scale overlay on fretboard'
-              }
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                  showScale ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-            {showScale && (
-              <select
-                value={selectedScale}
-                onChange={(e) => onSetScaleType(e.target.value as ScaleType)}
-                className="text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                aria-label="Select scale type"
-              >
-                <optgroup label="Major">
-                  {Object.entries(SCALE_DEFINITIONS)
-                    .filter(([, def]) => def.category === 'major')
-                    .map(([key, def]) => (
-                      <option key={key} value={key}>
-                        {def.name}
-                      </option>
-                    ))}
-                </optgroup>
-                <optgroup label="Minor">
-                  {Object.entries(SCALE_DEFINITIONS)
-                    .filter(([, def]) => def.category === 'minor')
-                    .map(([key, def]) => (
-                      <option key={key} value={key}>
-                        {def.name}
-                      </option>
-                    ))}
-                </optgroup>
-                <optgroup label="Modes">
-                  {Object.entries(SCALE_DEFINITIONS)
-                    .filter(([, def]) => def.category === 'mode')
-                    .map(([key, def]) => (
-                      <option key={key} value={key}>
-                        {def.name}
-                      </option>
-                    ))}
-                </optgroup>
-              </select>
-            )}
-            {!showScale && <span className="text-xs text-gray-500 dark:text-gray-400">OFF</span>}
-          </div>
+              <optgroup label="Major">
+                {Object.entries(SCALE_DEFINITIONS)
+                  .filter(([, def]) => def.category === 'major')
+                  .map(([key, def]) => (
+                    <option key={key} value={key}>
+                      {def.name}
+                    </option>
+                  ))}
+              </optgroup>
+              <optgroup label="Minor">
+                {Object.entries(SCALE_DEFINITIONS)
+                  .filter(([, def]) => def.category === 'minor')
+                  .map(([key, def]) => (
+                    <option key={key} value={key}>
+                      {def.name}
+                    </option>
+                  ))}
+              </optgroup>
+              <optgroup label="Modes">
+                {Object.entries(SCALE_DEFINITIONS)
+                  .filter(([, def]) => def.category === 'mode')
+                  .map(([key, def]) => (
+                    <option key={key} value={key}>
+                      {def.name}
+                    </option>
+                  ))}
+              </optgroup>
+            </select>
+          </ToggleSwitch>
         </div>
       </section>
 

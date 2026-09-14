@@ -34,6 +34,7 @@ src/
 │   ├── components/            # Shared UI components
 │   │   ├── FretboardDisplay.tsx   # Guitar fretboard renderer
 │   │   ├── AppNavigation.tsx      # Top navigation bar
+│   │   ├── ToggleSwitch.tsx       # Labelled on/off switch
 │   │   ├── ThemeToggle.tsx        # Theme switcher
 │   │   └── LoadingFallback.tsx    # Loading states
 │   ├── constants/             # Shared constants and magic numbers
@@ -65,6 +66,12 @@ src/
 │   │   ├── types/             # CAGED-specific types
 │   │   │   └── index.ts       # CAGED interfaces and types
 │   │   └── utils/             # CAGED-specific utilities
+│   ├── three-nps/             # 3 notes per string (3NPS) major scale system
+│   │   ├── components/        # ThreeNpsPage, ThreeNpsNavigation, ThreeNpsToggles
+│   │   ├── hooks/             # useThreeNpsState (reducer), useThreeNpsLogic, useThreeNpsKeyboard
+│   │   ├── constants/         # Major scale steps, mode colours, string pairs
+│   │   ├── types/             # ModeDegree, NpsPattern, ThreeNpsState
+│   │   └── utils/             # threeNps.ts: pattern/sequence generation (+ tests)
 │   ├── rhythm-game/           # Rhythm practice system module
 │   │   ├── components/        # Rhythm UI components
 │   │   │   ├── RhythmPage.tsx        # Main rhythm page
@@ -133,6 +140,7 @@ The project uses TypeScript path aliases for clean, predictable imports:
 - `@/shared` - Access to shared utilities, components, and types
 - `@/systems/caged` - CAGED system module imports
 - `@/systems/rhythm-game` - Rhythm practice system imports
+- `@/systems/three-nps` - 3NPS scale system imports
 - `@/systems/quiz` - Quiz system module imports
 
 Example imports:
@@ -154,6 +162,7 @@ Each module provides clean barrel exports for easy consumption:
 - `src/shared/index.ts` - All shared resources
 - `src/systems/caged/index.ts` - Complete CAGED system
 - `src/systems/rhythm-game/index.ts` - Complete rhythm system
+- `src/systems/three-nps/index.ts` - Complete 3NPS system
 - `src/systems/quiz/index.ts` - Complete quiz system
 
 ### System Isolation
@@ -165,7 +174,7 @@ Each module provides clean barrel exports for easy consumption:
 
 ### Code Splitting & Performance
 
-- Quiz and Rhythm systems are lazy-loaded for optimal initial bundle size
+- 3NPS, Quiz and Rhythm systems are lazy-loaded for optimal initial bundle size
 - Modular structure enables excellent tree shaking
 - Bundle sizes: Main (~214kB), Rhythm chunk (~21kB), Quiz chunk (~18kB), CSS (~38kB)
 
@@ -248,6 +257,13 @@ npm run preview  # Preview production build locally
 ## Music Theory Context (CAGED System)
 
 The app implements the CAGED guitar system with full major and minor chord support:
+
+### 3NPS (Three Notes Per String)
+
+- **Dominoes**: 6 consecutive notes of the parent major scale, 3 on each of two adjacent strings, named after the starting degree (Ionian … Locrian)
+- **Full positions**: 18 notes across all 6 strings, named after the starting degree on the low E string
+- **Generated from pitch**: frets come from absolute open-string pitches (`absoluteOpenPitches`), so the G–B major-third shift (+1 fret on the upper string) is automatic
+- **String index 0 is the high E** (matches `STANDARD_TUNING`/`STRING_NAMES`)
 
 ### Chord Shapes and Qualities
 

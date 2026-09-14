@@ -7,6 +7,7 @@ export default function AppNavigation() {
 
   const navItems: { page: AppPage; label: string; description: string }[] = [
     { page: 'caged', label: 'CAGED', description: 'Interactive CAGED system explorer' },
+    { page: '3nps', label: '3NPS', description: 'Three notes per string scale system' },
     { page: 'rhythm', label: 'Rhythm', description: 'Practice rhythm patterns' },
     { page: 'quiz', label: 'Quiz', description: 'Test your chord identification skills' },
   ];
@@ -16,23 +17,23 @@ export default function AppNavigation() {
       className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700"
       aria-label="Main navigation"
     >
-      <div className="max-w-6xl mx-auto px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Title */}
           <div className="flex items-center">
-            <h1 className="text-xl font-light text-gray-800 dark:text-gray-100">
+            <h1 className="hidden sm:block text-xl font-light text-gray-800 dark:text-gray-100">
               Guitar Learning Systems 🎸
             </h1>
           </div>
 
           {/* Navigation Links and Theme Toggle */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-1 sm:gap-3 ml-auto">
             {navItems.map(({ page, label, description }) => (
               <button
                 key={page}
                 onClick={() => navigateTo(page)}
                 className={`
-                  px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer
+                  px-3 sm:px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer
                   focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900
                   ${
                     currentPage === page
