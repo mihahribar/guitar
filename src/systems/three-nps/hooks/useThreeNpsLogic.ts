@@ -7,8 +7,8 @@ import {
   buildSequence,
   createModeStyle,
   npsPositionKey,
-  patternFretRange,
-  resolveCurrentPattern,
+  patternsFretRange,
+  visiblePatterns,
 } from '../utils/threeNps';
 import { getScope } from './useThreeNpsState';
 
@@ -16,22 +16,19 @@ import { getScope } from './useThreeNpsState';
  * Derived 3NPS data and fretboard callbacks for the current state.
  */
 export function useThreeNpsLogic(state: ThreeNpsState) {
-  const { root, lowString, degree, anchorFret, showAllModes, allStrings } = state;
+  const { root, lowString, degrees, anchorFret, wholeNeck, allStrings } = state;
 
   const sequence = useMemo(
     () => buildSequence(root, getScope({ allStrings, lowString })),
     [root, allStrings, lowString]
   );
 
-  const currentPattern = useMemo(
-    () => resolveCurrentPattern(sequence, degree, anchorFret),
-    [sequence, degree, anchorFret]
+  const patterns = useMemo(
+    () => visiblePatterns(sequence, degrees, anchorFret, wholeNeck),
+    [sequence, degrees, anchorFret, wholeNeck]
   );
 
-  const positionMap = useMemo(() => {
-    const visible = showAllModes ? sequence : currentPattern ? [currentPattern] : [];
-    return buildPositionMap(visible);
-  }, [showAllModes, sequence, currentPattern]);
+  const positionMap = useMemo(() => buildPositionMap(patterns), [patterns]);
 
   const shouldShowDot = useCallback(
     (stringIndex: number, fret: number) => positionMap.has(npsPositionKey(stringIndex, fret)),
@@ -44,11 +41,11 @@ export function useThreeNpsLogic(state: ThreeNpsState) {
     [positionMap]
   );
 
-  // Single mode: mark the mode's tonic (M). All modes: no single tonic, mark the key root (R).
-  const markedPitchClass = useMemo(() => {
-    if (showAllModes || !currentPattern) return root;
-    return (root + MAJOR_SCALE_STEPS[currentPattern.degree]) % 12;
-  }, [showAllModes, currentPattern, root]);
+  /** One mode selected: mark its tonic (M). Several: no single tonic, mark the key root (R). */
+  const soloDegree = degrees.length === 1 ? degrees[0] : undefined;
+
+  const markedPitchClass =
+    soloDegree === undefined ? root : (root + MAJOR_SCALE_STEPS[soloDegree]) % 12;
 
   const isKeyNote = useCallback(
     (stringIndex: number, fret: number) =>
@@ -56,21 +53,19 @@ export function useThreeNpsLogic(state: ThreeNpsState) {
     [shouldShowDot, markedPitchClass]
   );
 
-  const keyNoteIndicator = showAllModes ? 'R' : 'M';
+  const keyNoteIndicator = soloDegree === undefined ? 'R' : 'M';
 
-  const fretRange = useMemo(
-    () => (currentPattern ? patternFretRange(currentPattern) : undefined),
-    [currentPattern]
-  );
+  const fretRange = useMemo(() => patternsFretRange(patterns), [patterns]);
 
   const scrollToFret = useMemo(() => {
-    if (showAllModes || !fretRange) return undefined;
+    if (wholeNeck || !fretRange) return undefined;
     return (fretRange[0] + fretRange[1]) / 2;
-  }, [showAllModes, fretRange]);
+  }, [wholeNeck, fretRange]);
 
   return {
     sequence,
-    currentPattern,
+    patterns,
+    soloDegree,
     fretRange,
     shouldShowDot,
     getDotStyle,

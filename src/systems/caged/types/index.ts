@@ -54,10 +54,10 @@ export interface CAGEDState {
   selectedChord: ChordType;
   /** Current chord quality (major/minor) */
   chordQuality: ChordQuality;
-  /** Current position in CAGED sequence */
-  currentPosition: number;
-  /** Whether to show all CAGED shapes simultaneously */
-  showAllShapes: boolean;
+  /** Indices into the CAGED sequence that are drawn at once; sorted, never empty */
+  selectedPositions: number[];
+  /** Selection to restore when "show all shapes" is switched back off */
+  collapsedSelection: number[];
   /** Whether to show pentatonic scale overlay */
   showPentatonic: boolean;
   /** Whether to show all note names */
@@ -86,14 +86,14 @@ export interface CAGEDPosition {
 export interface CAGEDNavigationProps {
   selectedChord: ChordType;
   chordQuality: ChordQuality;
-  currentPosition: number;
+  selectedPositions: number[];
   cagedSequence: readonly CAGEDPosition[];
-  showAllShapes: boolean;
   onChordChange: (chord: ChordType) => void;
   onChordQualityChange: (quality: ChordQuality) => void;
   onPreviousPosition: () => void;
   onNextPosition: () => void;
-  onSetPosition: (position: number) => void;
+  onTogglePosition: (position: number) => void;
+  onSoloPosition: (position: number) => void;
 }
 
 /**
@@ -102,6 +102,7 @@ export interface CAGEDNavigationProps {
 export interface CAGEDViewModeProps {
   selectedChord: ChordType;
   chordQuality: ChordQuality;
+  selectedCount: number;
   showAllShapes: boolean;
   showPentatonic: boolean;
   showAllNotes: boolean;

@@ -1,40 +1,62 @@
 import { useEffect } from 'react';
 
 interface UseKeyboardNavigationProps {
-  showAllShapes: boolean;
   cagedSequenceLength: number;
   onPreviousPosition: () => void;
   onNextPosition: () => void;
-  onSetPosition: (position: number) => void;
-  onToggleShowAllShapes: () => void;
+  onTogglePosition: (position: number) => void;
+  onSoloPosition: (position: number) => void;
+  onToggleAllPositions: () => void;
   onToggleShowPentatonic: () => void;
   onToggleShowAllNotes: () => void;
   onToggleShowScale: () => void;
 }
 
+/** Physical number-row keys, so the shortcuts survive Shift turning "1" into "!" */
+const POSITION_KEY_CODES = [
+  'Digit1',
+  'Digit2',
+  'Digit3',
+  'Digit4',
+  'Digit5',
+  'Digit6',
+  'Digit7',
+  'Digit8',
+  'Digit9',
+];
+
+function positionFromKey(event: KeyboardEvent): number | undefined {
+  const codeIndex = POSITION_KEY_CODES.indexOf(event.code);
+  if (codeIndex >= 0) return codeIndex;
+  const digit = Number(event.key);
+  return digit >= 1 && digit <= POSITION_KEY_CODES.length ? digit - 1 : undefined;
+}
+
 /**
  * Custom hook for keyboard navigation and shortcuts in the CAGED visualizer
  *
- * Provides keyboard controls for navigating CAGED shapes and toggling display options.
- * Respects user input context and avoids interfering with form inputs.
+ * Provides keyboard controls for selecting CAGED positions and toggling display
+ * options. Respects user input context and avoids interfering with form inputs.
  * Includes accessibility-friendly shortcuts for efficient visualizer operation.
  *
  * @param props Configuration object containing:
- *   - showAllShapes: Whether all shapes are currently displayed
- *   - cagedSequenceLength: Number of shapes in current sequence
- *   - onPreviousPosition: Callback to navigate to previous shape
- *   - onNextPosition: Callback to navigate to next shape
- *   - onSetPosition: Callback to jump to specific position
- *   - onToggleShowAllShapes: Callback to toggle all shapes display
+ *   - cagedSequenceLength: Number of positions in the current sequence
+ *   - onPreviousPosition: Callback to walk the selection down the neck
+ *   - onNextPosition: Callback to walk the selection up the neck
+ *   - onTogglePosition: Callback to add/remove a position from the selection
+ *   - onSoloPosition: Callback to show a single position on its own
+ *   - onToggleAllPositions: Callback to select every position, or collapse back
  *   - onToggleShowPentatonic: Callback to toggle pentatonic overlay
  *   - onToggleShowAllNotes: Callback to toggle all notes display
+ *   - onToggleShowScale: Callback to toggle the scale overlay
  *
  * @keyboardShortcuts
- * - Arrow Left/Right: Navigate between CAGED shapes (when not showing all)
- * - 1-9: Jump directly to CAGED shape position (when not showing all)
- * - Space: Toggle show all shapes mode
+ * - Arrow Left/Right: walk every selected position down/up the neck
+ * - 1-9: add or remove a CAGED position; Shift+1-9 shows that position on its own
+ * - Space: select every position, or collapse back to the previous selection
  * - S: Toggle pentatonic scale overlay
  * - N: Toggle all notes display
+ * - M: Toggle the scale overlay
  *
  * @accessibility
  * - Respects form input focus (doesn't interfere with typing)
@@ -45,24 +67,25 @@ interface UseKeyboardNavigationProps {
  * @example
  * ```typescript
  * useKeyboardNavigation({
- *   showAllShapes: false,
- *   cagedSequenceLength: 5,
- *   onPreviousPosition: () => actions.previousPosition(5),
- *   onNextPosition: () => actions.nextPosition(5),
- *   onSetPosition: (pos) => actions.setPosition(pos),
- *   onToggleShowAllShapes: actions.toggleShowAllShapes,
+ *   cagedSequenceLength: 11,
+ *   onPreviousPosition: () => actions.previousPosition(11),
+ *   onNextPosition: () => actions.nextPosition(11),
+ *   onTogglePosition: actions.togglePosition,
+ *   onSoloPosition: actions.soloPosition,
+ *   onToggleAllPositions: () => actions.toggleAllPositions(11),
  *   onToggleShowPentatonic: actions.toggleShowPentatonic,
- *   onToggleShowAllNotes: actions.toggleShowAllNotes
+ *   onToggleShowAllNotes: actions.toggleShowAllNotes,
+ *   onToggleShowScale: actions.toggleShowScale
  * });
  * ```
  */
 export function useKeyboardNavigation({
-  showAllShapes,
   cagedSequenceLength,
   onPreviousPosition,
   onNextPosition,
-  onSetPosition,
-  onToggleShowAllShapes,
+  onTogglePosition,
+  onSoloPosition,
+  onToggleAllPositions,
   onToggleShowPentatonic,
   onToggleShowAllNotes,
   onToggleShowScale,
@@ -74,40 +97,32 @@ export function useKeyboardNavigation({
         return;
       }
 
+      const position = positionFromKey(event);
+      if (position !== undefined) {
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        event.preventDefault();
+        if (position < cagedSequenceLength) {
+          if (event.shiftKey) {
+            onSoloPosition(position);
+          } else {
+            onTogglePosition(position);
+          }
+        }
+        return;
+      }
+
       switch (event.key) {
         case 'ArrowLeft':
-          if (!showAllShapes) {
-            event.preventDefault();
-            onPreviousPosition();
-          }
+          event.preventDefault();
+          onPreviousPosition();
           break;
         case 'ArrowRight':
-          if (!showAllShapes) {
-            event.preventDefault();
-            onNextPosition();
-          }
+          event.preventDefault();
+          onNextPosition();
           break;
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9': {
-          if (!showAllShapes) {
-            event.preventDefault();
-            const position = parseInt(event.key) - 1;
-            if (position < cagedSequenceLength) {
-              onSetPosition(position);
-            }
-          }
-          break;
-        }
         case ' ':
           event.preventDefault();
-          onToggleShowAllShapes();
+          onToggleAllPositions();
           break;
         case 's':
         case 'S':
@@ -133,12 +148,12 @@ export function useKeyboardNavigation({
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [
-    showAllShapes,
+    cagedSequenceLength,
     onPreviousPosition,
     onNextPosition,
-    onSetPosition,
-    cagedSequenceLength,
-    onToggleShowAllShapes,
+    onTogglePosition,
+    onSoloPosition,
+    onToggleAllPositions,
     onToggleShowPentatonic,
     onToggleShowAllNotes,
     onToggleShowScale,

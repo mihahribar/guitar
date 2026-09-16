@@ -6,15 +6,20 @@ import ChordQualityToggle from './ChordQualityToggle';
 interface ConsolidatedNavigationProps {
   selectedChord: ChordType;
   chordQuality: ChordQuality;
-  currentPosition: number;
+  selectedPositions: number[];
   cagedSequence: readonly CAGEDPosition[];
-  showAllShapes: boolean;
   onChordChange: (chord: ChordType) => void;
   onChordQualityChange: (quality: ChordQuality) => void;
   onPreviousPosition: () => void;
   onNextPosition: () => void;
-  onSetPosition: (position: number) => void;
+  onTogglePosition: (position: number) => void;
+  onSoloPosition: (position: number) => void;
 }
+
+const navButtonClass =
+  'p-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 transition-colors focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:outline-none cursor-pointer';
+
+const kbdClass = 'px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs';
 
 const chords: { value: ChordType; label: string }[] = [
   { value: 'C', label: 'C' },
@@ -27,16 +32,15 @@ const chords: { value: ChordType; label: string }[] = [
 function CAGEDNavigation({
   selectedChord,
   chordQuality,
-  currentPosition,
+  selectedPositions,
   cagedSequence,
-  showAllShapes,
   onChordChange,
   onChordQualityChange,
   onPreviousPosition,
   onNextPosition,
-  onSetPosition,
+  onTogglePosition,
+  onSoloPosition,
 }: ConsolidatedNavigationProps) {
-  chords.find((chord) => chord.value === selectedChord);
   return (
     <div className="bg-white dark:bg-gray-900 mb-6">
       <div className="flex flex-col gap-6">
@@ -89,94 +93,87 @@ function CAGEDNavigation({
           </div>
         </div>
 
-        {/* CAGED Position Navigation - Only show in single shape mode */}
-        {!showAllShapes && (
-          <div className="flex flex-col items-center">
-            <div className="flex items-center gap-3">
-              {/* Previous Button */}
-              <button
-                onClick={onPreviousPosition}
-                className="p-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 transition-colors focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:outline-none cursor-pointer"
-                aria-label="Previous chord shape"
-                title="Previous shape (←)"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
+        {/* CAGED Position Selection — any number of positions can be shown at once */}
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-3">
+            {/* Previous Button */}
+            <button
+              onClick={onPreviousPosition}
+              className={navButtonClass}
+              aria-label="Move selection down the neck"
+              title="Move selection down the neck (←)"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
 
-              {/* Shape Position Selector */}
-              <div
-                className="flex flex-wrap justify-center gap-1.5"
-                role="tablist"
-                aria-label="CAGED shape selector"
-              >
-                {cagedSequence.map(({ shape, basePosition }, index) => (
+            {/* Shape Position Selector */}
+            <div
+              className="flex flex-wrap justify-center gap-1.5"
+              role="group"
+              aria-label="CAGED shape selector"
+            >
+              {cagedSequence.map(({ shape, basePosition }, index) => {
+                const isActive = selectedPositions.includes(index);
+                return (
                   <button
                     key={`${shape}-${basePosition}`}
-                    onClick={() => onSetPosition(index)}
+                    onClick={(event) =>
+                      event.shiftKey ? onSoloPosition(index) : onTogglePosition(index)
+                    }
                     className={`relative w-10 h-10 rounded-md text-white text-sm font-bold transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none cursor-pointer ${
-                      index === currentPosition
+                      isActive
                         ? 'scale-110 shadow-lg focus:ring-white ring-2 ring-white ring-opacity-30'
-                        : 'opacity-50 hover:opacity-75 focus:ring-gray-400'
+                        : 'opacity-40 hover:opacity-75 focus:ring-gray-400'
                     }`}
                     style={{ backgroundColor: CAGED_SHAPES_BY_QUALITY[chordQuality][shape].color }}
-                    role="tab"
-                    aria-selected={index === currentPosition}
+                    aria-pressed={isActive}
                     aria-label={`${shape} shape at fret ${basePosition}, position ${index + 1} of ${cagedSequence.length}`}
-                    title={`${shape} shape — fret ${basePosition}`}
+                    title={`${shape} shape — fret ${basePosition}${
+                      index < 9 ? ` (${index + 1}, ⇧ for this shape only)` : ''
+                    }`}
                   >
                     <div className="text-sm leading-none">{shape}</div>
                     <div className="absolute bottom-0.5 right-1 text-[9px] leading-none opacity-90 font-mono">
                       {basePosition}
                     </div>
                   </button>
-                ))}
-              </div>
+                );
+              })}
+            </div>
 
-              {/* Next Button */}
-              <button
-                onClick={onNextPosition}
-                className="p-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 transition-colors focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:outline-none cursor-pointer"
-                aria-label="Next chord shape"
-                title="Next shape (→)"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400 mt-4">
-              <span>CAGED positions - use</span>
-              <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs">←→</kbd>
-              <span>or</span>
-              <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs">1-9</kbd>
-            </div>
+            {/* Next Button */}
+            <button
+              onClick={onNextPosition}
+              className={navButtonClass}
+              aria-label="Move selection up the neck"
+              title="Move selection up the neck (→)"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
           </div>
-        )}
-
-        {/* All Shapes Mode Indicator */}
-        {showAllShapes && (
-          <div className="flex flex-col items-center">
-            <div className="text-center">
-              <div className="px-4 py-2 rounded-lg bg-indigo-600 dark:bg-indigo-500 text-white font-semibold text-base shadow-sm">
-                <div className="text-center">
-                  <div className="text-base opacity-90">All Shapes</div>
-                </div>
-              </div>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-4">
+            <span>Tap positions to stack them •</span>
+            <kbd className={kbdClass}>1-9</kbd>
+            <span>to toggle,</span>
+            <kbd className={kbdClass}>⇧1-9</kbd>
+            <span>for one • walk the neck with</span>
+            <kbd className={kbdClass}>←→</kbd>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

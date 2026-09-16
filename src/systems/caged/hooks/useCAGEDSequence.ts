@@ -21,26 +21,33 @@ import { FRETBOARD_CONSTANTS } from '@/shared/constants/magicNumbers';
  * the major patterns are used to compute fret extents — the result is identical for
  * the minor variants.
  */
-export function useCAGEDSequence(selectedChord: ChordType): CAGEDPosition[] {
-  return useMemo(() => {
-    const targetValue = CHROMATIC_VALUES[selectedChord];
-    const positions: CAGEDPosition[] = [];
+export function buildCAGEDSequence(selectedChord: ChordType): CAGEDPosition[] {
+  const targetValue = CHROMATIC_VALUES[selectedChord];
+  const positions: CAGEDPosition[] = [];
 
-    for (const shape of FULL_CAGED_SEQUENCE) {
-      const shapeRoot = CHROMATIC_VALUES[shape];
-      const naturalPosition = (targetValue - shapeRoot + 12) % 12;
-      const maxPatternFret = Math.max(...CAGED_SHAPE_DATA[shape].pattern.filter((f) => f !== -1));
+  for (const shape of FULL_CAGED_SEQUENCE) {
+    const shapeRoot = CHROMATIC_VALUES[shape];
+    const naturalPosition = (targetValue - shapeRoot + 12) % 12;
+    const maxPatternFret = Math.max(...CAGED_SHAPE_DATA[shape].pattern.filter((f) => f !== -1));
 
-      // Walk this shape up the neck in octave steps until it no longer fits.
-      for (
-        let basePosition = naturalPosition;
-        basePosition + maxPatternFret <= FRETBOARD_CONSTANTS.MAX_FRET;
-        basePosition += FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE
-      ) {
-        positions.push({ shape, basePosition });
-      }
+    // Walk this shape up the neck in octave steps until it no longer fits.
+    for (
+      let basePosition = naturalPosition;
+      basePosition + maxPatternFret <= FRETBOARD_CONSTANTS.MAX_FRET;
+      basePosition += FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE
+    ) {
+      positions.push({ shape, basePosition });
     }
+  }
 
-    return positions.sort((a, b) => a.basePosition - b.basePosition);
-  }, [selectedChord]);
+  return positions.sort((a, b) => a.basePosition - b.basePosition);
+}
+
+/** How many playable positions the walk holds for a chord */
+export function cagedSequenceLength(selectedChord: ChordType): number {
+  return buildCAGEDSequence(selectedChord).length;
+}
+
+export function useCAGEDSequence(selectedChord: ChordType): CAGEDPosition[] {
+  return useMemo(() => buildCAGEDSequence(selectedChord), [selectedChord]);
 }

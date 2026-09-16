@@ -6,6 +6,8 @@ import ToggleSwitch from '@/shared/components/ToggleSwitch';
 interface ViewModeTogglesProps {
   selectedChord: ChordType;
   chordQuality: ChordQuality;
+  /** How many CAGED positions are currently drawn */
+  selectedCount: number;
   showAllShapes: boolean;
   showPentatonic: boolean;
   showAllNotes: boolean;
@@ -21,6 +23,7 @@ interface ViewModeTogglesProps {
 function ViewModeToggles({
   selectedChord,
   chordQuality,
+  selectedCount,
   showAllShapes,
   showPentatonic,
   showAllNotes,
@@ -42,7 +45,9 @@ function ViewModeToggles({
             checked={showAllShapes}
             onToggle={onToggleShowAllShapes}
             color="indigo"
-            ariaLabel={showAllShapes ? 'Switch to single CAGED shape' : 'Show all CAGED shapes'}
+            ariaLabel={
+              showAllShapes ? 'Collapse back to the previous selection' : 'Show all CAGED shapes'
+            }
           />
           <ToggleSwitch
             label="Pentatonic Scale"
@@ -115,20 +120,26 @@ function ViewModeToggles({
           <p className="font-medium">
             {showAllShapes ? (
               <span className="text-indigo-600 dark:text-indigo-400">All CAGED Positions Mode</span>
-            ) : (
+            ) : selectedCount === 1 ? (
               <span>Single Shape Mode</span>
+            ) : (
+              <span className="text-indigo-600 dark:text-indigo-400">
+                {selectedCount} CAGED positions
+              </span>
             )}
           </p>
           <p>
             {showAllShapes
-              ? `Viewing all 5 CAGED positions for ${selectedChord} ${chordQuality} simultaneously`
-              : `Navigate through different ways to play ${selectedChord} ${chordQuality} using CAGED shapes`}
+              ? `Viewing every CAGED position for ${selectedChord} ${chordQuality} simultaneously`
+              : selectedCount === 1
+                ? `Navigate through different ways to play ${selectedChord} ${chordQuality} using CAGED shapes`
+                : `Viewing ${selectedCount} ways to play ${selectedChord} ${chordQuality} side by side`}
           </p>
           <p className="text-xs">
-            {showAllShapes
+            {selectedCount > 1
               ? 'Overlapping notes show blended colors'
-              : 'Use position controls above'}{' '}
-            • Press Space to toggle view mode{showPentatonic ? ' • Press S for scale' : ''}
+              : 'Tap positions above to stack them'}{' '}
+            • Press Space to show every position{showPentatonic ? ' • Press S for scale' : ''}
             {showAllNotes ? ' • Press N for notes' : ''}
           </p>
         </div>

@@ -8,12 +8,12 @@ import type { ModeDegree } from '../types';
 interface ThreeNpsTogglesProps {
   root: number;
   lowString: StringIndex;
-  degree: ModeDegree;
+  degrees: ModeDegree[];
   fretRange?: [number, number];
-  showAllModes: boolean;
+  wholeNeck: boolean;
   allStrings: boolean;
   showAllNotes: boolean;
-  onToggleShowAllModes: () => void;
+  onToggleWholeNeck: () => void;
   onToggleAllStrings: () => void;
   onToggleShowAllNotes: () => void;
 }
@@ -21,12 +21,12 @@ interface ThreeNpsTogglesProps {
 function ThreeNpsToggles({
   root,
   lowString,
-  degree,
+  degrees,
   fretRange,
-  showAllModes,
+  wholeNeck,
   allStrings,
   showAllNotes,
-  onToggleShowAllModes,
+  onToggleWholeNeck,
   onToggleAllStrings,
   onToggleShowAllNotes,
 }: ThreeNpsTogglesProps) {
@@ -35,20 +35,28 @@ function ThreeNpsToggles({
   const stringsLabel = allStrings
     ? 'all strings'
     : `strings ${pair.label} (${STRING_NAMES[pair.low]}–${STRING_NAMES[pair.high]})`;
-  const mode = MODES[degree];
-  const modeRoot = CHROMATIC_TO_NOTE_NAME[(root + MAJOR_SCALE_STEPS[degree]) % 12];
   const crossesGB = allStrings || lowString === G_B_LOW_STRING;
+  const modeRootName = (degree: ModeDegree) =>
+    CHROMATIC_TO_NOTE_NAME[(root + MAJOR_SCALE_STEPS[degree]) % 12];
+
+  const soloDegree = degrees.length === 1 ? degrees[0] : undefined;
+  const allSelected = degrees.length === MODES.length;
+  const shapeNoun = allStrings ? 'position' : 'domino';
 
   return (
     <div className="mt-6">
       <section className="mb-4" aria-label="View mode controls">
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
           <ToggleSwitch
-            label="All Modes"
-            checked={showAllModes}
-            onToggle={onToggleShowAllModes}
+            label="Whole Neck"
+            checked={wholeNeck}
+            onToggle={onToggleWholeNeck}
             color="indigo"
-            ariaLabel={showAllModes ? 'Show a single mode' : 'Show all modes'}
+            ariaLabel={
+              wholeNeck
+                ? 'Show the selected modes once, near the current position'
+                : 'Show the selected modes everywhere on the neck'
+            }
           />
           <ToggleSwitch
             label="All Strings"
@@ -72,21 +80,22 @@ function ThreeNpsToggles({
       <div className="text-center text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
         <div className="space-y-1">
           <p className="font-medium">
-            {showAllModes ? (
-              <span className="text-indigo-600 dark:text-indigo-400">
-                All modes of {rootName} major — {stringsLabel}
-              </span>
-            ) : (
+            {soloDegree !== undefined ? (
               <span>
                 <span
                   className="inline-block w-3 h-3 rounded-full mr-1.5 align-middle"
-                  style={{ backgroundColor: mode.color }}
+                  style={{ backgroundColor: MODES[soloDegree].color }}
                   aria-hidden="true"
                 />
-                {modeRoot} {mode.name} — {stringsLabel}
-                {fretRange && `, frets ${fretRange[0]}–${fretRange[1]}`}
+                {modeRootName(soloDegree)} {MODES[soloDegree].name} — {stringsLabel}
+              </span>
+            ) : (
+              <span className="text-indigo-600 dark:text-indigo-400">
+                {allSelected ? 'All modes' : `${degrees.length} modes`} of {rootName} major —{' '}
+                {stringsLabel}
               </span>
             )}
+            {!wholeNeck && fretRange && `, frets ${fretRange[0]}–${fretRange[1]}`}
           </p>
           <p>
             {allStrings
@@ -99,28 +108,35 @@ function ThreeNpsToggles({
             </p>
           )}
           <p className="text-xs">
-            {showAllModes ? `R marks the ${rootName} root` : `M marks the ${modeRoot} tonic`} •
-            Press Space for all modes • Press A for all strings • Press N for notes
+            {wholeNeck
+              ? `Every ${shapeNoun} of the selected modes, all the way up the neck`
+              : `One ${shapeNoun} per selected mode — ←→ walks them along the neck together`}
+          </p>
+          <p className="text-xs">
+            {soloDegree !== undefined
+              ? `M marks the ${modeRootName(soloDegree)} tonic`
+              : `R marks the ${rootName} root`}{' '}
+            • Press 0 for all modes • Space for whole neck • A for all strings • N for notes
           </p>
         </div>
 
-        {showAllModes && (
+        {degrees.length > 1 && (
           <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
             <ul
               className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs"
-              aria-label="Mode colours"
+              aria-label="Selected mode colours"
             >
-              {MODES.map((m, index) => (
-                <li key={m.name} className="flex items-center gap-1.5">
+              {degrees.map((degree) => (
+                <li key={degree} className="flex items-center gap-1.5">
                   <span
                     className="inline-block w-3 h-3 rounded-full"
-                    style={{ backgroundColor: m.color }}
+                    style={{ backgroundColor: MODES[degree].color }}
                   />
-                  {CHROMATIC_TO_NOTE_NAME[(root + MAJOR_SCALE_STEPS[index]) % 12]} {m.name}
+                  {modeRootName(degree)} {MODES[degree].name}
                 </li>
               ))}
             </ul>
-            <p className="text-xs mt-1">Split colours: notes shared by neighbouring patterns</p>
+            <p className="text-xs mt-1">Split colours: notes shared by the selected patterns</p>
           </div>
         )}
       </div>

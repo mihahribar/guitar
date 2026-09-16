@@ -10,7 +10,9 @@ import type { ModeDegree, NpsNote, NpsPattern, NpsScope } from '../types';
 
 const OCTAVE = FRETBOARD_CONSTANTS.CHROMATIC_OCTAVE;
 const OPEN_PITCHES = absoluteOpenPitches(STANDARD_TUNING);
-const DEGREES: readonly ModeDegree[] = [0, 1, 2, 3, 4, 5, 6];
+/** Every mode degree, in scale order */
+export const ALL_DEGREES: readonly ModeDegree[] = [0, 1, 2, 3, 4, 5, 6];
+const DEGREE_COUNT = ALL_DEGREES.length;
 
 /** Semitones from degree `degree` of the major scale to the next scale note */
 function stepAfter(degree: number): number {
@@ -72,7 +74,7 @@ export function buildSequence(root: number, scope: NpsScope): NpsPattern[] {
   const { lowString, stringCount } = scopeStrings(scope);
   const patterns: NpsPattern[] = [];
 
-  for (const degree of DEGREES) {
+  for (const degree of ALL_DEGREES) {
     const pitchClass = (root + MAJOR_SCALE_STEPS[degree]) % OCTAVE;
     const firstFret = (pitchClass - STANDARD_TUNING[lowString] + OCTAVE) % OCTAVE;
 
@@ -108,13 +110,50 @@ export function findNearest(
   return best;
 }
 
-/** Resolve the current pattern, falling back to the first pattern in the sequence */
-export function resolveCurrentPattern(
+/** Move a mode degree `steps` scale degrees along, wrapping Locrian back to Ionian */
+export function rotateDegree(degree: ModeDegree, steps: number): ModeDegree {
+  return ((((degree + steps) % DEGREE_COUNT) + DEGREE_COUNT) % DEGREE_COUNT) as ModeDegree;
+}
+
+/** Selected degrees as a sorted, duplicate-free list */
+export function sortDegrees(degrees: readonly ModeDegree[]): ModeDegree[] {
+  return [...new Set(degrees)].sort((a, b) => a - b);
+}
+
+/** One pattern per selected mode — the occurrence nearest `anchorFret` — ordered up the neck */
+export function anchoredPatterns(
   sequence: readonly NpsPattern[],
-  degree: ModeDegree,
+  degrees: readonly ModeDegree[],
   anchorFret: number
-): NpsPattern | undefined {
-  return findNearest(sequence, degree, anchorFret) ?? sequence[0];
+): NpsPattern[] {
+  return degrees
+    .map((degree) => findNearest(sequence, degree, anchorFret))
+    .filter((pattern): pattern is NpsPattern => pattern !== undefined)
+    .sort((a, b) => a.startFret - b.startFret);
+}
+
+/** Every occurrence of the selected modes along the whole neck */
+export function patternsOfDegrees(
+  sequence: readonly NpsPattern[],
+  degrees: readonly ModeDegree[]
+): NpsPattern[] {
+  return sequence.filter((pattern) => degrees.includes(pattern.degree));
+}
+
+/**
+ * The patterns to draw: every occurrence of the selected modes when `wholeNeck`
+ * is on, otherwise just the one of each mode nearest the anchor.
+ */
+export function visiblePatterns(
+  sequence: readonly NpsPattern[],
+  degrees: readonly ModeDegree[],
+  anchorFret: number,
+  wholeNeck: boolean
+): NpsPattern[] {
+  const patterns = wholeNeck
+    ? patternsOfDegrees(sequence, degrees)
+    : anchoredPatterns(sequence, degrees, anchorFret);
+  return patterns.length > 0 ? patterns : sequence.slice(0, 1);
 }
 
 /** Stable string-fret key for membership lookups */
@@ -154,8 +193,8 @@ export function createModeStyle(degrees: readonly ModeDegree[]): CSSProperties |
   return { background: `linear-gradient(90deg, ${stops})` };
 }
 
-/** Lowest and highest fret used by a pattern */
-export function patternFretRange(pattern: NpsPattern): [number, number] {
-  const frets = pattern.notes.map((n) => n.fret);
-  return [Math.min(...frets), Math.max(...frets)];
+/** Lowest and highest fret used by the given patterns */
+export function patternsFretRange(patterns: readonly NpsPattern[]): [number, number] | undefined {
+  const frets = patterns.flatMap((pattern) => pattern.notes.map((n) => n.fret));
+  return frets.length > 0 ? [Math.min(...frets), Math.max(...frets)] : undefined;
 }

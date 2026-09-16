@@ -39,10 +39,12 @@ export interface ThreeNpsState {
   root: number;
   /** Low string of the selected pair (5 = low E … 1 = B) */
   lowString: StringIndex;
-  degree: ModeDegree;
-  /** Fret the current pattern should stay near when the scope changes */
+  /** Modes shown at once, in degree order; never empty */
+  degrees: ModeDegree[];
+  /** Fret the selected patterns should stay near when the scope changes */
   anchorFret: number;
-  showAllModes: boolean;
+  /** Show every occurrence of the selected modes instead of the one nearest the anchor */
+  wholeNeck: boolean;
   allStrings: boolean;
   showAllNotes: boolean;
 }

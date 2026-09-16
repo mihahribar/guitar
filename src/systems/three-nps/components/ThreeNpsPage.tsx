@@ -17,13 +17,14 @@ const never = () => false;
  * 3NPS (three notes per string) major scale visualizer
  *
  * Walks the parent major scale up the neck as 2-string "dominoes" (or full
- * 6-string positions), one per mode, each mode with its own colour.
+ * 6-string positions), one per mode, each mode with its own colour. Any number
+ * of modes can be stacked on the fretboard at once.
  */
 export default function ThreeNpsPage() {
   const { state, actions } = useThreeNpsState();
-  const { root, lowString, degree, showAllModes, allStrings, showAllNotes } = state;
+  const { root, lowString, degrees, wholeNeck, allStrings, showAllNotes } = state;
   const {
-    currentPattern,
+    soloDegree,
     fretRange,
     shouldShowDot,
     getDotStyle,
@@ -33,40 +34,45 @@ export default function ThreeNpsPage() {
   } = useThreeNpsLogic(state);
 
   useThreeNpsKeyboard({
-    showAllModes,
     allStrings,
     onNext: actions.next,
     onPrevious: actions.previous,
     onPairUp: actions.pairUp,
     onPairDown: actions.pairDown,
-    onSetMode: actions.setMode,
-    onToggleShowAllModes: actions.toggleShowAllModes,
+    onToggleMode: actions.toggleMode,
+    onSoloMode: actions.soloMode,
+    onToggleAllModes: actions.toggleAllModes,
+    onToggleWholeNeck: actions.toggleWholeNeck,
     onToggleAllStrings: actions.toggleAllStrings,
     onToggleShowAllNotes: actions.toggleShowAllNotes,
   });
 
   const rootName = CHROMATIC_TO_NOTE_NAME[root];
-  const activeDegree = currentPattern?.degree ?? degree;
+  const selectionLabel =
+    soloDegree !== undefined
+      ? `${MODES[soloDegree].name} pattern`
+      : `${degrees.map((degree) => MODES[degree].name).join(', ')} patterns`;
 
   return (
     <div className="max-w-6xl mx-auto p-8">
       <ThreeNpsNavigation
         root={root}
         lowString={lowString}
-        degree={activeDegree}
-        showAllModes={showAllModes}
+        degrees={degrees}
         allStrings={allStrings}
         onRootChange={actions.setRoot}
         onStringPairChange={actions.setStringPair}
         onPrevious={actions.previous}
         onNext={actions.next}
-        onSetMode={actions.setMode}
+        onToggleMode={actions.toggleMode}
+        onSoloMode={actions.soloMode}
+        onToggleAllModes={actions.toggleAllModes}
       />
 
       <FretboardDisplay
         selectedRoot={rootName}
-        currentPattern={MODES[activeDegree].name}
-        showAllPatterns={showAllModes}
+        currentPattern={selectionLabel}
+        showAllPatterns={wholeNeck}
         showOverlay={false}
         showNoteNames={showAllNotes}
         shouldShowDot={shouldShowDot}
@@ -75,8 +81,8 @@ export default function ThreeNpsPage() {
         shouldShowOverlayDot={never}
         shouldShowNoteName={shouldShowNoteName}
         getNoteNameAtFret={getNoteNameAtFret}
-        ariaLabel={`Guitar fretboard showing ${rootName} major 3 notes per string ${
-          showAllModes ? 'in all modes' : `${MODES[activeDegree].name} pattern`
+        ariaLabel={`Guitar fretboard showing ${rootName} major 3 notes per string ${selectionLabel}${
+          wholeNeck ? ' along the whole neck' : ''
         }`}
         keyNoteIndicator={keyNoteIndicator}
         scrollToFret={scrollToFret}
@@ -85,12 +91,12 @@ export default function ThreeNpsPage() {
       <ThreeNpsToggles
         root={root}
         lowString={lowString}
-        degree={activeDegree}
+        degrees={degrees}
         fretRange={fretRange}
-        showAllModes={showAllModes}
+        wholeNeck={wholeNeck}
         allStrings={allStrings}
-        onToggleShowAllModes={actions.toggleShowAllModes}
         showAllNotes={showAllNotes}
+        onToggleWholeNeck={actions.toggleWholeNeck}
         onToggleAllStrings={actions.toggleAllStrings}
         onToggleShowAllNotes={actions.toggleShowAllNotes}
       />

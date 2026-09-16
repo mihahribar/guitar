@@ -1,11 +1,14 @@
-import { useReducer } from 'react';
+import { useMemo, useReducer } from 'react';
 import type { ChordType, ChordQuality, ScaleType } from '../types';
+import { cagedSequenceLength } from './useCAGEDSequence';
 
 interface CAGEDState {
   selectedChord: ChordType;
   chordQuality: ChordQuality;
-  currentPosition: number;
-  showAllShapes: boolean;
+  /** Indices into the CAGED sequence that are drawn at once; sorted, never empty */
+  selectedPositions: number[];
+  /** Selection to restore when "show all shapes" is switched back off */
+  collapsedSelection: number[];
   showPentatonic: boolean;
   showAllNotes: boolean;
   showScale: boolean;
@@ -15,14 +18,45 @@ interface CAGEDState {
 type CAGEDAction =
   | { type: 'SET_CHORD'; payload: ChordType }
   | { type: 'SET_CHORD_QUALITY'; payload: ChordQuality }
-  | { type: 'NEXT_POSITION'; payload: { sequenceLength: number } }
-  | { type: 'PREVIOUS_POSITION'; payload: { sequenceLength: number } }
-  | { type: 'SET_POSITION'; payload: number }
-  | { type: 'TOGGLE_SHOW_ALL_SHAPES' }
+  | { type: 'NEXT_POSITION' }
+  | { type: 'PREVIOUS_POSITION' }
+  | { type: 'TOGGLE_POSITION'; payload: number }
+  | { type: 'SOLO_POSITION'; payload: number }
+  | { type: 'TOGGLE_ALL_POSITIONS' }
   | { type: 'TOGGLE_SHOW_PENTATONIC' }
   | { type: 'TOGGLE_SHOW_ALL_NOTES' }
   | { type: 'TOGGLE_SHOW_SCALE' }
   | { type: 'SET_SCALE_TYPE'; payload: ScaleType };
+
+/** Positions as a sorted, duplicate-free list */
+function sortPositions(positions: readonly number[]): number[] {
+  return [...new Set(positions)].sort((a, b) => a - b);
+}
+
+/** Indices 0…length-1, i.e. every position on the neck */
+function allPositions(length: number): number[] {
+  return Array.from({ length }, (_, index) => index);
+}
+
+/** Whether the selection already covers the chord's whole walk */
+function isEverythingSelected(state: CAGEDState): boolean {
+  return state.selectedPositions.length >= cagedSequenceLength(state.selectedChord);
+}
+
+/**
+ * Walk the whole selection one position up or down the neck. Every selected
+ * position moves by the same step, so the group keeps its spacing.
+ */
+function shiftPositions(state: CAGEDState, delta: 1 | -1): CAGEDState {
+  const length = cagedSequenceLength(state.selectedChord);
+  if (length === 0) return state;
+  return {
+    ...state,
+    selectedPositions: sortPositions(
+      state.selectedPositions.map((position) => (position + delta + length) % length)
+    ),
+  };
+}
 
 function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
   switch (action.type) {
@@ -30,7 +64,12 @@ function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
       return {
         ...state,
         selectedChord: action.payload,
-        currentPosition: 0, // Reset to first position when changing chord
+        // The sequence is rebuilt for the new chord, so old indices no longer apply.
+        // Viewing the whole neck is a view mode, though, so that much carries over.
+        selectedPositions: isEverythingSelected(state)
+          ? allPositions(cagedSequenceLength(action.payload))
+          : [0],
+        collapsedSelection: [0],
       };
     case 'SET_CHORD_QUALITY': {
       let selectedScale = state.selectedScale;
@@ -47,27 +86,32 @@ function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
       };
     }
     case 'NEXT_POSITION':
-      return {
-        ...state,
-        currentPosition: (state.currentPosition + 1) % action.payload.sequenceLength,
-      };
+      return shiftPositions(state, 1);
     case 'PREVIOUS_POSITION':
+      return shiftPositions(state, -1);
+    case 'TOGGLE_POSITION': {
+      const selectedPositions = state.selectedPositions.includes(action.payload)
+        ? state.selectedPositions.filter((position) => position !== action.payload)
+        : sortPositions([...state.selectedPositions, action.payload]);
+      // Always leave at least one shape on the fretboard
+      return selectedPositions.length > 0 ? { ...state, selectedPositions } : state;
+    }
+    case 'SOLO_POSITION':
+      return { ...state, selectedPositions: [action.payload] };
+    case 'TOGGLE_ALL_POSITIONS': {
+      if (!isEverythingSelected(state)) {
+        return {
+          ...state,
+          selectedPositions: allPositions(cagedSequenceLength(state.selectedChord)),
+          collapsedSelection: state.selectedPositions,
+        };
+      }
+      // Switching back off restores whatever was selected before
       return {
         ...state,
-        currentPosition:
-          (state.currentPosition - 1 + action.payload.sequenceLength) %
-          action.payload.sequenceLength,
+        selectedPositions: state.collapsedSelection.length > 0 ? state.collapsedSelection : [0],
       };
-    case 'SET_POSITION':
-      return {
-        ...state,
-        currentPosition: action.payload,
-      };
-    case 'TOGGLE_SHOW_ALL_SHAPES':
-      return {
-        ...state,
-        showAllShapes: !state.showAllShapes,
-      };
+    }
     case 'TOGGLE_SHOW_PENTATONIC':
       return {
         ...state,
@@ -96,8 +140,8 @@ function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
 const initialState: CAGEDState = {
   selectedChord: 'C',
   chordQuality: 'major',
-  currentPosition: 0,
-  showAllShapes: false,
+  selectedPositions: [0],
+  collapsedSelection: [0],
   showPentatonic: false,
   showAllNotes: false,
   showScale: false,
@@ -119,20 +163,20 @@ const initialState: CAGEDState = {
  * ```typescript
  * const { state, actions } = useCAGEDState();
  *
- * // Change chord and reset position
+ * // Change chord and reset the selection
  * actions.setChord('G');
  *
- * // Toggle between major and minor
- * actions.setChordQuality('minor');
+ * // Stack a second position on the fretboard
+ * actions.togglePosition(3);
  *
- * // Navigate through CAGED sequence
- * actions.nextPosition(5); // 5 shapes in sequence
+ * // Walk every selected position up the neck
+ * actions.nextPosition();
  * ```
  *
  * @stateManagement
- * State updates follow immutable patterns with automatic position reset when
- * changing chord root (for consistency), but maintains position when switching
- * between major/minor quality for better user experience.
+ * Any number of positions can be shown at once. The selection is stored as
+ * indices into the CAGED sequence, reset when the chord root changes (the
+ * sequence is rebuilt) but kept when switching between major/minor quality.
  *
  * @performance
  * Uses useReducer for complex state logic instead of multiple useState hooks,
@@ -143,10 +187,11 @@ export function useCAGEDState(): {
   actions: {
     setChord: (chord: ChordType) => void;
     setChordQuality: (quality: ChordQuality) => void;
-    nextPosition: (sequenceLength: number) => void;
-    previousPosition: (sequenceLength: number) => void;
-    setPosition: (position: number) => void;
-    toggleShowAllShapes: () => void;
+    nextPosition: () => void;
+    previousPosition: () => void;
+    togglePosition: (position: number) => void;
+    soloPosition: (position: number) => void;
+    toggleAllPositions: () => void;
     toggleShowPentatonic: () => void;
     toggleShowAllNotes: () => void;
     toggleShowScale: () => void;
@@ -155,22 +200,25 @@ export function useCAGEDState(): {
 } {
   const [state, dispatch] = useReducer(cagedReducer, initialState);
 
-  const actions = {
-    setChord: (chord: ChordType) => dispatch({ type: 'SET_CHORD', payload: chord }),
-    setChordQuality: (quality: ChordQuality) =>
-      dispatch({ type: 'SET_CHORD_QUALITY', payload: quality }),
-    nextPosition: (sequenceLength: number) =>
-      dispatch({ type: 'NEXT_POSITION', payload: { sequenceLength } }),
-    previousPosition: (sequenceLength: number) =>
-      dispatch({ type: 'PREVIOUS_POSITION', payload: { sequenceLength } }),
-    setPosition: (position: number) => dispatch({ type: 'SET_POSITION', payload: position }),
-    toggleShowAllShapes: () => dispatch({ type: 'TOGGLE_SHOW_ALL_SHAPES' }),
-    toggleShowPentatonic: () => dispatch({ type: 'TOGGLE_SHOW_PENTATONIC' }),
-    toggleShowAllNotes: () => dispatch({ type: 'TOGGLE_SHOW_ALL_NOTES' }),
-    toggleShowScale: () => dispatch({ type: 'TOGGLE_SHOW_SCALE' }),
-    setScaleType: (scaleType: ScaleType) =>
-      dispatch({ type: 'SET_SCALE_TYPE', payload: scaleType }),
-  };
+  const actions = useMemo(
+    () => ({
+      setChord: (chord: ChordType) => dispatch({ type: 'SET_CHORD', payload: chord }),
+      setChordQuality: (quality: ChordQuality) =>
+        dispatch({ type: 'SET_CHORD_QUALITY', payload: quality }),
+      nextPosition: () => dispatch({ type: 'NEXT_POSITION' }),
+      previousPosition: () => dispatch({ type: 'PREVIOUS_POSITION' }),
+      togglePosition: (position: number) =>
+        dispatch({ type: 'TOGGLE_POSITION', payload: position }),
+      soloPosition: (position: number) => dispatch({ type: 'SOLO_POSITION', payload: position }),
+      toggleAllPositions: () => dispatch({ type: 'TOGGLE_ALL_POSITIONS' }),
+      toggleShowPentatonic: () => dispatch({ type: 'TOGGLE_SHOW_PENTATONIC' }),
+      toggleShowAllNotes: () => dispatch({ type: 'TOGGLE_SHOW_ALL_NOTES' }),
+      toggleShowScale: () => dispatch({ type: 'TOGGLE_SHOW_SCALE' }),
+      setScaleType: (scaleType: ScaleType) =>
+        dispatch({ type: 'SET_SCALE_TYPE', payload: scaleType }),
+    }),
+    []
+  );
 
   return {
     state,

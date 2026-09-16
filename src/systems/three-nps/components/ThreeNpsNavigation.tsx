@@ -7,33 +7,41 @@ import type { ModeDegree } from '../types';
 interface ThreeNpsNavigationProps {
   root: number;
   lowString: StringIndex;
-  degree: ModeDegree;
-  showAllModes: boolean;
+  degrees: ModeDegree[];
   allStrings: boolean;
   onRootChange: (root: number) => void;
   onStringPairChange: (lowString: StringIndex) => void;
   onPrevious: () => void;
   onNext: () => void;
-  onSetMode: (degree: ModeDegree) => void;
+  onToggleMode: (degree: ModeDegree) => void;
+  onSoloMode: (degree: ModeDegree) => void;
+  onToggleAllModes: () => void;
 }
 
 const navButtonClass =
   'p-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 transition-colors focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:outline-none cursor-pointer';
+
+const modeButtonClass =
+  'relative w-11 h-11 rounded-md text-white text-xs font-bold transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none cursor-pointer';
 
 const kbdClass = 'px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs';
 
 function ThreeNpsNavigation({
   root,
   lowString,
-  degree,
-  showAllModes,
+  degrees,
   allStrings,
   onRootChange,
   onStringPairChange,
   onPrevious,
   onNext,
-  onSetMode,
+  onToggleMode,
+  onSoloMode,
+  onToggleAllModes,
 }: ThreeNpsNavigationProps) {
+  const allSelected = degrees.length === MODES.length;
+  const isLastSelected = (degree: ModeDegree) => degrees.length === 1 && degrees[0] === degree;
+
   return (
     <div className="bg-white dark:bg-gray-900 mb-6">
       <div className="flex flex-col gap-6">
@@ -105,95 +113,105 @@ function ThreeNpsNavigation({
           </div>
         </div>
 
-        {/* Mode navigation */}
-        {!showAllModes ? (
-          <div className="flex flex-col items-center">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={onPrevious}
-                className={navButtonClass}
-                aria-label="Previous pattern"
-                title="Previous pattern (←)"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
+        {/* Mode selection — any number of modes can be shown at once */}
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onPrevious}
+              className={navButtonClass}
+              aria-label="Move selection down the neck"
+              title="Move selection down the neck (←)"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
 
-              <div
-                className="flex flex-wrap justify-center gap-1.5"
-                role="tablist"
-                aria-label="Mode selector"
-              >
-                {MODES.map((mode, index) => {
-                  const modeDegree = index as ModeDegree;
-                  const isActive = modeDegree === degree;
-                  const startNote = CHROMATIC_TO_NOTE_NAME[(root + MAJOR_SCALE_STEPS[index]) % 12];
-                  return (
-                    <button
-                      key={mode.name}
-                      onClick={() => onSetMode(modeDegree)}
-                      className={`relative w-11 h-11 rounded-md text-white text-xs font-bold transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none cursor-pointer ${
-                        isActive
-                          ? 'scale-110 shadow-lg focus:ring-white ring-2 ring-white ring-opacity-30'
-                          : 'opacity-50 hover:opacity-75 focus:ring-gray-400'
-                      }`}
-                      style={{ backgroundColor: mode.color }}
-                      role="tab"
-                      aria-selected={isActive}
-                      aria-label={`${startNote} ${mode.name}`}
-                      title={`${startNote} ${mode.name} (${index + 1})`}
-                    >
-                      <div className="leading-none">{mode.short}</div>
-                      <div className="absolute bottom-0.5 right-1 text-[9px] leading-none opacity-90 font-mono">
-                        {startNote}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+            <div
+              className="flex flex-wrap justify-center gap-1.5"
+              role="group"
+              aria-label="Mode selector"
+            >
+              {MODES.map((mode, index) => {
+                const modeDegree = index as ModeDegree;
+                const isActive = degrees.includes(modeDegree);
+                const startNote = CHROMATIC_TO_NOTE_NAME[(root + MAJOR_SCALE_STEPS[index]) % 12];
+                return (
+                  <button
+                    key={mode.name}
+                    onClick={(event) =>
+                      event.shiftKey ? onSoloMode(modeDegree) : onToggleMode(modeDegree)
+                    }
+                    className={`${modeButtonClass} ${
+                      isActive
+                        ? 'scale-110 shadow-lg focus:ring-white ring-2 ring-white ring-opacity-30'
+                        : 'opacity-40 hover:opacity-75 focus:ring-gray-400'
+                    } ${isLastSelected(modeDegree) ? 'cursor-default' : ''}`}
+                    style={{ backgroundColor: mode.color }}
+                    aria-pressed={isActive}
+                    aria-label={`${startNote} ${mode.name}`}
+                    title={`${startNote} ${mode.name} (${index + 1}, ⇧ for this mode only)`}
+                  >
+                    <div className="leading-none">{mode.short}</div>
+                    <div className="absolute bottom-0.5 right-1 text-[9px] leading-none opacity-90 font-mono">
+                      {startNote}
+                    </div>
+                  </button>
+                );
+              })}
 
               <button
-                onClick={onNext}
-                className={navButtonClass}
-                aria-label="Next pattern"
-                title="Next pattern (→)"
+                onClick={onToggleAllModes}
+                className={`${modeButtonClass} ${
+                  allSelected
+                    ? 'bg-indigo-600 dark:bg-indigo-500 scale-110 shadow-lg focus:ring-white ring-2 ring-white ring-opacity-30'
+                    : 'bg-gray-400 dark:bg-gray-600 opacity-70 hover:opacity-100 focus:ring-gray-400'
+                }`}
+                aria-pressed={allSelected}
+                aria-label={allSelected ? 'Show one mode only' : 'Show all modes'}
+                title={allSelected ? 'Show one mode only (0)' : 'Show all modes (0)'}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+                All
               </button>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-4">
-              <span>Walk the neck with</span>
-              <kbd className={kbdClass}>←→</kbd>
-              {!allStrings && (
-                <>
-                  <span>• change strings with</span>
-                  <kbd className={kbdClass}>↑↓</kbd>
-                </>
-              )}
-              <span>• jump to a mode with</span>
-              <kbd className={kbdClass}>1-7</kbd>
-            </div>
+
+            <button
+              onClick={onNext}
+              className={navButtonClass}
+              aria-label="Move selection up the neck"
+              title="Move selection up the neck (→)"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
           </div>
-        ) : (
-          <div className="flex flex-col items-center">
-            <div className="px-4 py-2 rounded-lg bg-indigo-600 dark:bg-indigo-500 text-white font-semibold text-base shadow-sm">
-              All Modes
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-4">
+            <span>Tap modes to stack them •</span>
+            <kbd className={kbdClass}>1-7</kbd>
+            <span>to toggle,</span>
+            <kbd className={kbdClass}>⇧1-7</kbd>
+            <span>for one •</span>
+            <span>walk the neck with</span>
+            <kbd className={kbdClass}>←→</kbd>
+            {!allStrings && (
+              <>
+                <span>• change strings with</span>
+                <kbd className={kbdClass}>↑↓</kbd>
+              </>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

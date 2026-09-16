@@ -9,6 +9,7 @@ import {
   buildSequence,
   createModeStyle,
   findNearest,
+  visiblePatterns,
 } from './threeNps';
 import { createInitialThreeNpsState, threeNpsReducer } from '../hooks/useThreeNpsState';
 
@@ -137,30 +138,102 @@ describe('buildPositionMap / createModeStyle', () => {
   });
 });
 
+describe('visiblePatterns', () => {
+  const sequence = buildSequence(C, { kind: 'pair', lowString: 5 });
+  const starts = (patterns: NpsPattern[]) => patterns.map((p) => [p.degree, p.startFret]);
+
+  it('shows the nearest pattern of every selected mode', () => {
+    // C Ionian sits at fret 8, D Dorian right above it at fret 10
+    expect(starts(visiblePatterns(sequence, [0, 1], 8, false))).toEqual([
+      [0, 8],
+      [1, 10],
+    ]);
+  });
+
+  it('shows every occurrence of the selected modes on the whole neck', () => {
+    expect(starts(visiblePatterns(sequence, [2], 0, true))).toEqual([
+      [2, 0],
+      [2, 12],
+    ]);
+  });
+
+  it('draws each selected mode in its own colour, splitting shared notes', () => {
+    const map = buildPositionMap(visiblePatterns(sequence, [0, 1], 8, false));
+    // Ionian-only note on the low E at fret 8
+    expect(map.get('5-8')).toEqual([0]);
+    // Fret 10 belongs to both dominoes
+    expect(map.get('5-10')).toEqual([0, 1]);
+    expect(createModeStyle(map.get('5-10') ?? [])).toHaveProperty('background');
+  });
+});
+
 describe('threeNpsReducer', () => {
-  it('starts on Ionian at its lowest position', () => {
+  it('starts on Ionian alone at its lowest position', () => {
     const state = createInitialThreeNpsState(C);
-    expect(state.degree).toBe(0);
+    expect(state.degrees).toEqual([0]);
     expect(state.anchorFret).toBe(8);
   });
 
   it('steps up the neck and wraps around', () => {
     let state = createInitialThreeNpsState(C);
     state = threeNpsReducer(state, { type: 'NEXT' });
-    expect([state.degree, state.anchorFret]).toEqual([1, 10]);
+    expect([state.degrees, state.anchorFret]).toEqual([[1], 10]);
 
     const sequence = buildSequence(C, { kind: 'pair', lowString: 5 });
     for (let i = 0; i < sequence.length; i++) state = threeNpsReducer(state, { type: 'NEXT' });
-    expect([state.degree, state.anchorFret]).toEqual([1, 10]);
+    expect([state.degrees, state.anchorFret]).toEqual([[1], 10]);
 
     state = threeNpsReducer(createInitialThreeNpsState(C), { type: 'PREVIOUS' });
-    expect([state.degree, state.anchorFret]).toEqual([6, 7]);
+    expect([state.degrees, state.anchorFret]).toEqual([[6], 7]);
   });
 
-  it('keeps the mode near the same fret when changing string pair', () => {
+  it('adds and removes modes, never emptying the selection', () => {
+    let state = threeNpsReducer(createInitialThreeNpsState(C), {
+      type: 'TOGGLE_MODE',
+      payload: 3,
+    });
+    expect(state.degrees).toEqual([0, 3]);
+
+    state = threeNpsReducer(state, { type: 'TOGGLE_MODE', payload: 0 });
+    expect(state.degrees).toEqual([3]);
+
+    // The last remaining mode stays put
+    expect(threeNpsReducer(state, { type: 'TOGGLE_MODE', payload: 3 })).toBe(state);
+  });
+
+  it('walks a multi-mode selection up the neck as a group', () => {
+    let state = threeNpsReducer(createInitialThreeNpsState(C), {
+      type: 'TOGGLE_MODE',
+      payload: 1,
+    });
+    expect([state.degrees, state.anchorFret]).toEqual([[0, 1], 8]);
+
+    state = threeNpsReducer(state, { type: 'NEXT' });
+    expect([state.degrees, state.anchorFret]).toEqual([[1, 2], 10]);
+
+    state = threeNpsReducer(state, { type: 'PREVIOUS' });
+    expect([state.degrees, state.anchorFret]).toEqual([[0, 1], 8]);
+  });
+
+  it('selects every mode and collapses back to the one at the anchor', () => {
+    const single = createInitialThreeNpsState(C);
+    const all = threeNpsReducer(single, { type: 'TOGGLE_ALL_MODES' });
+    expect(all.degrees).toEqual([0, 1, 2, 3, 4, 5, 6]);
+    expect(threeNpsReducer(all, { type: 'TOGGLE_ALL_MODES' }).degrees).toEqual([0]);
+  });
+
+  it('shows one mode on its own', () => {
+    const all = threeNpsReducer(createInitialThreeNpsState(C), { type: 'TOGGLE_ALL_MODES' });
+    const solo = threeNpsReducer(all, { type: 'SOLO_MODE', payload: 4 });
+    expect(solo.degrees).toEqual([4]);
+    // G Mixolydian on the low E: fret 3 or 15 — fret 3 is closer to the anchor at 8
+    expect(solo.anchorFret).toBe(3);
+  });
+
+  it('keeps the selection near the same fret when changing string pair', () => {
     const state = threeNpsReducer(createInitialThreeNpsState(C), { type: 'PAIR_UP' });
     expect(state.lowString).toBe(4);
-    expect(state.degree).toBe(0);
+    expect(state.degrees).toEqual([0]);
     // C on the A string: fret 3 or 15 — fret 3 is closer to 8
     expect(state.anchorFret).toBe(3);
   });
@@ -170,10 +243,11 @@ describe('threeNpsReducer', () => {
     expect(threeNpsReducer(lowest, { type: 'PAIR_DOWN' })).toBe(lowest);
   });
 
-  it('resets to Ionian when the root changes', () => {
+  it('keeps the selected modes when the root changes', () => {
     let state = threeNpsReducer(createInitialThreeNpsState(C), { type: 'NEXT' });
     state = threeNpsReducer(state, { type: 'SET_ROOT', payload: 7 });
-    expect(state.degree).toBe(0);
-    expect(state.anchorFret).toBe(3); // G on low E
+    expect(state.degrees).toEqual([1]);
+    // A Dorian, the second degree of G major, on the low E string
+    expect(state.anchorFret).toBe(5);
   });
 });
