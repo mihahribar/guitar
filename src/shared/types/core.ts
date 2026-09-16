@@ -128,7 +128,7 @@ export type ThemePreference = 'light' | 'dark';
 /**
  * Navigation page type
  */
-export type NavigationPage = 'caged' | 'quiz';
+export type NavigationPage = 'caged' | '3nps' | 'rhythm';
 
 /**
  * App-wide navigation state

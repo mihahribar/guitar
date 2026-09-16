@@ -24,12 +24,7 @@ export interface AppError {
 /**
  * Specific error types for different application domains
  */
-export type AppErrorType =
-  | ValidationError
-  | StorageError
-  | MusicTheoryError
-  | QuizError
-  | ComponentError;
+export type AppErrorType = ValidationError | StorageError | MusicTheoryError | ComponentError;
 
 /**
  * Validation errors with field-specific information
@@ -68,17 +63,6 @@ export interface MusicTheoryError extends AppError {
   calculationType: 'fret_position' | 'chord_interval' | 'scale_interval' | 'note_mapping';
   /** Input values that caused the error */
   inputs: Record<string, unknown>;
-}
-
-/**
- * Quiz-related errors
- */
-export interface QuizError extends AppError {
-  code: 'QUIZ_ERROR';
-  /** Phase of quiz that failed */
-  phase: 'generation' | 'validation' | 'scoring' | 'persistence';
-  /** Question index if applicable */
-  questionIndex?: number;
 }
 
 /**
@@ -154,20 +138,6 @@ export const createMusicTheoryError = (
   timestamp: new Date(),
 });
 
-export const createQuizError = (
-  phase: QuizError['phase'],
-  questionIndex?: number,
-  message?: string,
-  cause?: Error
-): QuizError => ({
-  code: 'QUIZ_ERROR',
-  message: message || `Quiz error in ${phase} phase`,
-  phase,
-  questionIndex,
-  cause,
-  timestamp: new Date(),
-});
-
 export const createComponentError = (
   componentName: string,
   phase: ComponentError['phase'],
@@ -195,8 +165,6 @@ export const isStorageError = (error: AppError): error is StorageError =>
 
 export const isMusicTheoryError = (error: AppError): error is MusicTheoryError =>
   error.code === 'MUSIC_THEORY_ERROR';
-
-export const isQuizError = (error: AppError): error is QuizError => error.code === 'QUIZ_ERROR';
 
 export const isComponentError = (error: AppError): error is ComponentError =>
   error.code === 'COMPONENT_ERROR';

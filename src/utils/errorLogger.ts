@@ -265,9 +265,6 @@ export const logStorageError = (error: AppErrorType, context?: Record<string, un
 export const logMusicTheoryError = (error: AppErrorType, context?: Record<string, unknown>) =>
   errorLogger.logError(error, 'high', context);
 
-export const logQuizError = (error: AppErrorType, context?: Record<string, unknown>) =>
-  errorLogger.logError(error, 'medium', context);
-
 export const logComponentError = (error: AppErrorType, context?: Record<string, unknown>) =>
   errorLogger.logError(error, 'high', context, false);
 

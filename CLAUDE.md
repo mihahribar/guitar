@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Interactive React web application for learning the CAGED guitar system - a guitar learning method that teaches 5 chord shapes that can be moved up and down the neck. The app includes an interactive visualizer, quiz mode for chord identification practice and rhythm practice with audio feedback. **Now supports both major and minor chord qualities** with complete CAGED implementation for all chord types.
+Interactive React web application for learning the CAGED guitar system - a guitar learning method that teaches 5 chord shapes that can be moved up and down the neck. The app includes an interactive visualizer, a three-notes-per-string scale system and rhythm practice with audio feedback. **Now supports both major and minor chord qualities** with complete CAGED implementation for all chord types.
 
 **Live Site**: [caged.hribar.org](https://caged.hribar.org)
 
@@ -92,23 +92,6 @@ src/
 │   │   │   └── index.ts       # RhythmPattern, Note, etc.
 │   │   └── utils/             # Rhythm utilities
 │   │       └── rhythmUtils.ts # Timing calculations
-│   └── quiz/                  # Quiz learning system module
-│       ├── components/        # Quiz-specific components
-│       │   ├── QuizPage.tsx           # Quiz mode entry point
-│       │   ├── QuizQuestion.tsx       # Individual questions
-│       │   ├── QuizResults.tsx        # Quiz completion screen
-│       │   ├── QuizProgress.tsx       # Progress indicator
-│       │   └── QuizModeToggle.tsx     # Quiz mode navigation
-│       ├── hooks/             # Quiz-specific hooks
-│       │   ├── useQuiz.ts             # Quiz state management
-│       │   ├── useQuizLogic.ts        # Question generation
-│       │   ├── useQuizState.ts        # Quiz state handling
-│       │   └── useQuizPreferences.ts  # Quiz preferences
-│       ├── constants/         # Quiz configuration
-│       │   ├── index.ts       # Quiz constants
-│       │   └── quizConfig.ts  # Default quiz settings
-│       └── types/             # Quiz-specific types
-│           └── index.ts       # Quiz interfaces and types
 ├── components/                # App infrastructure components
 │   ├── ErrorBoundary.tsx     # Error handling
 │   └── SafeComponent.tsx     # Safe component wrapper
@@ -141,7 +124,6 @@ The project uses TypeScript path aliases for clean, predictable imports:
 - `@/systems/caged` - CAGED system module imports
 - `@/systems/rhythm-game` - Rhythm practice system imports
 - `@/systems/three-nps` - 3NPS scale system imports
-- `@/systems/quiz` - Quiz system module imports
 
 Example imports:
 
@@ -152,7 +134,7 @@ import { FRETBOARD_CONSTANTS } from '@/shared/constants';
 
 // System-specific imports
 import { CAGEDVisualizer } from '@/systems/caged/components';
-import { useQuiz } from '@/systems/quiz/hooks';
+import { useThreeNpsState } from '@/systems/three-nps/hooks';
 ```
 
 ### Barrel Exports
@@ -163,7 +145,6 @@ Each module provides clean barrel exports for easy consumption:
 - `src/systems/caged/index.ts` - Complete CAGED system
 - `src/systems/rhythm-game/index.ts` - Complete rhythm system
 - `src/systems/three-nps/index.ts` - Complete 3NPS system
-- `src/systems/quiz/index.ts` - Complete quiz system
 
 ### System Isolation
 
@@ -174,9 +155,9 @@ Each module provides clean barrel exports for easy consumption:
 
 ### Code Splitting & Performance
 
-- 3NPS, Quiz and Rhythm systems are lazy-loaded for optimal initial bundle size
+- 3NPS and Rhythm systems are lazy-loaded for optimal initial bundle size
 - Modular structure enables excellent tree shaking
-- Bundle sizes: Main (~214kB), Rhythm chunk (~21kB), Quiz chunk (~18kB), CSS (~38kB)
+- Bundle sizes: Main (~237kB), Rhythm chunk (~26kB), 3NPS chunk (~16kB), CSS (~37kB)
 
 ## Code Conventions & Patterns
 
@@ -184,7 +165,7 @@ Each module provides clean barrel exports for easy consumption:
 
 - **Components**: PascalCase (`CAGEDVisualizer.tsx`)
 - **Hooks**: camelCase with `use` prefix (`useCAGEDLogic.ts`)
-- **Types**: PascalCase interfaces (`ChordType`, `QuizSession`)
+- **Types**: PascalCase interfaces (`ChordType`, `NpsPattern`)
 - **Constants**: SCREAMING_SNAKE_CASE (`CAGED_SHAPE_DATA`)
 - **Files**: PascalCase for components, camelCase for utilities
 
@@ -232,10 +213,13 @@ Each module provides clean barrel exports for easy consumption:
 ### Available Scripts
 
 ```bash
-npm run dev      # Development server (http://localhost:5173)
-npm run build    # Production build (runs TypeScript check first)
-npm run lint     # ESLint code quality check
-npm run preview  # Preview production build locally
+npm run dev       # Development server (http://localhost:5173)
+npm run build     # Production build (runs TypeScript check first)
+npm run lint      # ESLint code quality check
+npm run test      # Vitest in watch mode
+npm run test:run  # Vitest once (use this in checks)
+npm run format    # Prettier write
+npm run preview   # Preview production build locally
 ```
 
 ### Development Process
@@ -243,8 +227,10 @@ npm run preview  # Preview production build locally
 1. **Start dev server**: `npm run dev`
 2. **Code changes**: Auto-reload via Vite HMR
 3. **Type checking**: Continuous via TypeScript
-4. **Code quality**: Run `npm run lint` before commits
+4. **Code quality**: Run `npm run lint` and `npm run test:run` before commits
 5. **Build testing**: `npm run build` before deployment
+
+A husky + lint-staged pre-commit hook runs `eslint --fix` and `prettier --write` on staged files.
 
 ### Deployment Process
 
@@ -264,6 +250,18 @@ The app implements the CAGED guitar system with full major and minor chord suppo
 - **Full positions**: 18 notes across all 6 strings, named after the starting degree on the low E string
 - **Generated from pitch**: frets come from absolute open-string pitches (`absoluteOpenPitches`), so the G–B major-third shift (+1 fret on the upper string) is automatic
 - **String index 0 is the high E** (matches `STANDARD_TUNING`/`STRING_NAMES`)
+- **Whole Neck**: off shows one pattern per selected mode near the anchor fret; on shows every occurrence of those modes up the neck
+
+### Pattern Selection (shared by CAGED and 3NPS)
+
+Both visualizers use the same interaction, and it is the thing to preserve when
+changing either one:
+
+- **Multi-select chips**: tapping a chip toggles that pattern on the fretboard; at least one always stays selected. Shift-click (or `⇧` + the number key) reduces the selection to just that one.
+- **Group walk**: `←`/`→` move _every_ selected entry one step along the sequence, so a stacked selection keeps its spacing as it travels up the neck. With one selected this is plain next/previous.
+- **Selection is state, "show all" is derived**: CAGED stores `selectedPositions: number[]` (indices into the walk) and derives `showAllShapes` from "every position selected". 3NPS stores `degrees: ModeDegree[]` plus an `anchorFret`, with `wholeNeck` as a separate toggle.
+- **Overlapping notes split their colour**: `createGradientStyle` (CAGED) and `createModeStyle` (3NPS) render hard-edged segments, one per pattern covering that position.
+- **Overlays follow the selection**: CAGED's pentatonic and scale overlays box themselves around the union of the selected shapes, falling back to full-neck maps when everything is selected.
 
 ### Chord Shapes and Qualities
 
@@ -278,7 +276,7 @@ The app implements the CAGED guitar system with full major and minor chord suppo
 - **Major chord intervals**: Root (0), Major Third (4), Perfect Fifth (7)
 - **Minor chord intervals**: Root (0), Minor Third (3), Perfect Fifth (7)
 - **Pentatonic scales**: Major (0,2,4,7,9) and Minor (0,3,5,7,10) pentatonic intervals
-- **Fretboard logic**: 15 frets, standard tuning (E-A-D-G-B-E)
+- **Fretboard logic**: 21 frets (`FRETBOARD_CONSTANTS.MAX_FRET`), standard tuning (E-A-D-G-B-E)
 - **Pattern calculation**: Shape + quality + position = chord voicing
 - **Visual overlays**: Color-coded shapes with gradient blending for overlapping patterns
 
@@ -296,7 +294,7 @@ The app implements the CAGED guitar system with full major and minor chord suppo
 When asking Claude for help with this project:
 
 1. **Specify component location** - include file paths
-2. **Mention feature area** - visualizer vs quiz vs theme/navigation
+2. **Mention feature area** - visualizer vs 3NPS vs rhythm vs theme/navigation
 3. **Include TypeScript context** - types are crucial for accuracy
 4. **Reference existing patterns** - point to similar code when requesting changes
 
@@ -305,7 +303,7 @@ When asking Claude for help with this project:
 ```
 "Add a new feature to the visualizer component that [description]. Follow the existing pattern in CAGEDVisualizer.tsx and use the custom hooks pattern."
 
-"Fix a bug in the quiz system where [issue]. The quiz logic is in src/hooks/useQuiz.ts and the UI is in src/components/QuizQuestion.tsx."
+"Fix a bug in the 3NPS system where [issue]. The pattern logic is in src/systems/three-nps/utils/threeNps.ts and the UI is in src/systems/three-nps/components/ThreeNpsPage.tsx."
 
 "Update the theme system to support [new feature]. The theme context is in src/contexts/ThemeContext.tsx."
 ```
@@ -340,20 +338,22 @@ When asking Claude for help with this project:
 
 ### Common Task Templates
 
-#### Adding New Quiz Features
+#### Adding New 3NPS Features
 
-1. Update types in `src/systems/quiz/types/index.ts`
-2. Modify quiz logic in `src/systems/quiz/hooks/` (useQuiz.ts or related hooks)
-3. Update UI components in `src/systems/quiz/components/Quiz*.tsx`
-4. Add/update constants in `src/systems/quiz/constants/`
-5. Test with different chord combinations
+1. Update types in `src/systems/three-nps/types/index.ts`
+2. Modify pattern logic in `src/systems/three-nps/utils/threeNps.ts` (and its tests)
+3. Update state in `src/systems/three-nps/hooks/useThreeNpsState.ts`
+4. Update UI components in `src/systems/three-nps/components/ThreeNps*.tsx`
+5. Test with every root, mode and string pair
 
 #### Modifying CAGED Logic
 
 1. Review music theory in `src/systems/caged/constants/index.ts`
-2. Update calculation logic in `src/systems/caged/hooks/useCAGEDLogic.ts`
-3. Test with all chord shapes and positions
-4. Verify visual accuracy on fretboard
+2. Update the walk in `src/systems/caged/hooks/useCAGEDSequence.ts` (`buildCAGEDSequence` is pure and is reused by the reducer)
+3. Update calculation logic in `src/systems/caged/hooks/useCAGEDLogic.ts`
+4. Update selection behaviour in `src/systems/caged/hooks/useCAGEDState.ts` (and its tests)
+5. Test with all chord shapes, qualities and positions
+6. Verify visual accuracy on fretboard
 
 #### Adding Rhythm Features
 
@@ -405,7 +405,9 @@ When asking Claude for help with this project:
 
 ### Testing Approach
 
-- **Manual testing**: No automated test suite currently
+- **Vitest suite**: `npm run test:run` — music theory, CAGED/3NPS pattern generation and reducers
+- **Pure logic is tested**: pattern builders and reducers are pure functions kept outside components so they can be tested directly
+- **Components are not**: UI is verified by hand
 - **Cross-browser**: Test in Chrome, Firefox, Safari
 - **Device testing**: Desktop and mobile layouts
 - **Music accuracy**: Verify chord patterns with actual guitar
@@ -430,13 +432,13 @@ When asking Claude for help with this project:
 - **Mathematical chord calculation**: Real music theory implementation
 - **Gradient overlay system**: Complex visual blending for overlapping patterns
 - **Context-minimal approach**: Only theme and navigation in context
-- **Code splitting by system**: Quiz and Rhythm systems lazy-loaded for performance
+- **Code splitting by system**: 3NPS and Rhythm systems lazy-loaded for performance
 - **Web Audio API integration**: Rhythm system uses Web Audio for precise timing and audio playback
 
 ### Performance Considerations
 
 - **Modular tree shaking**: Excellent bundle optimization through system isolation
-- **Code splitting**: Quiz (~18kB) and Rhythm (~21kB) systems lazy-loaded, reducing initial bundle
+- **Code splitting**: 3NPS (~16kB) and Rhythm (~26kB) systems lazy-loaded, reducing initial bundle
 - **useMemo for calculations**: CAGED logic is memoized within systems
 - **Minimal re-renders**: State changes are targeted and system-contained
 - **Efficient gradient generation**: Dynamic CSS generation

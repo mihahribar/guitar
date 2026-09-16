@@ -38,7 +38,6 @@ export default defineConfig({
       '@/shared': resolve(__dirname, './src/shared'),
       '@/systems/caged': resolve(__dirname, './src/systems/caged'),
       '@/systems/rhythm-game': resolve(__dirname, './src/systems/rhythm-game'),
-      '@/systems/quiz': resolve(__dirname, './src/systems/quiz'),
       '@/systems/three-nps': resolve(__dirname, './src/systems/three-nps'),
     },
   },

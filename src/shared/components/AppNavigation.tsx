@@ -9,7 +9,6 @@ export default function AppNavigation() {
     { page: 'caged', label: 'CAGED', description: 'Interactive CAGED system explorer' },
     { page: '3nps', label: '3NPS', description: 'Three notes per string scale system' },
     { page: 'rhythm', label: 'Rhythm', description: 'Practice rhythm patterns' },
-    { page: 'quiz', label: 'Quiz', description: 'Test your chord identification skills' },
   ];
 
   return (

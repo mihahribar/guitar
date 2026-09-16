@@ -217,11 +217,6 @@ export const SAFE_COMPONENT_CONFIGS = {
     loadingMessage: 'Loading navigation...',
     logErrors: true,
   },
-  quiz: {
-    componentName: 'QuizComponents',
-    loadingMessage: 'Loading quiz...',
-    logErrors: true,
-  },
   visualizer: {
     componentName: 'CAGEDVisualizer',
     loadingMessage: 'Loading CAGED visualizer...',

@@ -51,27 +51,12 @@ export const MUSIC_THEORY_CONSTANTS = {
 export const UI_CONSTANTS = {
   /** Fret positions that should show position markers */
   FRET_MARKERS: [3, 5, 7, 9, 12, 15, 17, 19, 21] as const,
-
-  /** Delay in milliseconds for quiz auto-progression */
-  QUIZ_AUTO_ADVANCE_DELAY: 1000,
-
-  /** Default question count for quiz sessions */
-  DEFAULT_QUESTION_COUNT: 10,
-
-  /** Maximum question count allowed */
-  MAX_QUESTION_COUNT: 50,
-
-  /** Minimum question count allowed */
-  MIN_QUESTION_COUNT: 5,
 } as const;
 
 /**
  * Storage and persistence constants
  */
 export const STORAGE_CONSTANTS = {
-  /** LocalStorage key for quiz preferences */
-  QUIZ_PREFERENCES_KEY: 'caged-quiz-preferences',
-
   /** LocalStorage key for theme preferences */
   THEME_PREFERENCES_KEY: 'caged-theme-preferences',
 
@@ -102,9 +87,6 @@ export const VALIDATION_CONSTANTS = {
 
   /** Valid chord qualities */
   VALID_CHORD_QUALITIES: ['major', 'minor'] as const,
-
-  /** Valid quiz modes */
-  VALID_QUIZ_MODES: ['major', 'minor', 'mixed'] as const,
 
   /** String index bounds (0-based) */
   STRING_INDEX_BOUNDS: { MIN: 0, MAX: 5 } as const,

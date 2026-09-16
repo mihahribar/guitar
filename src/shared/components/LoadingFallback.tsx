@@ -121,33 +121,6 @@ export function NavigationSkeleton() {
 }
 
 /**
- * Skeleton loader for quiz question
- */
-export function QuizSkeleton() {
-  return (
-    <div className="space-y-6 animate-pulse">
-      {/* Progress bar */}
-      <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
-        <div className="h-2 bg-gray-300 dark:bg-gray-600 rounded-full w-1/3" />
-      </div>
-
-      {/* Question area */}
-      <div className="space-y-4">
-        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-2/3" />
-        <FretboardSkeleton />
-      </div>
-
-      {/* Answer choices */}
-      <div className="grid grid-cols-5 gap-3">
-        {Array.from({ length: 5 }, (_, i) => (
-          <div key={i} className="h-12 bg-gray-200 dark:bg-gray-700 rounded" />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/**
  * Generic content skeleton
  */
 export function ContentSkeleton({

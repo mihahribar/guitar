@@ -5,9 +5,13 @@
  * messages and type safety for the CAGED Visualizer application.
  */
 
-import type { ChordType, ChordQuality } from '@/shared/types/core';
-import type { QuizMode, ValidationResult, ValidationError } from '@/systems/quiz/types';
-import { VALIDATION_CONSTANTS, UI_CONSTANTS } from '@/shared/constants';
+import type {
+  ChordType,
+  ChordQuality,
+  ValidationResult,
+  ValidationError,
+} from '@/shared/types/core';
+import { VALIDATION_CONSTANTS } from '@/shared/constants';
 
 /**
  * Validation rule function type
@@ -103,34 +107,6 @@ export const validateChordQuality = (value: unknown): ValidationResult<ChordQual
   }
 
   return { success: true, data: value as ChordQuality };
-};
-
-/**
- * Quiz mode validation
- */
-export const validateQuizMode = (value: unknown): ValidationResult<QuizMode> => {
-  if (typeof value !== 'string') {
-    return {
-      success: false,
-      errors: [createValidationError('quizMode', 'Quiz mode must be a string', value, 'string')],
-    };
-  }
-
-  if (!VALIDATION_CONSTANTS.VALID_QUIZ_MODES.includes(value as QuizMode)) {
-    return {
-      success: false,
-      errors: [
-        createValidationError(
-          'quizMode',
-          `Invalid quiz mode. Must be one of: ${VALIDATION_CONSTANTS.VALID_QUIZ_MODES.join(', ')}`,
-          value,
-          VALIDATION_CONSTANTS.VALID_QUIZ_MODES.join(' | ')
-        ),
-      ],
-    };
-  }
-
-  return { success: true, data: value as QuizMode };
 };
 
 /**
@@ -249,51 +225,6 @@ export const validateStringIndex = (value: unknown): ValidationResult<number> =>
 };
 
 /**
- * Question count validation for quiz settings
- */
-export const validateQuestionCount = (value: unknown): ValidationResult<number> => {
-  if (typeof value !== 'number') {
-    return {
-      success: false,
-      errors: [
-        createValidationError('questionCount', 'Question count must be a number', value, 'number'),
-      ],
-    };
-  }
-
-  if (!Number.isInteger(value)) {
-    return {
-      success: false,
-      errors: [
-        createValidationError(
-          'questionCount',
-          'Question count must be an integer',
-          value,
-          'integer'
-        ),
-      ],
-    };
-  }
-
-  const { MIN_QUESTION_COUNT, MAX_QUESTION_COUNT } = UI_CONSTANTS;
-  if (value < MIN_QUESTION_COUNT || value > MAX_QUESTION_COUNT) {
-    return {
-      success: false,
-      errors: [
-        createValidationError(
-          'questionCount',
-          `Question count must be between ${MIN_QUESTION_COUNT} and ${MAX_QUESTION_COUNT}`,
-          value,
-          `${MIN_QUESTION_COUNT} <= count <= ${MAX_QUESTION_COUNT}`
-        ),
-      ],
-    };
-  }
-
-  return { success: true, data: value };
-};
-
-/**
  * Array validation with element validation
  */
 export const validateArray = <T>(
@@ -361,20 +292,6 @@ export const validateArray = <T>(
   }
 
   return { success: true, data: validatedItems };
-};
-
-/**
- * Validate chord type array (for quiz preferences)
- */
-export const validateChordTypeArray = (value: unknown): ValidationResult<ChordType[]> => {
-  return validateArray(value, validateChordType, 'chords', 1, 5);
-};
-
-/**
- * Validate shape type array (for quiz preferences)
- */
-export const validateShapeTypeArray = (value: unknown): ValidationResult<ChordType[]> => {
-  return validateArray(value, validateChordType, 'shapes', 1, 5);
 };
 
 /**

@@ -4,15 +4,16 @@ An interactive web application for learning various guitar system with a modular
 
 ## Features
 
-- **Visual fretboard** with color-coded chord shapes
+- **Visual fretboard** with color-coded chord shapes across a full 21-fret neck
 - **Major and Minor Chord Support** - Full CAGED system implementation for both major and minor chord qualities
 - **Chord Quality Toggle** - Seamlessly switch between major and minor chord patterns
-- Navigate through all 5 CAGED positions for any chord (C, A, G, E, D)
-- Show individual shapes or all shapes at once with gradient blending
+- **Stack multiple patterns** - Select any combination of CAGED positions (or 3NPS modes) to see how they link up, with overlapping notes split between their colors
+- Walk the whole neck, including octave repeats of each shape
+- **3NPS Scale System** - Three-notes-per-string major scale in all 12 keys, as two-string "dominoes" or full six-string positions, one color per mode
 - **Pentatonic Scale Overlay** - Toggle to show major/minor pentatonic scale notes over chord shapes for music theory context
+- **Scale Overlay** - Overlay any of the supported scales and modes over the chord shapes
 - **All Notes Display** - Toggle to show natural note names (E, F, G, A, B, C, D) on all fret positions for fretboard navigation
 - **Rhythm Practice** - Interactive rhythm training with musical notation display, customizable BPM, and audio feedback
-- **Quiz Mode** - Interactive chord identification quiz with scoring system
 - **Dark/Light theme toggle** with system preference detection
 - Authentic neck inlay dots for reference
 - Clean, minimal design focused on learning
@@ -33,21 +34,44 @@ An interactive web application for learning various guitar system with a modular
 
 ## Usage
 
-### Visualizer Mode
+### CAGED Visualizer
 
 - **Select a root chord** (C, A, G, E, or D) and **chord quality** (Major/Minor)
-- Use Previous/Next buttons to cycle through the 5 shapes
-- Toggle "Show All CAGED Shapes" to see the complete pattern with gradient overlays
+- Each chip in the selector is one playable position, labelled with its shape and base fret
+- **Tap a chip to stack it** on the fretboard; tap again to remove it. Shift-click shows that position on its own
+- Use Previous/Next to walk every selected position one step up or down the neck together
+- Toggle "Show All Shapes" to light up the whole neck; switching it back off restores the selection you had
 - Toggle "Pentatonic Scale" to overlay major/minor pentatonic scale notes in green
+- Toggle "Scale" to overlay a chosen scale or mode, and pick the scale from the dropdown
 - Toggle "All Notes" to display natural note names on fret positions for easy navigation
-- Click on any colored circle in the progress indicator to jump to that shape
 
-### Keyboard Shortcuts
+#### Keyboard Shortcuts
 
-- **Space**: Toggle between single shape and all shapes view
-- **Arrow Keys (←/→)**: Navigate through shapes in single shape mode
-- **Numbers (1-5)**: Jump directly to a specific shape position
+- **Arrow Keys (←/→)**: Walk every selected position down/up the neck
+- **Numbers (1-9)**: Add or remove that position; **⇧1-9** shows it on its own
+- **Space**: Select every position, or collapse back to your previous selection
 - **S**: Toggle pentatonic scale overlay
+- **M**: Toggle scale overlay
+- **N**: Toggle all notes display
+
+### 3NPS Scale System
+
+- Click "3NPS" to explore the three-notes-per-string major scale
+- **Pick any of the 12 roots**, then choose a string pair (6–5 through 2–1) or turn on "All Strings" for full six-string positions
+- Each chip is one mode, from Ionian to Locrian, labelled with the note it starts on
+- **Tap modes to stack them** and see how neighbouring dominoes connect; shift-click shows one alone
+- Use Previous/Next to rotate the whole selection one step up or down the neck
+- Toggle "Whole Neck" to show every occurrence of the selected modes instead of just the one nearest your position
+- Toggle "All Notes" to display note names across the fretboard
+
+#### Keyboard Shortcuts
+
+- **Arrow Keys (←/→)**: Walk the selection down/up the neck
+- **Arrow Keys (↑/↓)**: Move to the higher/lower string pair
+- **Numbers (1-7)**: Add or remove that mode; **⇧1-7** shows it on its own
+- **0**: Select every mode, or collapse back to one
+- **Space**: Toggle whole neck
+- **A**: Toggle all strings
 - **N**: Toggle all notes display
 
 ### Rhythm Practice
@@ -60,14 +84,6 @@ An interactive web application for learning various guitar system with a modular
 - Enable "Play Notes" to hear the subdivision notes for each pattern
 - Enable "Random Change" to have patterns randomly change after each cycle
 - Use "Randomize" to shuffle all patterns at once
-
-### Quiz Mode
-
-- Click "Quiz Mode" to start a chord identification quiz
-- View a chord pattern on the fretboard and identify which root chord it represents
-- Choose from all 5 possible chord options (C, A, G, E, D)
-- Receive immediate feedback and track your score
-- Review correct answers for missed questions at the end
 
 ## Building for Production
 
@@ -95,17 +111,18 @@ src/
 │   │   ├── hooks/       # CAGED-specific React hooks
 │   │   ├── types/       # CAGED system types
 │   │   └── utils/       # CAGED-specific utilities
-│   ├── rhythm-game/     # Rhythm practice system module
-│   │   ├── components/  # Rhythm UI (panels, controls, notation)
-│   │   ├── constants/   # Rhythm patterns and defaults
-│   │   ├── hooks/       # Beat cycling, audio, game state
-│   │   ├── types/       # Rhythm system types
-│   │   └── utils/       # Timing and pattern utilities
-│   └── quiz/            # Quiz learning system module
-│       ├── components/  # Quiz-specific components
-│       ├── constants/   # Quiz system constants
-│       ├── hooks/       # Quiz-specific React hooks
-│       └── types/       # Quiz system types
+│   ├── three-nps/       # Three-notes-per-string scale system module
+│   │   ├── components/  # 3NPS page, navigation, toggles
+│   │   ├── constants/   # Scale steps, mode colours, string pairs
+│   │   ├── hooks/       # 3NPS state, logic, keyboard
+│   │   ├── types/       # 3NPS system types
+│   │   └── utils/       # Pattern and sequence generation (+ tests)
+│   └── rhythm-game/     # Rhythm practice system module
+│       ├── components/  # Rhythm UI (panels, controls, notation)
+│       ├── constants/   # Rhythm patterns and defaults
+│       ├── hooks/       # Beat cycling, audio, game state
+│       ├── types/       # Rhythm system types
+│       └── utils/       # Timing and pattern utilities
 ├── components/          # App infrastructure components
 ├── contexts/           # React contexts for global state
 ├── hooks/             # App-level React hooks
@@ -115,11 +132,11 @@ src/
 
 ### Key Architecture Features
 
-- **Modular Systems**: Each guitar learning system (CAGED, Rhythm, Quiz) is completely isolated
+- **Modular Systems**: Each guitar learning system (CAGED, 3NPS, Rhythm) is completely isolated
 - **Shared Resources**: Common components and utilities are centralized for reuse
 - **TypeScript Path Aliases**: Clean imports using `@/shared` and `@/systems`
 - **Barrel Exports**: Each module provides clean export interfaces
-- **Code Splitting**: Quiz and Rhythm systems are lazy-loaded for optimal performance
+- **Code Splitting**: 3NPS and Rhythm systems are lazy-loaded for optimal performance
 - **Tree Shaking**: Optimized bundle sizes through proper module structure
 
 ### Tech Stack
@@ -141,10 +158,10 @@ src/
 
 The modular architecture enables excellent bundle optimization:
 
-- **Main bundle**: ~214kB (66kB gzipped) - Core app + CAGED system
-- **Rhythm chunk**: ~21kB (5.8kB gzipped) - Lazy-loaded rhythm system
-- **Quiz chunk**: ~18kB (5.5kB gzipped) - Lazy-loaded quiz system
-- **CSS bundle**: ~38kB (7.3kB gzipped) - Optimized styles
+- **Main bundle**: ~237kB (73kB gzipped) - Core app + CAGED system
+- **Rhythm chunk**: ~26kB (6.5kB gzipped) - Lazy-loaded rhythm system
+- **3NPS chunk**: ~16kB (5.5kB gzipped) - Lazy-loaded 3NPS system
+- **CSS bundle**: ~37kB (7.3kB gzipped) - Optimized styles
 - **Total**: Fast loading with effective code splitting
 
 ## Contributing
