@@ -45,17 +45,13 @@ src/
 │   ├── utils/                 # Shared utilities
 │   │   ├── musicTheory.ts     # Music theory calculations
 │   │   └── chordUtils.ts      # Chord calculation utilities
-│   └── hooks/                 # Shared hooks (currently none)
 ├── systems/                   # Modular learning systems
 │   ├── caged/                 # CAGED chord system module
 │   │   ├── components/        # CAGED-specific components
 │   │   │   ├── CAGEDVisualizer.tsx    # Main visualizer
 │   │   │   ├── CAGEDNavigation.tsx    # Shape navigation
 │   │   │   ├── ViewModeToggles.tsx    # Toggle controls
-│   │   │   ├── ChordQualityToggle.tsx # Major/minor toggle
-│   │   │   ├── ShowAllToggle.tsx      # Show all shapes
-│   │   │   ├── PentatonicToggle.tsx   # Pentatonic overlay
-│   │   │   └── AllNotesToggle.tsx     # All notes display
+│   │   │   └── ChordQualityToggle.tsx # Major/minor toggle
 │   │   ├── hooks/             # CAGED-specific hooks
 │   │   │   ├── useCAGEDLogic.ts       # Core calculations
 │   │   │   ├── useCAGEDState.ts       # State management
@@ -93,8 +89,7 @@ src/
 │   │   └── utils/             # Rhythm utilities
 │   │       └── rhythmUtils.ts # Timing calculations
 ├── components/                # App infrastructure components
-│   ├── ErrorBoundary.tsx     # Error handling
-│   └── SafeComponent.tsx     # Safe component wrapper
+│   └── ErrorBoundary.tsx     # Error handling
 ├── contexts/                  # React contexts for global state
 │   ├── ThemeContext.tsx      # Dark/light theme management
 │   ├── theme.ts              # Theme type definitions
@@ -108,8 +103,6 @@ src/
 │   └── errors.ts             # Error handling types
 ├── utils/                     # Infrastructure utilities
 │   ├── errorLogger.ts        # Error logging
-│   ├── inputValidation.ts    # Input validation
-│   ├── performanceMonitor.ts # Performance monitoring
 │   └── safeStorage.ts        # Safe localStorage operations
 └── assets/                    # Static assets
 ```

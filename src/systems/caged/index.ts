@@ -9,10 +9,7 @@
 export { default as CAGEDVisualizer } from './components/CAGEDVisualizer';
 export { default as CAGEDNavigation } from './components/CAGEDNavigation';
 export { default as ViewModeToggles } from './components/ViewModeToggles';
-export { default as AllNotesToggle } from './components/AllNotesToggle';
 export { default as ChordQualityToggle } from './components/ChordQualityToggle';
-export { default as PentatonicToggle } from './components/PentatonicToggle';
-export { default as ShowAllToggle } from './components/ShowAllToggle';
 
 // Hook exports
 export { useCAGEDLogic } from './hooks/useCAGEDLogic';
