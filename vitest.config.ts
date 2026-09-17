@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 
 export default defineConfig({
   plugins: [react()],
@@ -34,11 +34,11 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src'),
-      '@/shared': resolve(__dirname, './src/shared'),
-      '@/systems/caged': resolve(__dirname, './src/systems/caged'),
-      '@/systems/rhythm-game': resolve(__dirname, './src/systems/rhythm-game'),
-      '@/systems/three-nps': resolve(__dirname, './src/systems/three-nps'),
+      '@': resolve(import.meta.dirname, './src'),
+      '@/shared': resolve(import.meta.dirname, './src/shared'),
+      '@/systems/caged': resolve(import.meta.dirname, './src/systems/caged'),
+      '@/systems/rhythm-game': resolve(import.meta.dirname, './src/systems/rhythm-game'),
+      '@/systems/three-nps': resolve(import.meta.dirname, './src/systems/three-nps'),
     },
   },
 });

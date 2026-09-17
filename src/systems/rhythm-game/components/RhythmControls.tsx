@@ -4,7 +4,7 @@
  * Control panel with BPM input, Start/Stop, Randomize, and toggle switches.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
 
 interface RhythmControlsProps {
@@ -90,11 +90,14 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
 }) => {
   // Local state for BPM input to allow typing without immediate clamping
   const [inputValue, setInputValue] = useState(String(bpm));
+  const [lastBpm, setLastBpm] = useState(bpm);
 
-  // Sync local state when bpm prop changes (e.g., from external source)
-  useEffect(() => {
+  // Sync local state when bpm prop changes (e.g., from external source).
+  // Adjusted during render rather than in an effect to avoid a cascading render.
+  if (bpm !== lastBpm) {
+    setLastBpm(bpm);
     setInputValue(String(bpm));
-  }, [bpm]);
+  }
 
   const handleBpmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);

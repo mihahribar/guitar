@@ -14,17 +14,16 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/shared/*": ["src/shared/*"],
-      "@/systems/*": ["src/systems/*"],
-      "@/components": ["src/components"],
-      "@/hooks": ["src/hooks"],
-      "@/types": ["src/types"],
-      "@/constants": ["src/constants"],
-      "@/utils": ["src/utils"],
-      "@/contexts": ["src/contexts"]
+      "@/*": ["./src/*"],
+      "@/shared/*": ["./src/shared/*"],
+      "@/systems/*": ["./src/systems/*"],
+      "@/components": ["./src/components"],
+      "@/hooks": ["./src/hooks"],
+      "@/types": ["./src/types"],
+      "@/constants": ["./src/constants"],
+      "@/utils": ["./src/utils"],
+      "@/contexts": ["./src/contexts"]
     },
 
     /* Linting */

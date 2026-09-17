@@ -82,8 +82,7 @@ export interface ComponentError extends AppError {
  * Result type for operations that may fail
  */
 export type Result<T, E extends AppError = AppError> =
-  | { success: true; data: T }
-  | { success: false; error: E };
+  { success: true; data: T } | { success: false; error: E };
 
 /**
  * Safe operation wrapper type

@@ -139,7 +139,6 @@ function FretboardDisplay({
     }
     if (isScale) {
       shadows.push(`0 0 0 ${offset + 2}px var(--ring-scale)`);
-      offset += 2;
     }
     return shadows.join(', ');
   };
