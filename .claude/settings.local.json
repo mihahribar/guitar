@@ -18,7 +18,8 @@
       "Bash(npm run test:coverage:*)",
       "Bash(npx vitest:*)",
       "Bash(gh pr:*)",
-      "Bash(npm list:*)"
+      "Bash(npm list:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
