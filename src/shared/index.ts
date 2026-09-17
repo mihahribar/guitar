@@ -8,6 +8,7 @@
 // Type exports
 export type * from './types/core';
 export type * from './types/fretboard';
+export type * from './types/help';
 
 // Utility exports
 export * from './utils/musicTheory';
@@ -20,3 +21,4 @@ export * from './constants/magicNumbers';
 
 // Component exports
 export { default as FretboardDisplay } from './components/FretboardDisplay';
+export { default as SystemHelp } from './components/SystemHelp';

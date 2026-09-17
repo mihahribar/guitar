@@ -30,3 +30,5 @@ export const STRING_PAIRS: readonly StringPair[] = [
 export const G_B_LOW_STRING = 2;
 
 export const ROOT_OPTIONS = CHROMATIC_TO_NOTE_NAME.map((name, value) => ({ value, label: name }));
+
+export * from './help';

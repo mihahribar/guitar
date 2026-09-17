@@ -7,6 +7,8 @@
 
 import React, { useState } from 'react';
 import type { PanelIndex } from '../types';
+import { SystemHelp } from '@/shared';
+import { RHYTHM_HELP } from '../constants';
 import { useRhythmGame } from '../hooks';
 import { RhythmGrid } from './RhythmGrid';
 import { RhythmControls } from './RhythmControls';
@@ -111,6 +113,8 @@ const RhythmPage: React.FC = () => {
           </p>
           <p className="mt-1">Enable "Play Metronome" to hear a click on each beat.</p>
         </footer>
+
+        <SystemHelp content={RHYTHM_HELP} />
       </div>
 
       {/* Pattern selector modal */}

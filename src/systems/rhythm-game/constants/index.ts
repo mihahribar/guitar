@@ -67,3 +67,5 @@ export const CATEGORY_DISPLAY_NAMES = {
   sixteenths: 'Sixteenth Notes',
   triplets: 'Triplets',
 } as const;
+
+export * from './help';

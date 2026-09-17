@@ -152,3 +152,5 @@ export const CAGED_TO_PENTATONIC_BOX: { [key: string]: number } = {
   E: 4, // E shape corresponds to pentatonic box 4
   D: 5, // D shape corresponds to pentatonic box 5
 };
+
+export * from './help';

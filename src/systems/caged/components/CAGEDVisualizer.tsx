@@ -5,13 +5,14 @@ import { useCAGEDState } from '../hooks/useCAGEDState';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import CAGEDNavigation from './CAGEDNavigation';
 import ViewModeToggles from './ViewModeToggles';
-import { FretboardDisplay } from '@/shared';
+import { FretboardDisplay, SystemHelp } from '@/shared';
 import { STANDARD_TUNING, getNoteAtFret } from '@/shared/utils/musicTheory';
 import {
   CAGED_SHAPES_BY_QUALITY,
   PENTATONIC_BOX_PATTERNS,
   CAGED_TO_PENTATONIC_BOX,
   CHROMATIC_VALUES,
+  CAGED_HELP,
 } from '../constants';
 import { dedupeUnisonsByLowestFret, positionKey } from '../utils/scaleOverlay';
 
@@ -296,6 +297,8 @@ export default function CAGEDVisualizer() {
         onToggleShowScale={actions.toggleShowScale}
         onSetScaleType={actions.setScaleType}
       />
+
+      <SystemHelp content={CAGED_HELP} />
     </div>
   );
 }

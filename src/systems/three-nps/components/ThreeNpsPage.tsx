@@ -1,4 +1,4 @@
-import { FretboardDisplay } from '@/shared';
+import { FretboardDisplay, SystemHelp } from '@/shared';
 import {
   CHROMATIC_TO_NOTE_NAME,
   getNoteNameAtFret,
@@ -7,7 +7,7 @@ import {
 import { useThreeNpsKeyboard } from '../hooks/useThreeNpsKeyboard';
 import { useThreeNpsLogic } from '../hooks/useThreeNpsLogic';
 import { useThreeNpsState } from '../hooks/useThreeNpsState';
-import { MODES } from '../constants';
+import { MODES, THREE_NPS_HELP } from '../constants';
 import ThreeNpsNavigation from './ThreeNpsNavigation';
 import ThreeNpsToggles from './ThreeNpsToggles';
 
@@ -100,6 +100,8 @@ export default function ThreeNpsPage() {
         onToggleAllStrings={actions.toggleAllStrings}
         onToggleShowAllNotes={actions.toggleShowAllNotes}
       />
+
+      <SystemHelp content={THREE_NPS_HELP} />
     </div>
   );
 }

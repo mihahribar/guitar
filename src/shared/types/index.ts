@@ -4,3 +4,4 @@
 
 export * from './core';
 export * from './fretboard';
+export * from './help';
