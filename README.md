@@ -20,6 +20,9 @@ An interactive web application for learning various guitar system with a modular
 
 ## Installation
 
+Requires **Node 22.22.1 or newer** (Vitest 5, jsdom 30 and lint-staged 17 each
+set their own floor in that range; CI runs Node 24).
+
 1. Clone or download this project
 2. Navigate to the project directory
 3. Install dependencies:
@@ -141,10 +144,11 @@ src/
 
 ### Tech Stack
 
-- **Framework**: React 19.1.1 + TypeScript 5.8.3
-- **Build Tool**: Vite 7.1.2 with React plugin and path aliases
-- **Styling**: TailwindCSS 4.1.12 with dark/light theme support
-- **Code Quality**: ESLint 9.33.0 with TypeScript ESLint
+- **Framework**: React 19.3.0 + TypeScript 6.0.3
+- **Build Tool**: Vite 8.3.0 with React plugin and path aliases
+- **Styling**: TailwindCSS 4.3.3 with dark/light theme support
+- **Code Quality**: ESLint 10.10.0 with typescript-eslint
+- **Testing**: Vitest 5.0.1 with jsdom
 - **Deployment**: GitHub Actions → GitHub Pages
 
 ### Development Scripts
@@ -158,10 +162,11 @@ src/
 
 The modular architecture enables excellent bundle optimization:
 
-- **Main bundle**: ~237kB (73kB gzipped) - Core app + CAGED system
-- **Rhythm chunk**: ~26kB (6.5kB gzipped) - Lazy-loaded rhythm system
-- **3NPS chunk**: ~16kB (5.5kB gzipped) - Lazy-loaded 3NPS system
-- **CSS bundle**: ~37kB (7.3kB gzipped) - Optimized styles
+- **Main bundle**: ~250kB (77kB gzipped) - Core app + CAGED system
+- **Shared chunk**: ~18kB (6.5kB gzipped) - Components shared across systems
+- **Rhythm chunk**: ~28kB (7kB gzipped) - Lazy-loaded rhythm system
+- **3NPS chunk**: ~18kB (6.5kB gzipped) - Lazy-loaded 3NPS system
+- **CSS bundle**: ~37kB (7.5kB gzipped) - Optimized styles
 - **Total**: Fast loading with effective code splitting
 
 ## Contributing

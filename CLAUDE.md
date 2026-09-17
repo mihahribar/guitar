@@ -17,11 +17,20 @@ Interactive React web application for learning the CAGED guitar system - a guita
 
 ## Tech Stack
 
-- **Framework**: React 19.1.1 + TypeScript 5.8.3
-- **Build Tool**: Vite 7.1.2 with React plugin and TypeScript path aliases
-- **Styling**: TailwindCSS 4.1.12 (latest version with native CSS support)
-- **Development**: ESLint 9.33.0 with TypeScript ESLint
-- **Deployment**: GitHub Actions → GitHub Pages
+- **Framework**: React 19.3.0 + TypeScript 6.0.3
+- **Build Tool**: Vite 8.3.0 (Rolldown-based) with React plugin and TypeScript path aliases
+- **Styling**: TailwindCSS 4.3.3 (latest version with native CSS support)
+- **Development**: ESLint 10.10.0 with typescript-eslint 8.70.0
+- **Testing**: Vitest 5.0.1 with jsdom 30
+- **Deployment**: GitHub Actions → GitHub Pages (Node 24)
+
+### TypeScript is held at 6, not 7
+
+TypeScript 7 type-checks this project cleanly, but `typescript-eslint` refuses
+to load under it (peer range `<6.1.0`), which breaks `npm run lint` and the
+pre-commit hook. Revisit once typescript-eslint#10940 ships TS 7 support.
+Note that TS 7 also removed `baseUrl`, which is why `tsconfig.app.json` uses
+relative `paths` entries instead.
 
 ## Project Structure (Modular Multi-System Architecture)
 
@@ -150,7 +159,7 @@ Each module provides clean barrel exports for easy consumption:
 
 - 3NPS and Rhythm systems are lazy-loaded for optimal initial bundle size
 - Modular structure enables excellent tree shaking
-- Bundle sizes: Main (~237kB), Rhythm chunk (~26kB), 3NPS chunk (~16kB), CSS (~37kB)
+- Bundle sizes: Main (~250kB), shared chunk (~18kB), Rhythm chunk (~28kB), 3NPS chunk (~18kB), CSS (~37kB)
 
 ## Code Conventions & Patterns
 
@@ -431,7 +440,7 @@ When asking Claude for help with this project:
 ### Performance Considerations
 
 - **Modular tree shaking**: Excellent bundle optimization through system isolation
-- **Code splitting**: 3NPS (~16kB) and Rhythm (~26kB) systems lazy-loaded, reducing initial bundle
+- **Code splitting**: 3NPS (~18kB) and Rhythm (~28kB) systems lazy-loaded, reducing initial bundle
 - **useMemo for calculations**: CAGED logic is memoized within systems
 - **Minimal re-renders**: State changes are targeted and system-contained
 - **Efficient gradient generation**: Dynamic CSS generation
