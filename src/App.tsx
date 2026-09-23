@@ -6,9 +6,10 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { NavigationProvider } from './contexts/NavigationContext';
 import { useNavigation } from './hooks/useNavigation';
 
-// Lazy load 3NPS and Rhythm components for better initial bundle size
+// Lazy load 3NPS, Triads and Rhythm components for better initial bundle size
 const RhythmPage = lazy(() => import('@/systems/rhythm-game/components/RhythmPage'));
 const ThreeNpsPage = lazy(() => import('@/systems/three-nps/components/ThreeNpsPage'));
+const TriadsPage = lazy(() => import('@/systems/triads/components/TriadsPage'));
 
 function AppContent() {
   const { currentPage } = useNavigation();
@@ -31,6 +32,13 @@ function AppContent() {
           <ErrorBoundary componentName="ThreeNpsPage">
             <Suspense fallback={<LoadingFallback message="Loading 3NPS..." size="large" />}>
               <ThreeNpsPage />
+            </Suspense>
+          </ErrorBoundary>
+        )}
+        {currentPage === 'triads' && (
+          <ErrorBoundary componentName="TriadsPage">
+            <Suspense fallback={<LoadingFallback message="Loading triads..." size="large" />}>
+              <TriadsPage />
             </Suspense>
           </ErrorBoundary>
         )}

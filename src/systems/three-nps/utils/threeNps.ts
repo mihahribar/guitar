@@ -5,6 +5,7 @@ import {
   STANDARD_TUNING,
   absoluteOpenPitches,
 } from '@/shared/utils/musicTheory';
+import { createSplitColorStyle } from '@/shared/utils/splitColor';
 import { MAJOR_SCALE_STEPS, MODES, NOTES_PER_STRING } from '../constants';
 import type { ModeDegree, NpsNote, NpsPattern, NpsScope } from '../types';
 
@@ -181,16 +182,7 @@ export function buildPositionMap(patterns: readonly NpsPattern[]): Map<string, M
 
 /** Solid colour for one mode, hard-edged stripes for positions shared by several */
 export function createModeStyle(degrees: readonly ModeDegree[]): CSSProperties | undefined {
-  if (degrees.length === 0) return undefined;
-  if (degrees.length === 1) return { backgroundColor: MODES[degrees[0]].color };
-
-  const stops = degrees
-    .map((degree, i) => {
-      const color = MODES[degree].color;
-      return `${color} ${(i * 100) / degrees.length}%, ${color} ${((i + 1) * 100) / degrees.length}%`;
-    })
-    .join(', ');
-  return { background: `linear-gradient(90deg, ${stops})` };
+  return createSplitColorStyle(degrees.map((degree) => MODES[degree].color));
 }
 
 /** Lowest and highest fret used by the given patterns */

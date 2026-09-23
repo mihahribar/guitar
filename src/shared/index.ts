@@ -13,6 +13,7 @@ export type * from './types/help';
 // Utility exports
 export * from './utils/musicTheory';
 export * from './utils/chordUtils';
+export * from './utils/splitColor';
 
 // Hook exports - currently no shared hooks, system-specific hooks in their modules
 

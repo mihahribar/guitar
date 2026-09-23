@@ -44,6 +44,11 @@ interface FretboardDisplayProps {
   /** Optional key note indicator text */
   keyNoteIndicator?: string;
   /**
+   * Optional text for every main dot (e.g. a chord tone like "R" or "♭3").
+   * When it returns a label, that label replaces the key note indicator.
+   */
+  getDotLabel?: (stringIndex: StringIndex, fretNumber: FretNumber) => string | undefined;
+  /**
    * Fret number (1-based, may be fractional for "between two frets") to smooth-scroll
    * into the horizontal center of the viewport whenever this value changes.
    * No-op when undefined or when the table already fits the container.
@@ -95,6 +100,7 @@ function FretboardDisplay({
   shouldShowScaleDot,
   ariaLabel,
   keyNoteIndicator = 'R',
+  getDotLabel,
   scrollToFret,
 }: FretboardDisplayProps) {
   const defaultAriaLabel =
@@ -217,13 +223,14 @@ function FretboardDisplay({
     if (hasMain) {
       const baseStyle = getDotStyle(si, fi) || {};
       const ringShadow = buildRings(isKey, isPent, isScale, 0);
+      const dotLabel = getDotLabel?.(si, fi);
       dot = (
         <div
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium shadow-sm fretboard-rings"
           style={ringShadow ? { ...baseStyle, boxShadow: ringShadow } : baseStyle}
-          aria-label={`${isKey ? 'Key note' : 'Pattern note'}${isPent ? ' (also overlay note)' : ''}${isScale ? ' (also scale note)' : ''} on ${stringName} string, ${fretLabel}`}
+          aria-label={`${isKey ? 'Key note' : 'Pattern note'}${dotLabel ? ` ${dotLabel}` : ''}${isPent ? ' (also overlay note)' : ''}${isScale ? ' (also scale note)' : ''} on ${stringName} string, ${fretLabel}`}
         >
-          {isKey ? keyNoteIndicator : ''}
+          {dotLabel ?? (isKey ? keyNoteIndicator : '')}
         </div>
       );
     } else if (isPent) {
