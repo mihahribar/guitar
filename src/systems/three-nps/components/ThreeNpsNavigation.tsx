@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { Kbd } from '@/shared';
 import type { StringIndex } from '@/shared/types/core';
 import { CHROMATIC_TO_NOTE_NAME } from '@/shared/utils/musicTheory';
 import { MAJOR_SCALE_STEPS, MODES, ROOT_OPTIONS, STRING_PAIRS } from '../constants';
@@ -23,8 +24,6 @@ const navButtonClass =
 
 const modeButtonClass =
   'relative w-11 h-11 rounded-md text-white text-xs font-bold transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none cursor-pointer';
-
-const kbdClass = 'px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs';
 
 function ThreeNpsNavigation({
   root,
@@ -198,16 +197,16 @@ function ThreeNpsNavigation({
           </div>
           <div className="flex flex-wrap items-center justify-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-4">
             <span>Tap modes to stack them •</span>
-            <kbd className={kbdClass}>1-7</kbd>
+            <Kbd>1-7</Kbd>
             <span>to toggle,</span>
-            <kbd className={kbdClass}>⇧1-7</kbd>
+            <Kbd>⇧1-7</Kbd>
             <span>for one •</span>
             <span>walk the neck with</span>
-            <kbd className={kbdClass}>←→</kbd>
+            <Kbd>←→</Kbd>
             {!allStrings && (
               <>
                 <span>• change strings with</span>
-                <kbd className={kbdClass}>↑↓</kbd>
+                <Kbd>↑↓</Kbd>
               </>
             )}
           </div>

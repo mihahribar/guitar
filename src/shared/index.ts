@@ -23,3 +23,4 @@ export * from './constants/magicNumbers';
 // Component exports
 export { default as FretboardDisplay } from './components/FretboardDisplay';
 export { default as SystemHelp } from './components/SystemHelp';
+export { default as Kbd } from './components/Kbd';

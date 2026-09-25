@@ -5,11 +5,11 @@
  * Combines all rhythm game components into a complete page.
  */
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import type { PanelIndex } from '../types';
 import { SystemHelp } from '@/shared';
 import { RHYTHM_HELP } from '../constants';
-import { useRhythmGame } from '../hooks';
+import { useRhythmGame, useRhythmKeyboard } from '../hooks';
 import { RhythmGrid } from './RhythmGrid';
 import { RhythmControls } from './RhythmControls';
 import { PatternSelector } from './PatternSelector';
@@ -39,6 +39,15 @@ const RhythmPage: React.FC = () => {
   // Pattern selector state
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [selectedPanelIndex, setSelectedPanelIndex] = useState<PanelIndex | null>(null);
+
+  const changeBpmBy = useCallback((delta: number) => setBpm(bpm + delta), [bpm, setBpm]);
+
+  useRhythmKeyboard({
+    enabled: !selectorOpen,
+    onTogglePlay: togglePlay,
+    onRandomize: randomizeAll,
+    onBpmChange: changeBpmBy,
+  });
 
   /**
    * Handle panel click to open pattern selector

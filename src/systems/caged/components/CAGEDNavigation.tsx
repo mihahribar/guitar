@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { Kbd } from '@/shared';
 import type { ChordType, ChordQuality, CAGEDPosition } from '../types';
 import { CAGED_SHAPES_BY_QUALITY } from '../constants';
 import ChordQualityToggle from './ChordQualityToggle';
@@ -18,8 +19,6 @@ interface ConsolidatedNavigationProps {
 
 const navButtonClass =
   'p-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 transition-colors focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:outline-none cursor-pointer';
-
-const kbdClass = 'px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs';
 
 const chords: { value: ChordType; label: string }[] = [
   { value: 'C', label: 'C' },
@@ -167,11 +166,11 @@ function CAGEDNavigation({
           </div>
           <div className="flex flex-wrap items-center justify-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-4">
             <span>Tap positions to stack them •</span>
-            <kbd className={kbdClass}>1-9</kbd>
+            <Kbd>1-9</Kbd>
             <span>to toggle,</span>
-            <kbd className={kbdClass}>⇧1-9</kbd>
+            <Kbd>⇧1-9</Kbd>
             <span>for one • walk the neck with</span>
-            <kbd className={kbdClass}>←→</kbd>
+            <Kbd>←→</Kbd>
           </div>
         </div>
       </div>

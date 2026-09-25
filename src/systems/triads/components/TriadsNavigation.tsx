@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { Kbd } from '@/shared';
 import type { StringIndex } from '@/shared/types/core';
 import {
   INVERSIONS,
@@ -37,8 +38,6 @@ const segmentButtonClass =
 const segmentActiveClass = 'bg-blue-600 text-white shadow-sm focus:ring-blue-500';
 const segmentIdleClass =
   'text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 focus:ring-gray-400';
-
-const kbdClass = 'px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs';
 
 function TriadsNavigation({
   root,
@@ -229,14 +228,14 @@ function TriadsNavigation({
           </div>
           <div className="flex flex-wrap items-center justify-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-4">
             <span>Tap inversions and string sets to stack them •</span>
-            <kbd className={kbdClass}>1-3</kbd>
+            <Kbd>1-3</Kbd>
             <span>to toggle,</span>
-            <kbd className={kbdClass}>⇧1-3</kbd>
+            <Kbd>⇧1-3</Kbd>
             <span>for one •</span>
             <span>walk the neck with</span>
-            <kbd className={kbdClass}>←→</kbd>
+            <Kbd>←→</Kbd>
             <span>• shift strings with</span>
-            <kbd className={kbdClass}>↑↓</kbd>
+            <Kbd>↑↓</Kbd>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@
  */
 
 import React, { useState } from 'react';
+import { Kbd } from '@/shared';
 import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
 
 interface RhythmControlsProps {
@@ -101,6 +102,17 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
 
   const handleBpmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
+
+    // Apply valid tempos while typing so playback follows the input; partial or
+    // out-of-range values wait for blur/Enter, which clamp them
+    const value = Number(e.target.value);
+    if (
+      Number.isInteger(value) &&
+      value >= METRONOME_CONSTANTS.MIN_BPM &&
+      value <= METRONOME_CONSTANTS.MAX_BPM
+    ) {
+      onSetBpm(value);
+    }
   };
 
   const applyBpmValue = () => {
@@ -241,6 +253,17 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
           onChange={onSetPlayMetronome}
           label="Play Metronome"
         />
+      </div>
+
+      <div className="flex flex-wrap items-center justify-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-4">
+        <Kbd>Space</Kbd>
+        <span>to start or stop •</span>
+        <Kbd>↑↓</Kbd>
+        <span>to change tempo,</span>
+        <Kbd>⇧↑↓</Kbd>
+        <span>by 10 •</span>
+        <Kbd>R</Kbd>
+        <span>to randomize</span>
       </div>
     </div>
   );
