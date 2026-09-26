@@ -35,10 +35,6 @@ export const STRING_SETS: readonly StringSet[] = [
   { low: 2, label: 'GBE' },
 ] as const;
 
-/** Lowest set starts on the low E (5); highest starts on the G string (2) */
-export const LOWEST_SET_STRING = 5;
-export const HIGHEST_SET_STRING = 2;
-
 export const STRINGS_PER_TRIAD = 3;
 
 export const ROOT_OPTIONS = CHROMATIC_TO_NOTE_NAME.map((name, value) => ({ value, label: name }));
