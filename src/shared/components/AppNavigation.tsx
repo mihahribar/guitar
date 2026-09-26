@@ -17,11 +17,11 @@ export default function AppNavigation() {
       className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700"
       aria-label="Main navigation"
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-8">
+      <div className="max-w-6xl mx-auto px-2 sm:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Title */}
           <div className="flex items-center">
-            <h1 className="hidden sm:block text-xl font-light text-gray-800 dark:text-gray-100">
+            <h1 className="hidden md:block text-xl font-light text-gray-800 dark:text-gray-100">
               Fretboard Lab 🎸
             </h1>
           </div>
@@ -33,7 +33,7 @@ export default function AppNavigation() {
                 key={page}
                 onClick={() => navigateTo(page)}
                 className={`
-                  px-3 sm:px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer
+                  px-2 sm:px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer
                   focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900
                   ${
                     currentPage === page
