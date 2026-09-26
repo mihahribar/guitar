@@ -127,7 +127,7 @@ export type ThemePreference = 'light' | 'dark';
 /**
  * Navigation page type
  */
-export type NavigationPage = 'caged' | '3nps' | 'triads' | 'rhythm';
+export type NavigationPage = 'caged' | '3nps' | 'triads' | 'sevenths' | 'rhythm';
 
 /**
  * App-wide navigation state

@@ -9,6 +9,7 @@ export default function AppNavigation() {
     { page: 'caged', label: 'CAGED', description: 'Interactive CAGED system explorer' },
     { page: '3nps', label: '3NPS', description: 'Three notes per string scale system' },
     { page: 'triads', label: 'Triads', description: 'Triad inversions on string sets' },
+    { page: 'sevenths', label: '7ths', description: 'Seventh chord inversions on string sets' },
     { page: 'rhythm', label: 'Rhythm', description: 'Practice rhythm patterns' },
   ];
 

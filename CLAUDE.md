@@ -1,7 +1,7 @@
 # Fretboard Lab
 
 React + TypeScript app for learning guitar: CAGED chord shapes (major and minor), three-notes-per-string
-scales, triads and rhythm practice. Live at [guitar.hribar.org](https://guitar.hribar.org); every push to `main`
+scales, triads, seventh chords and rhythm practice. Live at [guitar.hribar.org](https://guitar.hribar.org); every push to `main`
 deploys to GitHub Pages.
 
 System-specific notes live in `src/systems/<system>/CLAUDE.md`.
@@ -19,15 +19,15 @@ relative `paths` entries instead.
 Each learning system in `src/systems/` is self-contained. Systems may import from `@/shared`
 but never from each other; anything two systems need goes in `src/shared/`.
 
-## Pattern Selection (shared by CAGED, 3NPS and Triads)
+## Pattern Selection (shared by CAGED, 3NPS, Triads and 7ths)
 
-All three visualizers use the same interaction, and it is the thing to preserve when
-changing either one:
+All four visualizers use the same interaction, and it is the thing to preserve when
+changing any of them:
 
 - **Multi-select chips**: tapping a chip toggles that pattern on the fretboard; at least one always stays selected. Shift-click (or `⇧` + the number key) reduces the selection to just that one.
 - **Group walk**: `←`/`→` move _every_ selected entry one step along the sequence, so a stacked selection keeps its spacing as it travels up the neck. With one selected this is plain next/previous.
-- **Selection is state, "show all" is derived**: CAGED stores `selectedPositions: number[]` (indices into the walk) and derives `showAllShapes` from "every position selected". 3NPS stores `degrees: ModeDegree[]` plus an `anchorFret`, with `wholeNeck` as a separate toggle; Triads follows 3NPS with `inversions` and `stringSets`.
-- **Overlapping notes split their colour**: `createGradientStyle` (CAGED) and the shared `createSplitColorStyle` (3NPS, Triads) render hard-edged segments, one per pattern covering that position.
+- **Selection is state, "show all" is derived**: CAGED stores `selectedPositions: number[]` (indices into the walk) and derives `showAllShapes` from "every position selected". 3NPS stores `degrees: ModeDegree[]` plus an `anchorFret`, with `wholeNeck` as a separate toggle; Triads and 7ths follow 3NPS with `inversions` and `stringSets`, through one shared reducer (`src/shared/utils/voicingSelection.ts`).
+- **Overlapping notes split their colour**: `createGradientStyle` (CAGED) and the shared `createSplitColorStyle` (3NPS, Triads, 7ths) render hard-edged segments, one per pattern covering that position.
 - **Overlays follow the selection**: CAGED's pentatonic and scale overlays box themselves around the union of the selected shapes, falling back to full-neck maps when everything is selected.
 
 ## Constraints

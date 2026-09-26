@@ -7,10 +7,11 @@ An interactive web application for learning various guitar system with a modular
 - **Visual fretboard** with color-coded chord shapes across a full 21-fret neck
 - **Major and Minor Chord Support** - Full CAGED system implementation for both major and minor chord qualities
 - **Chord Quality Toggle** - Seamlessly switch between major and minor chord patterns
-- **Stack multiple patterns** - Select any combination of CAGED positions (or 3NPS modes, or triad inversions) to see how they link up, with overlapping notes split between their colors
+- **Stack multiple patterns** - Select any combination of CAGED positions (or 3NPS modes, or triad and seventh-chord inversions) to see how they link up, with overlapping notes split between their colors
 - Walk the whole neck, including octave repeats of each shape
 - **3NPS Scale System** - Three-notes-per-string major scale in all 12 keys, as two-string "dominoes" or full six-string positions, one color per mode
 - **Triads** - Major, minor, diminished and augmented triads in every inversion on the four three-string sets, labelled by chord tone
+- **7ths** - Major 7, dominant 7, minor 7, minor 7♭5 and diminished 7 chords in every inversion, as drop 2 and drop 3 voicings on three four-string sets, labelled by chord tone
 - **Pentatonic Scale Overlay** - Toggle to show major/minor pentatonic scale notes over chord shapes for music theory context
 - **Scale Overlay** - Overlay any of the supported scales and modes over the chord shapes
 - **All Notes Display** - Toggle to show natural note names (E, F, G, A, B, C, D) on all fret positions for fretboard navigation
@@ -96,6 +97,25 @@ set their own floor in that range; CI runs Node 24).
 - **Space**: Toggle whole neck
 - **N**: Toggle all notes display
 
+### 7ths
+
+- Click "7ths" to explore four-note seventh chords, one note per string
+- **Pick any of the 12 roots** and a quality: maj7, 7, m7, m7♭5 or °7
+- Choose one or more string sets: E·DGB (drop 3, A string muted), ADGB and DGBE (drop 2); shift-click shows one alone
+- Each chip is one inversion (root position, 1st, 2nd, 3rd), each with its own color; every dot shows its chord tone (R, 3, 5, 7, with ♭ as the quality needs)
+- The root positions are the classic 6th-, 5th- and 4th-string-root shapes
+- Use Previous/Next to walk the selected inversions up or down the neck
+- Toggle "Whole Neck" to show every occurrence of the selected inversions
+
+#### Keyboard Shortcuts
+
+- **Arrow Keys (←/→)**: Walk the selection down/up the neck
+- **Arrow Keys (↑/↓)**: Move the selected string sets toward the high/low strings
+- **Numbers (1-4)**: Add or remove that inversion; **⇧1-4** shows it on its own
+- **0**: Select every inversion, or collapse back to one
+- **Space**: Toggle whole neck
+- **N**: Toggle all notes display
+
 ### Rhythm Practice
 
 - Click "Rhythm" to access the rhythm training system
@@ -125,7 +145,7 @@ src/
 │   ├── components/        # Shared UI components (FretboardDisplay, AppNavigation)
 │   ├── constants/         # Shared constants and magic numbers
 │   ├── types/            # Shared TypeScript type definitions
-│   └── utils/            # Shared utilities (music theory, chord calculations)
+│   └── utils/            # Shared utilities (music theory, chord voicings, selection reducer)
 ├── systems/              # Modular learning systems
 │   ├── caged/           # CAGED chord system module
 │   │   ├── components/  # CAGED-specific components
@@ -145,6 +165,12 @@ src/
 │   │   ├── hooks/       # Triads state, logic, keyboard
 │   │   ├── types/       # Triads system types
 │   │   └── utils/       # Triad and sequence generation (+ tests)
+│   ├── sevenths/        # Seventh chords (7ths) system module
+│   │   ├── components/  # 7ths page, navigation, toggles
+│   │   ├── constants/   # Qualities, inversion colours, string sets
+│   │   ├── hooks/       # 7ths state, logic, keyboard
+│   │   ├── types/       # 7ths system types
+│   │   └── utils/       # Seventh chord sequences (+ tests)
 │   └── rhythm-game/     # Rhythm practice system module
 │       ├── components/  # Rhythm UI (panels, controls, notation)
 │       ├── constants/   # Rhythm patterns and defaults
@@ -160,11 +186,11 @@ src/
 
 ### Key Architecture Features
 
-- **Modular Systems**: Each guitar learning system (CAGED, 3NPS, Triads, Rhythm) is completely isolated
+- **Modular Systems**: Each guitar learning system (CAGED, 3NPS, Triads, 7ths, Rhythm) is completely isolated
 - **Shared Resources**: Common components and utilities are centralized for reuse
 - **TypeScript Path Aliases**: Clean imports using `@/shared` and `@/systems`
 - **Barrel Exports**: Each module provides clean export interfaces
-- **Code Splitting**: 3NPS, Triads and Rhythm systems are lazy-loaded for optimal performance
+- **Code Splitting**: 3NPS, Triads, 7ths and Rhythm systems are lazy-loaded for optimal performance
 - **Tree Shaking**: Optimized bundle sizes through proper module structure
 
 ### Tech Stack
@@ -188,11 +214,12 @@ src/
 The modular architecture enables excellent bundle optimization:
 
 - **Main bundle**: ~250kB (77kB gzipped) - Core app + CAGED system
-- **Shared chunk**: ~18kB (6.5kB gzipped) - Components shared across systems
+- **Shared chunk**: ~24kB (8kB gzipped) - Components and voicing logic shared across systems
 - **Rhythm chunk**: ~28kB (7kB gzipped) - Lazy-loaded rhythm system
-- **3NPS chunk**: ~18kB (6.5kB gzipped) - Lazy-loaded 3NPS system
-- **Triads chunk**: ~18kB (6kB gzipped) - Lazy-loaded triads system
-- **CSS bundle**: ~37kB (7.5kB gzipped) - Optimized styles
+- **3NPS chunk**: ~18kB (6kB gzipped) - Lazy-loaded 3NPS system
+- **Triads chunk**: ~15kB (5kB gzipped) - Lazy-loaded triads system
+- **7ths chunk**: ~16kB (5.5kB gzipped) - Lazy-loaded seventh chords system
+- **CSS bundle**: ~36kB (7.5kB gzipped) - Optimized styles
 - **Total**: Fast loading with effective code splitting
 
 ## Contributing
