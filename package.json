@@ -1,6 +1,6 @@
 {
-  "homepage": "https://caged.hribar.org/",
-  "name": "caged-visualizer",
+  "homepage": "https://guitar.hribar.org/",
+  "name": "fretboard-lab",
   "private": true,
   "version": "0.0.0",
   "type": "module",

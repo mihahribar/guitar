@@ -1,4 +1,4 @@
-# Guitar System Visualizer
+# Fretboard Lab
 
 An interactive web application for learning various guitar system with a modular, extensible architecture designed to support multiple guitar learning systems.
 

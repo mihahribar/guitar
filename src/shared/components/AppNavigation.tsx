@@ -22,7 +22,7 @@ export default function AppNavigation() {
           {/* Logo/Title */}
           <div className="flex items-center">
             <h1 className="hidden sm:block text-xl font-light text-gray-800 dark:text-gray-100">
-              Guitar Learning Systems 🎸
+              Fretboard Lab 🎸
             </h1>
           </div>
 

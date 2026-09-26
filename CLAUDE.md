@@ -1,7 +1,7 @@
-# CAGED Visualizer
+# Fretboard Lab
 
 React + TypeScript app for learning guitar: CAGED chord shapes (major and minor), three-notes-per-string
-scales, triads and rhythm practice. Live at [caged.hribar.org](https://caged.hribar.org); every push to `main`
+scales, triads and rhythm practice. Live at [guitar.hribar.org](https://guitar.hribar.org); every push to `main`
 deploys to GitHub Pages.
 
 System-specific notes live in `src/systems/<system>/CLAUDE.md`.

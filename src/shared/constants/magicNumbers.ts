@@ -1,7 +1,7 @@
 /**
  * Magic numbers and constants extracted for better maintainability
  *
- * This file centralizes all magic numbers used throughout the CAGED visualizer
+ * This file centralizes all magic numbers used throughout Fretboard Lab
  * to improve code readability and make changes easier to manage.
  */
 

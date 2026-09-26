@@ -1,5 +1,5 @@
 /**
- * Error handling types and utilities for the CAGED Visualizer
+ * Error handling types and utilities for the Fretboard Lab
  *
  * Provides structured error handling with detailed context and type safety
  * for better debugging and user experience.

@@ -1,8 +1,8 @@
-# JSDoc Documentation Standards for CAGED Visualizer
+# JSDoc Documentation Standards for Fretboard Lab
 
 ## Overview
 
-This document establishes comprehensive JSDoc documentation standards for the CAGED Visualizer project to improve code maintainability and developer experience.
+This document establishes comprehensive JSDoc documentation standards for the Fretboard Lab project to improve code maintainability and developer experience.
 
 ## Documentation Requirements
 

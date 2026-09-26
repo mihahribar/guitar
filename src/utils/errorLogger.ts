@@ -1,5 +1,5 @@
 /**
- * Error logging utilities for the CAGED Visualizer
+ * Error logging utilities for the Fretboard Lab
  *
  * Provides centralized error logging with different severity levels
  * and optional integration with external error reporting services.
