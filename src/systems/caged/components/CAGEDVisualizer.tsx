@@ -13,7 +13,7 @@ import {
   CAGED_TO_PENTATONIC_BOX,
   CAGED_HELP,
 } from '../constants';
-import { dedupeUnisonsByLowestFret, positionKey } from '../utils/scaleOverlay';
+import { dedupeUnisonsByLowestFret, positionKey, scaleWindow } from '../utils/scaleOverlay';
 
 /**
  * Expand a CAGED shape pattern into its absolute fret numbers.
@@ -181,8 +181,7 @@ export default function CAGEDVisualizer() {
       );
       if (shapeFrets.length === 0) continue;
 
-      const minFret = Math.max(0, Math.min(...shapeFrets) - 1);
-      const maxFret = Math.max(...shapeFrets) + 1;
+      const { minFret, maxFret } = scaleWindow(shapeFrets);
 
       const candidates: { stringIndex: number; fretNumber: number }[] = [];
       for (let stringIndex = 0; stringIndex < STANDARD_TUNING.length; stringIndex++) {

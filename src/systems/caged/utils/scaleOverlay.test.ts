@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { absoluteOpenPitches, dedupeUnisonsByLowestFret, positionKey } from './scaleOverlay';
+import {
+  absoluteOpenPitches,
+  dedupeUnisonsByLowestFret,
+  positionKey,
+  scaleWindow,
+} from './scaleOverlay';
 import { STANDARD_TUNING } from '@/shared/utils/musicTheory';
 
 // String indices: 0 = high E, 1 = B, 2 = G, 3 = D, 4 = A, 5 = low E
@@ -69,6 +74,18 @@ describe('dedupeUnisonsByLowestFret', () => {
     ];
     const result = dedupeUnisonsByLowestFret(positions);
     expect(result).toHaveLength(2);
+  });
+});
+
+describe('scaleWindow', () => {
+  it('pads the shape by one fret on each side', () => {
+    expect(scaleWindow([5, 7, 8])).toEqual({ minFret: 4, maxFret: 9 });
+  });
+
+  it('stays on the neck at both ends', () => {
+    // Open C shape, and C#'s G shape at fret 18 which reaches the last fret
+    expect(scaleWindow([0, 1, 2, 3])).toEqual({ minFret: 0, maxFret: 4 });
+    expect(scaleWindow([18, 20, 21])).toEqual({ minFret: 17, maxFret: 21 });
   });
 });
 

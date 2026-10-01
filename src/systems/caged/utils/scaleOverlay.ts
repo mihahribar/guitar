@@ -1,4 +1,8 @@
-import { STANDARD_TUNING, absoluteOpenPitches } from '@/shared/utils/musicTheory';
+import {
+  FRETBOARD_CONSTANTS,
+  STANDARD_TUNING,
+  absoluteOpenPitches,
+} from '@/shared/utils/musicTheory';
 
 // Re-exported for existing CAGED consumers; the implementation lives in shared.
 export { absoluteOpenPitches };
@@ -37,6 +41,20 @@ export function dedupeUnisonsByLowestFret(
   }
 
   return [...lowestByPitch.values()];
+}
+
+/**
+ * Fret window a shape's scale overlay is collected from: one fret either side of
+ * the shape, kept on the neck. A shape reaching the last fret (C# has the G shape
+ * at fret 18, spanning 18-21) must not ask for a fret past it.
+ *
+ * @param shapeFrets - Absolute frets the shape plays (non-empty)
+ */
+export function scaleWindow(shapeFrets: readonly number[]): { minFret: number; maxFret: number } {
+  return {
+    minFret: Math.max(0, Math.min(...shapeFrets) - 1),
+    maxFret: Math.min(FRETBOARD_CONSTANTS.MAX_FRET, Math.max(...shapeFrets) + 1),
+  };
 }
 
 /** Stable string-fret key for membership lookups. */
