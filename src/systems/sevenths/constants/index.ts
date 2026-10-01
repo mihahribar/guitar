@@ -1,4 +1,3 @@
-import { CHROMATIC_TO_NOTE_NAME } from '@/shared/utils/musicTheory';
 import type {
   InversionInfo,
   SeventhQuality,
@@ -87,7 +86,5 @@ export const STRING_SETS: Record<StringSetId, SeventhStringSet> = {
 
 /** String sets from the lowest upward; ↑ moves one step along this list */
 export const STRING_SET_ORDER: readonly StringSetId[] = ['e-dgb', 'adgb', 'dgbe'];
-
-export const ROOT_OPTIONS = CHROMATIC_TO_NOTE_NAME.map((name, value) => ({ value, label: name }));
 
 export * from './help';

@@ -6,12 +6,11 @@ import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import CAGEDNavigation from './CAGEDNavigation';
 import ViewModeToggles from './ViewModeToggles';
 import { FretboardDisplay, SystemHelp } from '@/shared';
-import { STANDARD_TUNING, getNoteAtFret } from '@/shared/utils/musicTheory';
+import { CHROMATIC_TO_NOTE_NAME, STANDARD_TUNING, getNoteAtFret } from '@/shared/utils/musicTheory';
 import {
   CAGED_SHAPES_BY_QUALITY,
   PENTATONIC_BOX_PATTERNS,
   CAGED_TO_PENTATONIC_BOX,
-  CHROMATIC_VALUES,
   CAGED_HELP,
 } from '../constants';
 import { dedupeUnisonsByLowestFret, positionKey } from '../utils/scaleOverlay';
@@ -52,7 +51,7 @@ function expandShapeFrets(pattern: readonly number[], basePosition: number): num
  *
  * @stateManagement
  * Uses multiple custom hooks for separation of concerns:
- * - useCAGEDState: Global visualizer state (selected chord, mode toggles)
+ * - useCAGEDState: Global visualizer state (selected root, mode toggles)
  * - useCAGEDLogic: Music theory calculations and fretboard positioning
  * - useCAGEDSequence: Dynamic chord sequence generation
  * - useKeyboardNavigation: Accessibility and keyboard shortcuts
@@ -68,7 +67,7 @@ function expandShapeFrets(pattern: readonly number[], basePosition: number): num
 export default function CAGEDVisualizer() {
   const { state, actions } = useCAGEDState();
   const {
-    selectedChord,
+    root,
     chordQuality,
     selectedPositions,
     showPentatonic,
@@ -78,7 +77,8 @@ export default function CAGEDVisualizer() {
   } = state;
 
   // Use custom hooks for music theory logic and calculations
-  const cagedSequence = useCAGEDSequence(selectedChord);
+  const rootName = CHROMATIC_TO_NOTE_NAME[root];
+  const cagedSequence = useCAGEDSequence(root);
 
   // Entries of the (extended) CAGED walk that are currently drawn. The shape letter
   // and the actual base fret both come from the tuple — the same shape can appear
@@ -101,7 +101,7 @@ export default function CAGEDVisualizer() {
     isScaleNote,
     getNoteNameAtFret,
     shouldShowNoteName,
-  } = useCAGEDLogic(selectedChord, chordQuality, selectedEntries, selectedScale);
+  } = useCAGEDLogic(root, chordQuality, selectedEntries, selectedScale);
 
   // Check if a dot should be shown at this position
   const shouldShowDot = useCallback(
@@ -126,9 +126,9 @@ export default function CAGEDVisualizer() {
       if (!shouldShowDot(stringIndex, fretNumber)) {
         return false;
       }
-      return getNoteAtFret(stringIndex, fretNumber) === CHROMATIC_VALUES[selectedChord];
+      return getNoteAtFret(stringIndex, fretNumber) === root;
     },
-    [shouldShowDot, selectedChord]
+    [shouldShowDot, root]
   );
 
   // Fret window of the pentatonic box belonging to each selected shape. The
@@ -251,11 +251,11 @@ export default function CAGEDVisualizer() {
   return (
     <div className="max-w-6xl mx-auto p-8">
       <CAGEDNavigation
-        selectedChord={selectedChord}
+        root={root}
         chordQuality={chordQuality}
         selectedPositions={selectedPositions}
         cagedSequence={cagedSequence}
-        onChordChange={actions.setChord}
+        onRootChange={actions.setRoot}
         onChordQualityChange={actions.setChordQuality}
         onPreviousPosition={actions.previousPosition}
         onNextPosition={actions.nextPosition}
@@ -264,7 +264,7 @@ export default function CAGEDVisualizer() {
       />
 
       <FretboardDisplay
-        selectedRoot={selectedChord}
+        selectedRoot={rootName}
         currentPattern={selectionLabel}
         showAllPatterns={showAllShapes}
         showOverlay={showPentatonic}
@@ -277,13 +277,13 @@ export default function CAGEDVisualizer() {
         getNoteNameAtFret={getNoteNameAtFret}
         showScaleOverlay={showScale}
         shouldShowScaleDot={shouldShowScaleDot}
-        ariaLabel={`Guitar fretboard showing ${selectedChord} ${chordQuality} chord — ${selectionLabel}`}
+        ariaLabel={`Guitar fretboard showing ${rootName} ${chordQuality} chord — ${selectionLabel}`}
         keyNoteIndicator="R"
         scrollToFret={activeCenterFret}
       />
 
       <ViewModeToggles
-        selectedChord={selectedChord}
+        rootName={rootName}
         chordQuality={chordQuality}
         selectedCount={selectedEntries.length}
         showAllShapes={showAllShapes}

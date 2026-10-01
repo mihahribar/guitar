@@ -1,9 +1,10 @@
 import { useMemo, useReducer } from 'react';
-import type { ChordType, ChordQuality, ScaleType } from '../types';
+import type { ChordQuality, ScaleType } from '../types';
 import { cagedSequenceLength } from './useCAGEDSequence';
 
 interface CAGEDState {
-  selectedChord: ChordType;
+  /** Pitch class of the chord root (0 = C … 11 = B) */
+  root: number;
   chordQuality: ChordQuality;
   /** Indices into the CAGED sequence that are drawn at once; sorted, never empty */
   selectedPositions: number[];
@@ -16,7 +17,7 @@ interface CAGEDState {
 }
 
 type CAGEDAction =
-  | { type: 'SET_CHORD'; payload: ChordType }
+  | { type: 'SET_ROOT'; payload: number }
   | { type: 'SET_CHORD_QUALITY'; payload: ChordQuality }
   | { type: 'NEXT_POSITION' }
   | { type: 'PREVIOUS_POSITION' }
@@ -40,7 +41,7 @@ function allPositions(length: number): number[] {
 
 /** Whether the selection already covers the chord's whole walk */
 function isEverythingSelected(state: CAGEDState): boolean {
-  return state.selectedPositions.length >= cagedSequenceLength(state.selectedChord);
+  return state.selectedPositions.length >= cagedSequenceLength(state.root);
 }
 
 /**
@@ -48,7 +49,7 @@ function isEverythingSelected(state: CAGEDState): boolean {
  * position moves by the same step, so the group keeps its spacing.
  */
 function shiftPositions(state: CAGEDState, delta: 1 | -1): CAGEDState {
-  const length = cagedSequenceLength(state.selectedChord);
+  const length = cagedSequenceLength(state.root);
   if (length === 0) return state;
   return {
     ...state,
@@ -60,11 +61,11 @@ function shiftPositions(state: CAGEDState, delta: 1 | -1): CAGEDState {
 
 function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
   switch (action.type) {
-    case 'SET_CHORD':
+    case 'SET_ROOT':
       return {
         ...state,
-        selectedChord: action.payload,
-        // The sequence is rebuilt for the new chord, so old indices no longer apply.
+        root: action.payload,
+        // The sequence is rebuilt for the new root, so old indices no longer apply.
         // Viewing the whole neck is a view mode, though, so that much carries over.
         selectedPositions: isEverythingSelected(state)
           ? allPositions(cagedSequenceLength(action.payload))
@@ -102,7 +103,7 @@ function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
       if (!isEverythingSelected(state)) {
         return {
           ...state,
-          selectedPositions: allPositions(cagedSequenceLength(state.selectedChord)),
+          selectedPositions: allPositions(cagedSequenceLength(state.root)),
           collapsedSelection: state.selectedPositions,
         };
       }
@@ -138,7 +139,7 @@ function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
 }
 
 const initialState: CAGEDState = {
-  selectedChord: 'C',
+  root: 0,
   chordQuality: 'major',
   selectedPositions: [0],
   collapsedSelection: [0],
@@ -163,8 +164,8 @@ const initialState: CAGEDState = {
  * ```typescript
  * const { state, actions } = useCAGEDState();
  *
- * // Change chord and reset the selection
- * actions.setChord('G');
+ * // Change the root to G and reset the selection
+ * actions.setRoot(7);
  *
  * // Stack a second position on the fretboard
  * actions.togglePosition(3);
@@ -185,7 +186,7 @@ const initialState: CAGEDState = {
 export function useCAGEDState(): {
   state: CAGEDState;
   actions: {
-    setChord: (chord: ChordType) => void;
+    setRoot: (root: number) => void;
     setChordQuality: (quality: ChordQuality) => void;
     nextPosition: () => void;
     previousPosition: () => void;
@@ -202,7 +203,7 @@ export function useCAGEDState(): {
 
   const actions = useMemo(
     () => ({
-      setChord: (chord: ChordType) => dispatch({ type: 'SET_CHORD', payload: chord }),
+      setRoot: (root: number) => dispatch({ type: 'SET_ROOT', payload: root }),
       setChordQuality: (quality: ChordQuality) =>
         dispatch({ type: 'SET_CHORD_QUALITY', payload: quality }),
       nextPosition: () => dispatch({ type: 'NEXT_POSITION' }),

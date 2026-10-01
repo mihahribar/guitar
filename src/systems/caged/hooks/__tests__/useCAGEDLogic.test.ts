@@ -1,9 +1,17 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { useCAGEDLogic } from '../useCAGEDLogic';
-import type { ChordType, ChordQuality } from '@/shared/types/core';
+import type { ChordQuality } from '@/shared/types/core';
+import { CHROMATIC_TO_NOTE_NAME } from '@/shared/utils/musicTheory';
 import type { ScaleType } from '../../constants/scales';
 import type { CAGEDPosition } from '../../types';
+
+// Pitch classes of the five CAGED roots
+const C = 0;
+const D = 2;
+const E = 4;
+const G = 7;
+const A = 9;
 
 /**
  * Empty sequence — useful for tests that only exercise behavior independent of
@@ -27,7 +35,7 @@ const C_MAJOR_SEQUENCE: CAGEDPosition[] = [
 describe('useCAGEDLogic', () => {
   describe('shape positions', () => {
     it('should calculate C major positions correctly', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', C_MAJOR_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', C_MAJOR_SEQUENCE));
 
       // CHROMATIC_VALUES: C=0, A=9, G=7, E=4, D=2
       // For C (target=0): C=0-0=0, A=0-9+12=3, G=0-7+12=5, E=0-4+12=8, D=0-2+12=10
@@ -41,7 +49,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should calculate A minor positions correctly', () => {
-      const { result } = renderHook(() => useCAGEDLogic('A', 'minor', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(A, 'minor', EMPTY_SEQUENCE));
 
       // For A (target=9): C=9-0=9, A=9-9=0, G=9-7=2, E=9-4=5, D=9-2=7
       expect(result.current.shapePositions).toEqual({
@@ -54,7 +62,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should calculate G major positions correctly', () => {
-      const { result } = renderHook(() => useCAGEDLogic('G', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(G, 'major', EMPTY_SEQUENCE));
 
       // For G (target=7): C=7-0=7, A=7-9+12=10, G=7-7=0, E=7-4=3, D=7-2=5
       expect(result.current.shapePositions).toEqual({
@@ -67,7 +75,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should calculate E major positions correctly', () => {
-      const { result } = renderHook(() => useCAGEDLogic('E', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(E, 'major', EMPTY_SEQUENCE));
 
       // For E (target=4): C=4-0=4, A=4-9+12=7, G=4-7+12=9, E=4-4=0, D=4-2=2
       expect(result.current.shapePositions).toEqual({
@@ -80,7 +88,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should calculate D minor positions correctly', () => {
-      const { result } = renderHook(() => useCAGEDLogic('D', 'minor', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(D, 'minor', EMPTY_SEQUENCE));
 
       // For D (target=2): C=2-0=2, A=2-9+12=5, G=2-7+12=7, E=2-4+12=10, D=2-2=0
       expect(result.current.shapePositions).toEqual({
@@ -92,14 +100,14 @@ describe('useCAGEDLogic', () => {
       });
     });
 
-    // Test all chords - positions should be in valid range
-    const chords: ChordType[] = ['C', 'A', 'G', 'E', 'D'];
+    // Test all roots - positions should be in valid range
+    const roots = Array.from({ length: 12 }, (_, root) => root);
     const qualities: ChordQuality[] = ['major', 'minor'];
 
-    chords.forEach((chord) => {
+    roots.forEach((root) => {
       qualities.forEach((quality) => {
-        it(`should calculate valid positions for ${chord} ${quality}`, () => {
-          const { result } = renderHook(() => useCAGEDLogic(chord, quality, EMPTY_SEQUENCE));
+        it(`should calculate valid positions for ${CHROMATIC_TO_NOTE_NAME[root]} ${quality}`, () => {
+          const { result } = renderHook(() => useCAGEDLogic(root, quality, EMPTY_SEQUENCE));
 
           // All positions should be between 0-11 (chromatic scale)
           Object.values(result.current.shapePositions).forEach((pos) => {
@@ -113,7 +121,7 @@ describe('useCAGEDLogic', () => {
 
   describe('getShapeFret', () => {
     it('should return valid fret numbers for C shape', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       // Test all strings
       for (let string = 0; string < 6; string++) {
@@ -126,7 +134,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should handle base position offset correctly', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       // Get fret at position 0
       const fretAtZero = result.current.getShapeFret('C', 0, 0);
@@ -139,7 +147,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should return -1 for unplayed strings', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       // Low E string (string 5) is not played in C shape
       const fret = result.current.getShapeFret('C', 5, 0);
@@ -147,7 +155,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should handle open strings correctly', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       // C shape pattern: [0, 1, 0, 2, 3, -1]
       // String 0 (high E) has pattern 0 = open
@@ -161,8 +169,8 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should work with different chord qualities', () => {
-      const { result: majorResult } = renderHook(() => useCAGEDLogic('A', 'major', EMPTY_SEQUENCE));
-      const { result: minorResult } = renderHook(() => useCAGEDLogic('A', 'minor', EMPTY_SEQUENCE));
+      const { result: majorResult } = renderHook(() => useCAGEDLogic(A, 'major', EMPTY_SEQUENCE));
+      const { result: minorResult } = renderHook(() => useCAGEDLogic(A, 'minor', EMPTY_SEQUENCE));
 
       // Get fret for A shape at position 0
       const majorFret = majorResult.current.getShapeFret('A', 0, 0);
@@ -176,7 +184,7 @@ describe('useCAGEDLogic', () => {
 
   describe('getShapesAtPosition', () => {
     it('should find shapes at a specific position', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', C_MAJOR_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', C_MAJOR_SEQUENCE));
 
       // Get shapes at a position - this will vary based on actual patterns
       const shapes = result.current.getShapesAtPosition(1, 1);
@@ -191,14 +199,14 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should return empty array when no shapes at position', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', C_MAJOR_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', C_MAJOR_SEQUENCE));
 
       // A high fret well beyond every shape in the walk has nothing.
       expect(result.current.getShapesAtPosition(0, 20)).toEqual([]);
     });
 
     it('should include open strings (fret 0) played by a shape', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', C_MAJOR_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', C_MAJOR_SEQUENCE));
 
       // The open C major C-shape plays the high-E (index 0) and G (index 2)
       // strings open, so fret 0 there belongs to the C shape.
@@ -209,7 +217,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should find overlapping shapes', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', C_MAJOR_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', C_MAJOR_SEQUENCE));
 
       // Search across fretboard for overlaps
       let foundOverlap = false;
@@ -234,7 +242,7 @@ describe('useCAGEDLogic', () => {
 
   describe('gradient styles', () => {
     it('should return solid color for single shape', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       const style = result.current.createGradientStyle(['C']);
 
@@ -243,7 +251,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should return 50/50 gradient for two shapes', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       const style = result.current.createGradientStyle(['C', 'A']);
 
@@ -253,7 +261,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should handle three or more shapes with equal segments', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       const style = result.current.createGradientStyle(['C', 'A', 'G']);
 
@@ -262,7 +270,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should handle four shapes', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       const style = result.current.createGradientStyle(['C', 'A', 'G', 'E']);
 
@@ -271,7 +279,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should handle all five shapes', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', C_MAJOR_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', C_MAJOR_SEQUENCE));
 
       const style = result.current.createGradientStyle(['C', 'A', 'G', 'E', 'D']);
 
@@ -280,7 +288,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should use different colors for different shapes', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       const cStyle = result.current.createGradientStyle(['C']);
       const aStyle = result.current.createGradientStyle(['A']);
@@ -292,7 +300,7 @@ describe('useCAGEDLogic', () => {
 
   describe('pentatonic notes', () => {
     it('should identify root note as pentatonic', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       // C note at fret 8 on low E string
       const isPentatonic = result.current.isPentatonicNote(5, 8);
@@ -300,7 +308,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should identify pentatonic notes for major scale', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       // C major pentatonic: C D E G A
       // These should all be pentatonic
@@ -309,7 +317,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should identify pentatonic notes for minor scale', () => {
-      const { result } = renderHook(() => useCAGEDLogic('A', 'minor', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(A, 'minor', EMPTY_SEQUENCE));
 
       // A minor pentatonic: A C D E G
       // A note at fret 5 on low E string
@@ -318,7 +326,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should return pentatonic positions array', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       const positions = result.current.getPentatonicPositions;
 
@@ -342,12 +350,12 @@ describe('useCAGEDLogic', () => {
 
   describe('scale notes', () => {
     it('should provide isScaleNote function', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE, 'major'));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE, 'major'));
       expect(typeof result.current.isScaleNote).toBe('function');
     });
 
     it('should identify C major scale notes correctly', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE, 'major'));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE, 'major'));
 
       // C is in C major scale: high E string fret 8 = C (4+8=12%12=0)
       expect(result.current.isScaleNote(0, 8)).toBe(true);
@@ -356,7 +364,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should identify Dorian scale notes correctly', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE, 'dorian'));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE, 'dorian'));
 
       // C Dorian: C(0) D(2) Eb(3) F(5) G(7) A(9) Bb(10)
       // High E string fret 8 = C -> in scale
@@ -366,7 +374,7 @@ describe('useCAGEDLogic', () => {
     });
 
     it('should return scale positions array', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE, 'major'));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE, 'major'));
 
       const positions = result.current.getScalePositions;
       expect(Array.isArray(positions)).toBe(true);
@@ -385,7 +393,7 @@ describe('useCAGEDLogic', () => {
         ({ chord, quality, sequence, scale }) => useCAGEDLogic(chord, quality, sequence, scale),
         {
           initialProps: {
-            chord: 'C' as ChordType,
+            chord: C,
             quality: 'major' as ChordQuality,
             sequence: EMPTY_SEQUENCE,
             scale: 'major' as ScaleType,
@@ -396,7 +404,7 @@ describe('useCAGEDLogic', () => {
       const majorPositions = result.current.getScalePositions;
 
       rerender({
-        chord: 'C',
+        chord: C,
         quality: 'major',
         sequence: EMPTY_SEQUENCE,
         scale: 'dorian' as ScaleType,
@@ -415,7 +423,7 @@ describe('useCAGEDLogic', () => {
         ({ chord, quality }) => useCAGEDLogic(chord, quality, EMPTY_SEQUENCE),
         {
           initialProps: {
-            chord: 'C' as ChordType,
+            chord: C,
             quality: 'major' as ChordQuality,
           },
         }
@@ -424,7 +432,7 @@ describe('useCAGEDLogic', () => {
       const majorPositions = result.current.shapePositions;
 
       // Change to minor
-      rerender({ chord: 'C', quality: 'minor' });
+      rerender({ chord: C, quality: 'minor' });
 
       const minorPositions = result.current.shapePositions;
 
@@ -437,7 +445,7 @@ describe('useCAGEDLogic', () => {
         ({ chord, quality }) => useCAGEDLogic(chord, quality, EMPTY_SEQUENCE),
         {
           initialProps: {
-            chord: 'A' as ChordType,
+            chord: A,
             quality: 'major' as ChordQuality,
           },
         }
@@ -446,7 +454,7 @@ describe('useCAGEDLogic', () => {
       const majorPentatonic = result.current.getPentatonicPositions;
 
       // Change to minor
-      rerender({ chord: 'A', quality: 'minor' });
+      rerender({ chord: A, quality: 'minor' });
 
       const minorPentatonic = result.current.getPentatonicPositions;
 
@@ -457,13 +465,13 @@ describe('useCAGEDLogic', () => {
 
   describe('note name utilities', () => {
     it('should provide getNoteNameAtFret function', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       expect(typeof result.current.getNoteNameAtFret).toBe('function');
     });
 
     it('should provide shouldShowNoteName function', () => {
-      const { result } = renderHook(() => useCAGEDLogic('C', 'major', EMPTY_SEQUENCE));
+      const { result } = renderHook(() => useCAGEDLogic(C, 'major', EMPTY_SEQUENCE));
 
       expect(typeof result.current.shouldShowNoteName).toBe('function');
     });
@@ -481,7 +489,7 @@ describe('useCAGEDLogic', () => {
         ({ chord, quality, sequence }) => useCAGEDLogic(chord, quality, sequence),
         {
           initialProps: {
-            chord: 'C' as ChordType,
+            chord: C,
             quality: 'major' as ChordQuality,
             sequence: seqA as CAGEDPosition[],
           },
@@ -491,7 +499,7 @@ describe('useCAGEDLogic', () => {
       const firstPositions = result.current.shapePositions;
 
       // Change sequence but keep chord and quality same
-      rerender({ chord: 'C', quality: 'major', sequence: seqB });
+      rerender({ chord: C, quality: 'major', sequence: seqB });
 
       const secondPositions = result.current.shapePositions;
 
@@ -504,7 +512,7 @@ describe('useCAGEDLogic', () => {
         ({ chord, quality, sequence }) => useCAGEDLogic(chord, quality, sequence),
         {
           initialProps: {
-            chord: 'C' as ChordType,
+            chord: C,
             quality: 'major' as ChordQuality,
             sequence: EMPTY_SEQUENCE,
           },
@@ -514,7 +522,7 @@ describe('useCAGEDLogic', () => {
       const cPositions = result.current.shapePositions;
 
       // Change chord
-      rerender({ chord: 'G', quality: 'major', sequence: EMPTY_SEQUENCE });
+      rerender({ chord: G, quality: 'major', sequence: EMPTY_SEQUENCE });
 
       const gPositions = result.current.shapePositions;
 

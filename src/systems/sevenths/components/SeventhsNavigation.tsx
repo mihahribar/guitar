@@ -1,10 +1,9 @@
 import { memo } from 'react';
 import { Kbd } from '@/shared';
-import { STRING_NAMES } from '@/shared/utils/musicTheory';
+import { ROOT_OPTIONS, STRING_NAMES } from '@/shared/utils/musicTheory';
 import {
   INVERSIONS,
   QUALITY_ORDER,
-  ROOT_OPTIONS,
   SEVENTH_QUALITIES,
   STRING_SETS,
   STRING_SET_ORDER,

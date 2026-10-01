@@ -1,13 +1,8 @@
 import { memo } from 'react';
 import { Kbd } from '@/shared';
 import type { StringIndex } from '@/shared/types/core';
-import {
-  INVERSIONS,
-  QUALITY_ORDER,
-  ROOT_OPTIONS,
-  STRING_SETS,
-  TRIAD_QUALITIES,
-} from '../constants';
+import { ROOT_OPTIONS } from '@/shared/utils/musicTheory';
+import { INVERSIONS, QUALITY_ORDER, STRING_SETS, TRIAD_QUALITIES } from '../constants';
 import type { Inversion, TriadQuality } from '../types';
 
 interface TriadsNavigationProps {

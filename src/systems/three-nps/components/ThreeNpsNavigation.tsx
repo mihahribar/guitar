@@ -1,8 +1,8 @@
 import { memo } from 'react';
 import { Kbd } from '@/shared';
 import type { StringIndex } from '@/shared/types/core';
-import { CHROMATIC_TO_NOTE_NAME } from '@/shared/utils/musicTheory';
-import { MAJOR_SCALE_STEPS, MODES, ROOT_OPTIONS, STRING_PAIRS } from '../constants';
+import { CHROMATIC_TO_NOTE_NAME, ROOT_OPTIONS } from '@/shared/utils/musicTheory';
+import { MAJOR_SCALE_STEPS, MODES, STRING_PAIRS } from '../constants';
 import type { ModeDegree } from '../types';
 
 interface ThreeNpsNavigationProps {

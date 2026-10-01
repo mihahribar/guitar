@@ -1,10 +1,11 @@
 import { memo } from 'react';
-import type { ChordType, ChordQuality, ScaleType } from '../types';
+import type { ChordQuality, ScaleType } from '../types';
 import { SCALE_DEFINITIONS } from '../constants/scales';
 import ToggleSwitch from '@/shared/components/ToggleSwitch';
 
 interface ViewModeTogglesProps {
-  selectedChord: ChordType;
+  /** Name of the chord root, e.g. "F#" */
+  rootName: string;
   chordQuality: ChordQuality;
   /** How many CAGED positions are currently drawn */
   selectedCount: number;
@@ -21,7 +22,7 @@ interface ViewModeTogglesProps {
 }
 
 function ViewModeToggles({
-  selectedChord,
+  rootName,
   chordQuality,
   selectedCount,
   showAllShapes,
@@ -130,10 +131,10 @@ function ViewModeToggles({
           </p>
           <p>
             {showAllShapes
-              ? `Viewing every CAGED position for ${selectedChord} ${chordQuality} simultaneously`
+              ? `Viewing every CAGED position for ${rootName} ${chordQuality} simultaneously`
               : selectedCount === 1
-                ? `Navigate through different ways to play ${selectedChord} ${chordQuality} using CAGED shapes`
-                : `Viewing ${selectedCount} ways to play ${selectedChord} ${chordQuality} side by side`}
+                ? `Navigate through different ways to play ${rootName} ${chordQuality} using CAGED shapes`
+                : `Viewing ${selectedCount} ways to play ${rootName} ${chordQuality} side by side`}
           </p>
           <p className="text-xs">
             {selectedCount > 1
@@ -147,7 +148,7 @@ function ViewModeToggles({
         {showPentatonic && (
           <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
             <p className="font-medium text-green-600 dark:text-green-400 text-sm">
-              {selectedChord} {chordQuality === 'major' ? 'Major' : 'Minor'} Pentatonic Scale Active
+              {rootName} {chordQuality === 'major' ? 'Major' : 'Minor'} Pentatonic Scale Active
             </p>
             <p className="text-xs">Green dots: scale notes • Green rings: chord + scale overlap</p>
           </div>
@@ -167,7 +168,7 @@ function ViewModeToggles({
         {showScale && (
           <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
             <p className="font-medium text-violet-600 dark:text-violet-400 text-sm">
-              {selectedChord} {SCALE_DEFINITIONS[selectedScale].name} Scale Active
+              {rootName} {SCALE_DEFINITIONS[selectedScale].name} Scale Active
             </p>
             <p className="text-xs">
               Purple dots: scale notes • Split colors: chord + scale overlap

@@ -50,8 +50,8 @@ export interface CAGEDShapesByQuality extends ShapesByQuality {
  * CAGED visualizer state
  */
 export interface CAGEDState {
-  /** Currently selected root chord */
-  selectedChord: ChordType;
+  /** Pitch class of the chord root (0 = C … 11 = B) */
+  root: number;
   /** Current chord quality (major/minor) */
   chordQuality: ChordQuality;
   /** Indices into the CAGED sequence that are drawn at once; sorted, never empty */
@@ -84,11 +84,11 @@ export interface CAGEDPosition {
  * CAGED navigation props
  */
 export interface CAGEDNavigationProps {
-  selectedChord: ChordType;
+  root: number;
   chordQuality: ChordQuality;
   selectedPositions: number[];
   cagedSequence: readonly CAGEDPosition[];
-  onChordChange: (chord: ChordType) => void;
+  onRootChange: (root: number) => void;
   onChordQualityChange: (quality: ChordQuality) => void;
   onPreviousPosition: () => void;
   onNextPosition: () => void;
@@ -100,7 +100,7 @@ export interface CAGEDNavigationProps {
  * CAGED view mode toggles props
  */
 export interface CAGEDViewModeProps {
-  selectedChord: ChordType;
+  rootName: string;
   chordQuality: ChordQuality;
   selectedCount: number;
   showAllShapes: boolean;

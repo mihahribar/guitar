@@ -1,15 +1,17 @@
 import { memo } from 'react';
 import { Kbd } from '@/shared';
-import type { ChordType, ChordQuality, CAGEDPosition } from '../types';
+import { ROOT_OPTIONS } from '@/shared/utils/musicTheory';
+import type { ChordQuality, CAGEDPosition } from '../types';
 import { CAGED_SHAPES_BY_QUALITY } from '../constants';
 import ChordQualityToggle from './ChordQualityToggle';
 
 interface ConsolidatedNavigationProps {
-  selectedChord: ChordType;
+  /** Pitch class of the chord root (0 = C … 11 = B) */
+  root: number;
   chordQuality: ChordQuality;
   selectedPositions: number[];
   cagedSequence: readonly CAGEDPosition[];
-  onChordChange: (chord: ChordType) => void;
+  onRootChange: (root: number) => void;
   onChordQualityChange: (quality: ChordQuality) => void;
   onPreviousPosition: () => void;
   onNextPosition: () => void;
@@ -20,20 +22,12 @@ interface ConsolidatedNavigationProps {
 const navButtonClass =
   'p-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md text-gray-600 dark:text-gray-300 transition-colors focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:outline-none cursor-pointer';
 
-const chords: { value: ChordType; label: string }[] = [
-  { value: 'C', label: 'C' },
-  { value: 'A', label: 'A' },
-  { value: 'G', label: 'G' },
-  { value: 'E', label: 'E' },
-  { value: 'D', label: 'D' },
-];
-
 function CAGEDNavigation({
-  selectedChord,
+  root,
   chordQuality,
   selectedPositions,
   cagedSequence,
-  onChordChange,
+  onRootChange,
   onChordQualityChange,
   onPreviousPosition,
   onNextPosition,
@@ -47,20 +41,21 @@ function CAGEDNavigation({
         <div className="flex flex-col items-center">
           {/* Horizontal layout for chord and quality selectors */}
           <div className="flex items-center gap-6">
-            {/* Root Chord Selector */}
+            {/* Root Chord Selector, coloured after the walk's first shape (the open form for C, A, G, E and D) */}
             <div className="flex flex-col items-center gap-2">
               <span className="text-xs text-gray-600 dark:text-gray-400">Root</span>
               <div className="relative">
                 <select
-                  value={selectedChord}
-                  onChange={(e) => onChordChange(e.target.value as ChordType)}
+                  value={root}
+                  onChange={(e) => onRootChange(Number(e.target.value))}
                   className="appearance-none rounded-lg px-4 py-2 pr-8 text-white font-medium focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:outline-none cursor-pointer border-none shadow-md transition-all duration-200"
                   style={{
-                    backgroundColor: CAGED_SHAPES_BY_QUALITY[chordQuality][selectedChord].color,
+                    backgroundColor:
+                      CAGED_SHAPES_BY_QUALITY[chordQuality][cagedSequence[0].shape].color,
                   }}
                   aria-label="Select root chord"
                 >
-                  {chords.map(({ value, label }) => (
+                  {ROOT_OPTIONS.map(({ value, label }) => (
                     <option key={value} value={value} className="bg-gray-800 text-white">
                       {label}
                     </option>

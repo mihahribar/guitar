@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { ChordType, ChordQuality } from '@/shared/types/core';
+import type { ChordQuality } from '@/shared/types/core';
 import type { CAGEDPosition, ScaleType } from '../types';
 import { CHROMATIC_VALUES, CAGED_SHAPES_BY_QUALITY } from '../constants';
 import { SCALE_DEFINITIONS } from '../constants/scales';
@@ -21,7 +21,7 @@ import { getPentatonicIntervals } from '@/shared/utils/chordUtils';
  * with support for pentatonic scale overlays and gradient blending for
  * overlapping chord shapes.
  *
- * @param selectedChord - The root chord (C, A, G, E, D) to build patterns from
+ * @param root - Pitch class of the chord root (0 = C … 11 = B) to build patterns from
  * @param chordQuality - Major or minor chord quality affecting interval patterns
  * @param cagedSequence - Array of shapes in CAGED sequence order for display
  *
@@ -37,7 +37,7 @@ import { getPentatonicIntervals } from '@/shared/utils/chordUtils';
  *
  * @example
  * ```typescript
- * const { shapePositions, getShapeFret, createGradientStyle } = useCAGEDLogic('C', 'major', ['C', 'A', 'G', 'E', 'D']);
+ * const { shapePositions, getShapeFret, createGradientStyle } = useCAGEDLogic(0, 'major', cagedSequence);
  *
  * // Get C shape fret position on low E string (string 0)
  * const fret = getShapeFret('C', 0, shapePositions['C']);
@@ -57,7 +57,7 @@ import { getPentatonicIntervals } from '@/shared/utils/chordUtils';
  * - Shape transposition: Each shape pattern is offset by the chromatic distance to target chord
  */
 export function useCAGEDLogic(
-  selectedChord: ChordType,
+  root: number,
   chordQuality: ChordQuality,
   cagedSequence: readonly CAGEDPosition[],
   selectedScale: ScaleType = 'major'
@@ -67,7 +67,6 @@ export function useCAGEDLogic(
 
   // Calculate fret positions for each CAGED shape relative to the selected chord
   const shapePositions = useMemo(() => {
-    const targetValue = CHROMATIC_VALUES[selectedChord]; // Target chord's chromatic value (0-11)
     const positions: { [key: string]: number } = {};
 
     // For each CAGED shape, calculate how many frets to move from its natural position
@@ -75,11 +74,11 @@ export function useCAGEDLogic(
     for (const [shapeKey, shapeRoot] of Object.entries(CHROMATIC_VALUES)) {
       // Calculate chromatic distance: (target - origin + 12) % 12
       // +12 ensures positive result, %12 wraps to single octave
-      positions[shapeKey] = (targetValue - shapeRoot + 12) % 12;
+      positions[shapeKey] = (root - shapeRoot + 12) % 12;
     }
 
     return positions;
-  }, [selectedChord]);
+  }, [root]);
 
   /**
    * Calculate the actual fret number for a CAGED shape at a specific string
@@ -159,37 +158,33 @@ export function useCAGEDLogic(
 
   // Use shared pentatonic logic
   const isPentatonicNoteAtPosition = useMemo(() => {
-    const rootNote = CHROMATIC_VALUES[selectedChord];
     const intervals = getPentatonicIntervals(chordQuality);
 
     return (stringIndex: number, fretNumber: number) => {
-      return isPentatonicNote(stringIndex, fretNumber, rootNote, intervals);
+      return isPentatonicNote(stringIndex, fretNumber, root, intervals);
     };
-  }, [selectedChord, chordQuality]);
+  }, [root, chordQuality]);
 
   // Scale note detection using selected scale type
   const isScaleNoteAtPosition = useMemo(() => {
-    const rootNote = CHROMATIC_VALUES[selectedChord];
     const intervals = SCALE_DEFINITIONS[selectedScale].intervals;
 
     return (stringIndex: number, fretNumber: number) => {
-      return isScaleNote(stringIndex, fretNumber, rootNote, intervals);
+      return isScaleNote(stringIndex, fretNumber, root, intervals);
     };
-  }, [selectedChord, selectedScale]);
+  }, [root, selectedScale]);
 
   // All scale positions across the fretboard
   const allScalePositions = useMemo(() => {
-    const rootNote = CHROMATIC_VALUES[selectedChord];
     const intervals = SCALE_DEFINITIONS[selectedScale].intervals;
-    return getScalePositions(rootNote, intervals);
-  }, [selectedChord, selectedScale]);
+    return getScalePositions(root, intervals);
+  }, [root, selectedScale]);
 
   // Use shared pentatonic positions utility
   const allPentatonicPositions = useMemo(() => {
-    const rootNote = CHROMATIC_VALUES[selectedChord];
     const intervals = getPentatonicIntervals(chordQuality);
-    return getPentatonicPositions(rootNote, intervals);
-  }, [selectedChord, chordQuality]);
+    return getPentatonicPositions(root, intervals);
+  }, [root, chordQuality]);
 
   return {
     shapePositions,

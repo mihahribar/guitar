@@ -34,6 +34,9 @@ export const CHROMATIC_TO_NOTE_NAME: readonly string[] = [
   'B',
 ] as const;
 
+/** All twelve roots as select options, valued by pitch class */
+export const ROOT_OPTIONS = CHROMATIC_TO_NOTE_NAME.map((name, value) => ({ value, label: name }));
+
 /**
  * String names for display purposes
  */

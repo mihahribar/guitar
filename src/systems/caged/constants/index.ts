@@ -102,7 +102,8 @@ export const CAGED_SHAPES_BY_QUALITY: CAGEDShapesByQuality = {
   minor: CAGED_MINOR_SHAPE_DATA,
 };
 
-// Chromatic values for CAGED chord roots
+// Pitch class of each shape's open-chord root (the C shape is rooted on C, and so on).
+// A shape moves (root - this) mod 12 frets to play any other root.
 export const CHROMATIC_VALUES: ChromaticValues = {
   C: 0,
   A: 9,

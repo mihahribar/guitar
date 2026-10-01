@@ -3,6 +3,9 @@ import { renderHook, act } from '@testing-library/react';
 import { useCAGEDSequence } from '../useCAGEDSequence';
 import { useCAGEDState } from '../useCAGEDState';
 
+// Pitch class of G
+const G = 7;
+
 describe('useCAGEDState - scale overlay', () => {
   it('should initialize with showScale=false and selectedScale="major"', () => {
     const { result } = renderHook(() => useCAGEDState());
@@ -30,13 +33,13 @@ describe('useCAGEDState - scale overlay', () => {
     expect(result.current.state.selectedScale).toBe('harmonicMinor');
   });
 
-  it('should persist showScale when switching chords', () => {
+  it('should persist showScale when switching roots', () => {
     const { result } = renderHook(() => useCAGEDState());
 
     act(() => result.current.actions.toggleShowScale());
     expect(result.current.state.showScale).toBe(true);
 
-    act(() => result.current.actions.setChord('G'));
+    act(() => result.current.actions.setRoot(G));
     expect(result.current.state.showScale).toBe(true);
     expect(result.current.state.selectedScale).toBe('major');
   });
@@ -115,7 +118,7 @@ describe('useCAGEDState - position selection', () => {
   const SEQUENCE_LENGTH = 8;
 
   it('derives the sequence length from the selected chord', () => {
-    const { result } = renderHook(() => useCAGEDSequence('C'));
+    const { result } = renderHook(() => useCAGEDSequence(0));
     expect(result.current).toHaveLength(SEQUENCE_LENGTH);
   });
 
@@ -176,9 +179,9 @@ describe('useCAGEDState - position selection', () => {
     const { result } = renderHook(() => useCAGEDState());
 
     act(() => result.current.actions.toggleAllPositions());
-    act(() => result.current.actions.setChord('G'));
+    act(() => result.current.actions.setRoot(G));
     expect(result.current.state.selectedPositions).toHaveLength(
-      renderHook(() => useCAGEDSequence('G')).result.current.length
+      renderHook(() => useCAGEDSequence(G)).result.current.length
     );
   });
 
@@ -200,7 +203,7 @@ describe('useCAGEDState - position selection', () => {
     const { result } = renderHook(() => useCAGEDState());
 
     act(() => result.current.actions.togglePosition(5));
-    act(() => result.current.actions.setChord('G'));
+    act(() => result.current.actions.setRoot(G));
     // The sequence is rebuilt for the new chord, so old indices no longer apply
     expect(result.current.state.selectedPositions).toEqual([0]);
   });

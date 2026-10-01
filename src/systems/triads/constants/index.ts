@@ -1,4 +1,3 @@
-import { CHROMATIC_TO_NOTE_NAME } from '@/shared/utils/musicTheory';
 import type { InversionInfo, StringSet, TriadQuality, TriadQualityInfo } from '../types';
 
 export const TRIAD_QUALITIES: Record<TriadQuality, TriadQualityInfo> = {
@@ -36,7 +35,5 @@ export const STRING_SETS: readonly StringSet[] = [
 ] as const;
 
 export const STRINGS_PER_TRIAD = 3;
-
-export const ROOT_OPTIONS = CHROMATIC_TO_NOTE_NAME.map((name, value) => ({ value, label: name }));
 
 export * from './help';

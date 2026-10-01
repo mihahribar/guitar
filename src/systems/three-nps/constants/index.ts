@@ -1,4 +1,3 @@
-import { CHROMATIC_TO_NOTE_NAME } from '@/shared/utils/musicTheory';
 import type { ModeInfo, StringPair } from '../types';
 
 /** Semitone offsets of the major scale degrees */
@@ -28,7 +27,5 @@ export const STRING_PAIRS: readonly StringPair[] = [
 
 /** The G–B pair is tuned a major third apart, shifting the upper string one fret */
 export const G_B_LOW_STRING = 2;
-
-export const ROOT_OPTIONS = CHROMATIC_TO_NOTE_NAME.map((name, value) => ({ value, label: name }));
 
 export * from './help';
