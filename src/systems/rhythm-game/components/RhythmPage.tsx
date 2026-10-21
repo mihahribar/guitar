@@ -163,11 +163,18 @@ const RhythmPage: React.FC = () => {
         onClose={() => setPoolOpen(false)}
         title="Random Patterns"
         description="Randomize and Random Change only use the patterns picked here. Tap a heading for the whole group, or Shift-click a pattern to keep just that one."
+        warning={
+          randomPool.length === 0
+            ? 'Pick at least one pattern. Until then Randomize and Random Change leave the beats as they are.'
+            : undefined
+        }
         selectedIds={randomPool}
         onSelect={handlePoolSelect}
         onSelectCategory={(category) =>
           updateRandomPool({ type: 'TOGGLE_CATEGORY', payload: category })
         }
+        onSelectAll={() => updateRandomPool({ type: 'SELECT_ALL' })}
+        onSelectNone={() => updateRandomPool({ type: 'SELECT_NONE' })}
       />
     </div>
   );

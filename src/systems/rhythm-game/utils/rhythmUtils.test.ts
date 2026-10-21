@@ -58,15 +58,22 @@ describe('random change', () => {
 describe('random pool', () => {
   const eighths = EIGHTH_PATTERNS.map((pattern) => pattern.id);
 
-  it('toggles patterns but always keeps one', () => {
+  it('toggles patterns, down to none', () => {
     const pool = randomPoolReducer(['quarter'], { type: 'TOGGLE_PATTERN', payload: 'triplet' });
     expect(pool).toEqual(['quarter', 'triplet']);
     expect(randomPoolReducer(pool, { type: 'TOGGLE_PATTERN', payload: 'quarter' })).toEqual([
       'triplet',
     ]);
-    expect(randomPoolReducer(['triplet'], { type: 'TOGGLE_PATTERN', payload: 'triplet' })).toEqual([
-      'triplet',
-    ]);
+    expect(randomPoolReducer(['triplet'], { type: 'TOGGLE_PATTERN', payload: 'triplet' })).toEqual(
+      []
+    );
+  });
+
+  it('selects all and none', () => {
+    expect(randomPoolReducer(eighths, { type: 'SELECT_ALL' })).toEqual(
+      ALL_PATTERNS.map((pattern) => pattern.id)
+    );
+    expect(randomPoolReducer(eighths, { type: 'SELECT_NONE' })).toEqual([]);
   });
 
   it('solos a pattern', () => {
@@ -84,11 +91,5 @@ describe('random pool', () => {
     expect(randomPoolReducer(filled, { type: 'TOGGLE_CATEGORY', payload: 'eighths' })).toEqual([
       'quarter',
     ]);
-  });
-
-  it('will not clear the only selected category', () => {
-    expect(randomPoolReducer(eighths, { type: 'TOGGLE_CATEGORY', payload: 'eighths' })).toEqual(
-      eighths
-    );
   });
 });

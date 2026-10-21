@@ -44,27 +44,28 @@ export const getRandomPatternExcept = (
 };
 
 /**
- * Ids of the patterns Randomize and Random Change pick from. As with the pattern
- * chips in the other tabs, at least one always stays selected
+ * Ids of the patterns Randomize and Random Change pick from. It may be empty,
+ * which leaves the panels as they are until something is picked again
  */
 export const randomPoolReducer = (pool: string[], action: RandomPoolAction): string[] => {
   switch (action.type) {
-    case 'TOGGLE_PATTERN': {
-      const next = pool.includes(action.payload)
+    case 'TOGGLE_PATTERN':
+      return pool.includes(action.payload)
         ? pool.filter((id) => id !== action.payload)
         : [...pool, action.payload];
-      return next.length > 0 ? next : pool;
-    }
     case 'SOLO_PATTERN':
       return [action.payload];
     case 'TOGGLE_CATEGORY': {
       const ids = PATTERNS_BY_CATEGORY[action.payload].map((pattern) => pattern.id);
       // A partly selected group fills up first, and clears once it is full
-      const next = ids.every((id) => pool.includes(id))
+      return ids.every((id) => pool.includes(id))
         ? pool.filter((id) => !ids.includes(id))
         : [...pool, ...ids.filter((id) => !pool.includes(id))];
-      return next.length > 0 ? next : pool;
     }
+    case 'SELECT_ALL':
+      return ALL_PATTERNS.map((pattern) => pattern.id);
+    case 'SELECT_NONE':
+      return [];
   }
 };
 

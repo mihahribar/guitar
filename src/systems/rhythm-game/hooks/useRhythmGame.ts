@@ -178,6 +178,9 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
    * Randomize all panel patterns
    */
   const randomizeAll = useCallback(() => {
+    // An empty pool leaves the panels as they are
+    if (poolPatterns.length === 0) return;
+
     setPanels([
       getRandomPattern(poolPatterns),
       getRandomPattern(poolPatterns),

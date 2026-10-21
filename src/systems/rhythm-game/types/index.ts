@@ -75,7 +75,9 @@ export interface RhythmGameState {
 export type RandomPoolAction =
   | { type: 'TOGGLE_PATTERN'; payload: string }
   | { type: 'SOLO_PATTERN'; payload: string }
-  | { type: 'TOGGLE_CATEGORY'; payload: SubdivisionType };
+  | { type: 'TOGGLE_CATEGORY'; payload: SubdivisionType }
+  | { type: 'SELECT_ALL' }
+  | { type: 'SELECT_NONE' };
 
 /**
  * Actions available for the rhythm game
