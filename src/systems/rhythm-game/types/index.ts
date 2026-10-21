@@ -52,6 +52,8 @@ export type BeatIndex = 0 | 1 | 2 | 3;
 export interface RhythmGameState {
   /** Patterns for each of the 4 panels */
   panels: [RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern];
+  /** Panels random change swapped that have not been played yet */
+  changedPanels: PanelIndex[];
   /** Whether the beat cycling is active */
   isPlaying: boolean;
   /** Current beat (0-3), null when not playing */
@@ -118,6 +120,8 @@ export interface RhythmPanelProps {
   pattern: RhythmPattern;
   /** Whether this panel is the active beat */
   isActive: boolean;
+  /** Whether random change just swapped this panel's pattern */
+  isChanged: boolean;
   /** Panel index (0-3) */
   panelIndex: PanelIndex;
   /** Click handler for pattern selection */

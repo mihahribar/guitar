@@ -5,8 +5,8 @@
  * and subdivision calculations.
  */
 
-import type { RhythmPattern, PanelIndex, SubdivisionType } from '../types';
-import { ALL_PATTERNS, PATTERNS_BY_CATEGORY } from '../constants';
+import type { RhythmPattern, PanelIndex, BeatIndex, SubdivisionType } from '../types';
+import { ALL_PATTERNS, PATTERNS_BY_CATEGORY, RHYTHM_GAME_CONSTANTS } from '../constants';
 
 /**
  * Validate that a pattern's note durations sum to 1.0 (one beat)
@@ -32,11 +32,52 @@ export const getRandomPattern = (category?: SubdivisionType): RhythmPattern => {
 };
 
 /**
+ * Get a random pattern that differs from the current one, so a swap is always visible
+ * @param current - The pattern being replaced
+ * @returns A different rhythm pattern
+ */
+export const getRandomPatternExcept = (current: RhythmPattern): RhythmPattern => {
+  const others = ALL_PATTERNS.filter((pattern) => pattern.id !== current.id);
+  return others[Math.floor(Math.random() * others.length)];
+};
+
+/**
  * Get a random panel index (0-3)
  * @returns Random panel index
  */
 export const getRandomPanelIndex = (): PanelIndex => {
   return Math.floor(Math.random() * 4) as PanelIndex;
+};
+
+/**
+ * Beat on which random change swaps a panel, so the player sees the new pattern
+ * RANDOM_CHANGE_LEAD_BEATS beats before playing it
+ * @param panel - The panel being swapped
+ * @returns The beat to swap it on
+ */
+export const getRandomChangeBeat = (panel: PanelIndex): BeatIndex => {
+  const { BEATS_PER_MEASURE, RANDOM_CHANGE_LEAD_BEATS } = RHYTHM_GAME_CONSTANTS;
+  return ((panel - RANDOM_CHANGE_LEAD_BEATS + BEATS_PER_MEASURE) % BEATS_PER_MEASURE) as BeatIndex;
+};
+
+/**
+ * One beat of random change. The panel for the next bar is picked on panel 1's swap
+ * beat, which opens the swap window for that bar, so every bar played differs from
+ * the one before in exactly one panel
+ * @param beat - The beat just reached
+ * @param pending - Panel picked but not yet swapped, if any
+ * @param pickPanel - Picks the panel to swap
+ * @returns The panel still waiting, and the panel to swap on this beat
+ */
+export const stepRandomChange = (
+  beat: BeatIndex,
+  pending: PanelIndex | null,
+  pickPanel: () => PanelIndex = getRandomPanelIndex
+): { pending: PanelIndex | null; swap: PanelIndex | null } => {
+  const target = beat === getRandomChangeBeat(0) ? pickPanel() : pending;
+  return target !== null && getRandomChangeBeat(target) === beat
+    ? { pending: null, swap: target }
+    : { pending: target, swap: null };
 };
 
 /**

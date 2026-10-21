@@ -21,6 +21,7 @@ const RhythmPage: React.FC = () => {
   // Game state and actions from hook
   const {
     panels,
+    changedPanels,
     isPlaying,
     currentBeat,
     randomChangeMode,
@@ -93,7 +94,13 @@ const RhythmPage: React.FC = () => {
         <main className="space-y-8">
           {/* Rhythm grid */}
           <section aria-label="Rhythm grid">
-            <RhythmGrid panels={panels} currentBeat={currentBeat} onPanelClick={handlePanelClick} />
+            <RhythmGrid
+              panels={panels}
+              currentBeat={currentBeat}
+              changedPanels={changedPanels}
+              bpm={bpm}
+              onPanelClick={handlePanelClick}
+            />
           </section>
 
           {/* Controls */}

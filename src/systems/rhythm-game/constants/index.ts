@@ -18,6 +18,8 @@ export const RHYTHM_GAME_CONSTANTS = {
   PANEL_COUNT: 4,
   /** Beats per measure (4/4 time) */
   BEATS_PER_MEASURE: 4,
+  /** Beats of warning random change gives before the swapped panel plays */
+  RANDOM_CHANGE_LEAD_BEATS: 2,
   /** Grid dimensions */
   GRID_COLS: 2,
   GRID_ROWS: 2,

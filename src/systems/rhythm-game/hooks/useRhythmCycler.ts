@@ -11,8 +11,8 @@ import type { BeatIndex } from '../types';
 interface UseRhythmCyclerProps {
   /** Beats per minute from the metronome */
   bpm: number;
-  /** Callback when a cycle completes (after beat 3, before beat 0) */
-  onCycleComplete?: () => void;
+  /** Callback on each beat the cycler advances to (not the first beat after start) */
+  onBeat?: (beat: BeatIndex) => void;
 }
 
 interface UseRhythmCyclerReturn {
@@ -31,20 +31,18 @@ interface UseRhythmCyclerReturn {
 /**
  * Hook for beat cycling synchronized with BPM
  */
-export const useRhythmCycler = ({
-  bpm,
-  onCycleComplete,
-}: UseRhythmCyclerProps): UseRhythmCyclerReturn => {
+export const useRhythmCycler = ({ bpm, onBeat }: UseRhythmCyclerProps): UseRhythmCyclerReturn => {
   const [currentBeat, setCurrentBeat] = useState<BeatIndex | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
   const intervalIdRef = useRef<number | null>(null);
-  const onCycleCompleteRef = useRef(onCycleComplete);
+  const beatRef = useRef<BeatIndex>(0);
+  const onBeatRef = useRef(onBeat);
 
   // Keep callback ref updated
   useEffect(() => {
-    onCycleCompleteRef.current = onCycleComplete;
-  }, [onCycleComplete]);
+    onBeatRef.current = onBeat;
+  }, [onBeat]);
 
   /**
    * Clear the interval timer
@@ -60,22 +58,19 @@ export const useRhythmCycler = ({
    * Advance to the next beat
    */
   const advanceBeat = useCallback(() => {
-    setCurrentBeat((prev) => {
-      const nextBeat = (((prev ?? -1) + 1) % 4) as BeatIndex;
+    const nextBeat = ((beatRef.current + 1) % 4) as BeatIndex;
+    beatRef.current = nextBeat;
 
-      // If completing a cycle (going from beat 3 to 0), call the callback
-      if (nextBeat === 0 && prev === 3) {
-        onCycleCompleteRef.current?.();
-      }
-
-      return nextBeat;
-    });
+    // Called outside a state updater so the caller's updates render with the beat
+    onBeatRef.current?.(nextBeat);
+    setCurrentBeat(nextBeat);
   }, []);
 
   /**
    * Start the beat cycling
    */
   const start = useCallback(() => {
+    beatRef.current = 0;
     setIsPlaying(true);
     setCurrentBeat(0);
   }, []);
@@ -93,6 +88,7 @@ export const useRhythmCycler = ({
    * Reset to beat 0 without stopping
    */
   const reset = useCallback(() => {
+    beatRef.current = 0;
     setCurrentBeat(0);
   }, []);
 

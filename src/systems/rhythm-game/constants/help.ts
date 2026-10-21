@@ -14,7 +14,7 @@ export const RHYTHM_HELP: HelpContent = {
   tips: [
     'Start slower than feels necessary. Clean and slow beats fast and sloppy.',
     'Click any panel to swap in a different pattern for that beat.',
-    'Turn on Random Change to keep yourself reading instead of memorising.',
+    'Turn on Random Change to keep yourself reading instead of memorising. Each bar one beat swaps two beats before you reach it, and its panel flashes.',
   ],
   reading: [
     {

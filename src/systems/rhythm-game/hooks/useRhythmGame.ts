@@ -5,13 +5,13 @@
  * into a single unified interface.
  */
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
-import type { RhythmPattern, UseRhythmGameReturn, PanelIndex } from '../types';
+import type { RhythmPattern, UseRhythmGameReturn, PanelIndex, BeatIndex } from '../types';
 import { DEFAULT_PANELS } from '../constants';
 import { useRhythmCycler } from './useRhythmCycler';
 import { useSubdivisionAudio } from './useSubdivisionAudio';
-import { getRandomPattern, getRandomPanelIndex } from '../utils/rhythmUtils';
+import { getRandomPattern, getRandomPatternExcept, stepRandomChange } from '../utils/rhythmUtils';
 
 /**
  * Main hook for the rhythm game feature
@@ -36,21 +36,35 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
   const [playAudio, setPlayAudioState] = useState(false);
   const [playMetronome, setPlayMetronomeState] = useState(true);
 
+  // Panels swapped by random change that have not been played yet
+  const [changedPanels, setChangedPanels] = useState<PanelIndex[]>([]);
+  // Panel picked for the next bar, waiting for its swap beat
+  const pendingChangeRef = useRef<PanelIndex | null>(null);
+
   /**
-   * Handle cycle completion - randomize one panel if in random change mode
+   * Handle each beat - in random change mode, swap one panel per bar, two beats
+   * before it plays, so the player has time to read it
    */
-  const handleCycleComplete = useCallback(() => {
-    if (randomChangeMode) {
-      const panelIndex = getRandomPanelIndex();
-      const newPattern = getRandomPattern();
+  const handleBeat = useCallback(
+    (beat: BeatIndex) => {
+      // A swapped panel stops flashing once it is being played
+      setChangedPanels((prev) => prev.filter((panel) => panel !== beat));
+
+      if (!randomChangeMode) return;
+
+      const { pending, swap: target } = stepRandomChange(beat, pendingChangeRef.current);
+      pendingChangeRef.current = pending;
+      if (target === null) return;
 
       setPanels((prev) => {
         const updated = [...prev] as [RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern];
-        updated[panelIndex] = newPattern;
+        updated[target] = getRandomPatternExcept(prev[target]);
         return updated;
       });
-    }
-  }, [randomChangeMode]);
+      setChangedPanels((prev) => [...prev, target]);
+    },
+    [randomChangeMode]
+  );
 
   // Beat cycling hook
   const {
@@ -60,7 +74,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
     stop: stopCycling,
   } = useRhythmCycler({
     bpm,
-    onCycleComplete: handleCycleComplete,
+    onBeat: handleBeat,
   });
 
   // Audio playback hook
@@ -116,6 +130,8 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
   const stop = useCallback(() => {
     stopCycling();
     stopClicks();
+    pendingChangeRef.current = null;
+    setChangedPanels([]);
   }, [stopCycling, stopClicks]);
 
   /**
@@ -184,6 +200,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
     () => ({
       // State
       panels,
+      changedPanels,
       isPlaying,
       currentBeat,
       randomChangeMode,
@@ -203,6 +220,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
     }),
     [
       panels,
+      changedPanels,
       isPlaying,
       currentBeat,
       randomChangeMode,

@@ -59,3 +59,21 @@ body {
   --ring-pent: #22c55e; /* green-500 */
   --ring-scale: #8b5cf6; /* violet-500 */
 }
+
+/* Rhythm panel that random change just swapped: flashes once, lasting one beat.
+   --beat is set on the rhythm grid from the tempo. */
+.rhythm-panel-changed {
+  animation: beat-flash var(--beat, 0.5s) ease-out;
+}
+
+@keyframes beat-flash {
+  from {
+    background-color: rgb(251 191 36 / 0.7); /* amber-400 */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rhythm-panel-changed {
+    animation: none;
+  }
+}
