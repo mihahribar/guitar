@@ -1,7 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_PATTERNS } from '../constants';
+import { ALL_PATTERNS, EIGHTH_PATTERNS } from '../constants';
 import type { BeatIndex, PanelIndex } from '../types';
-import { getRandomChangeBeat, getRandomPatternExcept, stepRandomChange } from './rhythmUtils';
+import {
+  getRandomChangeBeat,
+  getRandomPatternExcept,
+  randomPoolReducer,
+  stepRandomChange,
+} from './rhythmUtils';
 
 describe('random change', () => {
   it('swaps each panel two beats before it plays', () => {
@@ -37,7 +42,53 @@ describe('random change', () => {
 
   it('never swaps a panel for the pattern it already shows', () => {
     for (const pattern of ALL_PATTERNS) {
-      expect(getRandomPatternExcept(pattern).id).not.toBe(pattern.id);
+      expect(getRandomPatternExcept(pattern)?.id).not.toBe(pattern.id);
     }
+  });
+
+  it('only swaps in patterns from the pool, and skips when there is nothing new', () => {
+    const [quarter] = ALL_PATTERNS;
+    for (let i = 0; i < 20; i++) {
+      expect(EIGHTH_PATTERNS).toContain(getRandomPatternExcept(quarter, EIGHTH_PATTERNS));
+    }
+    expect(getRandomPatternExcept(quarter, [quarter])).toBeUndefined();
+  });
+});
+
+describe('random pool', () => {
+  const eighths = EIGHTH_PATTERNS.map((pattern) => pattern.id);
+
+  it('toggles patterns but always keeps one', () => {
+    const pool = randomPoolReducer(['quarter'], { type: 'TOGGLE_PATTERN', payload: 'triplet' });
+    expect(pool).toEqual(['quarter', 'triplet']);
+    expect(randomPoolReducer(pool, { type: 'TOGGLE_PATTERN', payload: 'quarter' })).toEqual([
+      'triplet',
+    ]);
+    expect(randomPoolReducer(['triplet'], { type: 'TOGGLE_PATTERN', payload: 'triplet' })).toEqual([
+      'triplet',
+    ]);
+  });
+
+  it('solos a pattern', () => {
+    expect(randomPoolReducer(eighths, { type: 'SOLO_PATTERN', payload: 'quarter' })).toEqual([
+      'quarter',
+    ]);
+  });
+
+  it('fills a partly selected category, then clears it', () => {
+    const filled = randomPoolReducer(['quarter', eighths[0]], {
+      type: 'TOGGLE_CATEGORY',
+      payload: 'eighths',
+    });
+    expect(filled).toEqual(['quarter', ...eighths]);
+    expect(randomPoolReducer(filled, { type: 'TOGGLE_CATEGORY', payload: 'eighths' })).toEqual([
+      'quarter',
+    ]);
+  });
+
+  it('will not clear the only selected category', () => {
+    expect(randomPoolReducer(eighths, { type: 'TOGGLE_CATEGORY', payload: 'eighths' })).toEqual(
+      eighths
+    );
   });
 });

@@ -5,13 +5,18 @@
  * into a single unified interface.
  */
 
-import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef, useReducer } from 'react';
 import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
 import type { RhythmPattern, UseRhythmGameReturn, PanelIndex, BeatIndex } from '../types';
-import { DEFAULT_PANELS } from '../constants';
+import { ALL_PATTERNS, DEFAULT_PANELS } from '../constants';
 import { useRhythmCycler } from './useRhythmCycler';
 import { useSubdivisionAudio } from './useSubdivisionAudio';
-import { getRandomPattern, getRandomPatternExcept, stepRandomChange } from '../utils/rhythmUtils';
+import {
+  getRandomPattern,
+  getRandomPatternExcept,
+  randomPoolReducer,
+  stepRandomChange,
+} from '../utils/rhythmUtils';
 
 /**
  * Main hook for the rhythm game feature
@@ -36,6 +41,15 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
   const [playAudio, setPlayAudioState] = useState(false);
   const [playMetronome, setPlayMetronomeState] = useState(true);
 
+  // Patterns Randomize and Random Change pick from, every pattern to start with
+  const [randomPool, updateRandomPool] = useReducer(randomPoolReducer, ALL_PATTERNS, (patterns) =>
+    patterns.map((pattern) => pattern.id)
+  );
+  const poolPatterns = useMemo(
+    () => ALL_PATTERNS.filter((pattern) => randomPool.includes(pattern.id)),
+    [randomPool]
+  );
+
   // Panels swapped by random change that have not been played yet
   const [changedPanels, setChangedPanels] = useState<PanelIndex[]>([]);
   // Panel picked for the next bar, waiting for its swap beat
@@ -56,14 +70,18 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       pendingChangeRef.current = pending;
       if (target === null) return;
 
+      // Nothing to swap to when the pool holds only the pattern already there
+      const next = getRandomPatternExcept(panels[target], poolPatterns);
+      if (!next) return;
+
       setPanels((prev) => {
         const updated = [...prev] as [RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern];
-        updated[target] = getRandomPatternExcept(prev[target]);
+        updated[target] = next;
         return updated;
       });
       setChangedPanels((prev) => [...prev, target]);
     },
-    [randomChangeMode]
+    [randomChangeMode, panels, poolPatterns]
   );
 
   // Beat cycling hook
@@ -160,8 +178,13 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
    * Randomize all panel patterns
    */
   const randomizeAll = useCallback(() => {
-    setPanels([getRandomPattern(), getRandomPattern(), getRandomPattern(), getRandomPattern()]);
-  }, []);
+    setPanels([
+      getRandomPattern(poolPatterns),
+      getRandomPattern(poolPatterns),
+      getRandomPattern(poolPatterns),
+      getRandomPattern(poolPatterns),
+    ]);
+  }, [poolPatterns]);
 
   /**
    * Set random change mode
@@ -206,6 +229,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       randomChangeMode,
       playAudio,
       playMetronome,
+      randomPool,
       bpm,
       // Actions
       start,
@@ -214,6 +238,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       setPattern,
       randomizeAll,
       setRandomChangeMode,
+      updateRandomPool,
       setPlayAudio,
       setPlayMetronome,
       setBpm,
@@ -226,6 +251,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       randomChangeMode,
       playAudio,
       playMetronome,
+      randomPool,
       bpm,
       start,
       stop,
@@ -233,6 +259,7 @@ export const useRhythmGame = (): UseRhythmGameReturn => {
       setPattern,
       randomizeAll,
       setRandomChangeMode,
+      updateRandomPool,
       setPlayAudio,
       setPlayMetronome,
       setBpm,

@@ -64,7 +64,18 @@ export interface RhythmGameState {
   playAudio: boolean;
   /** Whether metronome beat click is enabled */
   playMetronome: boolean;
+  /** Ids of the patterns Randomize and Random Change pick from */
+  randomPool: string[];
 }
+
+/**
+ * Changes to the random pool: Shift-click solos one pattern, a category
+ * heading toggles its whole group
+ */
+export type RandomPoolAction =
+  | { type: 'TOGGLE_PATTERN'; payload: string }
+  | { type: 'SOLO_PATTERN'; payload: string }
+  | { type: 'TOGGLE_CATEGORY'; payload: SubdivisionType };
 
 /**
  * Actions available for the rhythm game
@@ -82,6 +93,8 @@ export interface RhythmGameActions {
   randomizeAll: () => void;
   /** Toggle random change mode */
   setRandomChangeMode: (enabled: boolean) => void;
+  /** Change which patterns Randomize and Random Change pick from */
+  updateRandomPool: (action: RandomPoolAction) => void;
   /** Toggle audio playback */
   setPlayAudio: (enabled: boolean) => void;
   /** Toggle metronome playback */

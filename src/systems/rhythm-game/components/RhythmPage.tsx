@@ -25,6 +25,7 @@ const RhythmPage: React.FC = () => {
     isPlaying,
     currentBeat,
     randomChangeMode,
+    randomPool,
     playAudio,
     playMetronome,
     bpm,
@@ -32,6 +33,7 @@ const RhythmPage: React.FC = () => {
     setPattern,
     randomizeAll,
     setRandomChangeMode,
+    updateRandomPool,
     setPlayAudio,
     setPlayMetronome,
     setBpm,
@@ -40,11 +42,12 @@ const RhythmPage: React.FC = () => {
   // Pattern selector state
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [selectedPanelIndex, setSelectedPanelIndex] = useState<PanelIndex | null>(null);
+  const [poolOpen, setPoolOpen] = useState(false);
 
   const changeBpmBy = useCallback((delta: number) => setBpm(bpm + delta), [bpm, setBpm]);
 
   useRhythmKeyboard({
-    enabled: !selectorOpen,
+    enabled: !selectorOpen && !poolOpen,
     onTogglePlay: togglePlay,
     onRandomize: randomizeAll,
     onBpmChange: changeBpmBy,
@@ -75,6 +78,16 @@ const RhythmPage: React.FC = () => {
   const handleCloseSelector = () => {
     setSelectorOpen(false);
     setSelectedPanelIndex(null);
+  };
+
+  /**
+   * Toggle a pattern in the random pool, or keep only it with Shift
+   */
+  const handlePoolSelect = (pattern: (typeof panels)[0], event: React.MouseEvent) => {
+    updateRandomPool({
+      type: event.shiftKey ? 'SOLO_PATTERN' : 'TOGGLE_PATTERN',
+      payload: pattern.id,
+    });
   };
 
   return (
@@ -109,11 +122,13 @@ const RhythmPage: React.FC = () => {
               isPlaying={isPlaying}
               bpm={bpm}
               randomChangeMode={randomChangeMode}
+              randomPoolSize={randomPool.length}
               playAudio={playAudio}
               playMetronome={playMetronome}
               onTogglePlay={togglePlay}
               onRandomizeAll={randomizeAll}
               onSetRandomChangeMode={setRandomChangeMode}
+              onOpenRandomPool={() => setPoolOpen(true)}
               onSetPlayAudio={setPlayAudio}
               onSetPlayMetronome={setPlayMetronome}
               onSetBpm={setBpm}
@@ -137,8 +152,22 @@ const RhythmPage: React.FC = () => {
       <PatternSelector
         isOpen={selectorOpen}
         onClose={handleCloseSelector}
+        title="Select Pattern"
+        selectedIds={selectedPanelIndex !== null ? [panels[selectedPanelIndex].id] : []}
         onSelect={handlePatternSelect}
-        currentPattern={selectedPanelIndex !== null ? panels[selectedPanelIndex] : undefined}
+      />
+
+      {/* Random pool modal */}
+      <PatternSelector
+        isOpen={poolOpen}
+        onClose={() => setPoolOpen(false)}
+        title="Random Patterns"
+        description="Randomize and Random Change only use the patterns picked here. Tap a heading for the whole group, or Shift-click a pattern to keep just that one."
+        selectedIds={randomPool}
+        onSelect={handlePoolSelect}
+        onSelectCategory={(category) =>
+          updateRandomPool({ type: 'TOGGLE_CATEGORY', payload: category })
+        }
       />
     </div>
   );

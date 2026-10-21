@@ -5,7 +5,7 @@
  * and subdivision calculations.
  */
 
-import type { RhythmPattern, PanelIndex, BeatIndex, SubdivisionType } from '../types';
+import type { RhythmPattern, PanelIndex, BeatIndex, RandomPoolAction } from '../types';
 import { ALL_PATTERNS, PATTERNS_BY_CATEGORY, RHYTHM_GAME_CONSTANTS } from '../constants';
 
 /**
@@ -20,25 +20,52 @@ export const validatePattern = (pattern: RhythmPattern): boolean => {
 };
 
 /**
- * Get a random pattern from available patterns
- * @param category - Optional category to filter by
+ * Get a random pattern from a pool
+ * @param pool - Patterns to pick from
  * @returns A random rhythm pattern
  */
-export const getRandomPattern = (category?: SubdivisionType): RhythmPattern => {
-  const patterns = category ? PATTERNS_BY_CATEGORY[category] : ALL_PATTERNS;
-
-  const randomIndex = Math.floor(Math.random() * patterns.length);
-  return patterns[randomIndex];
+export const getRandomPattern = (pool: RhythmPattern[] = ALL_PATTERNS): RhythmPattern => {
+  const randomIndex = Math.floor(Math.random() * pool.length);
+  return pool[randomIndex];
 };
 
 /**
  * Get a random pattern that differs from the current one, so a swap is always visible
  * @param current - The pattern being replaced
- * @returns A different rhythm pattern
+ * @param pool - Patterns to pick from
+ * @returns A different rhythm pattern, or undefined when the pool has none
  */
-export const getRandomPatternExcept = (current: RhythmPattern): RhythmPattern => {
-  const others = ALL_PATTERNS.filter((pattern) => pattern.id !== current.id);
+export const getRandomPatternExcept = (
+  current: RhythmPattern,
+  pool: RhythmPattern[] = ALL_PATTERNS
+): RhythmPattern | undefined => {
+  const others = pool.filter((pattern) => pattern.id !== current.id);
   return others[Math.floor(Math.random() * others.length)];
+};
+
+/**
+ * Ids of the patterns Randomize and Random Change pick from. As with the pattern
+ * chips in the other tabs, at least one always stays selected
+ */
+export const randomPoolReducer = (pool: string[], action: RandomPoolAction): string[] => {
+  switch (action.type) {
+    case 'TOGGLE_PATTERN': {
+      const next = pool.includes(action.payload)
+        ? pool.filter((id) => id !== action.payload)
+        : [...pool, action.payload];
+      return next.length > 0 ? next : pool;
+    }
+    case 'SOLO_PATTERN':
+      return [action.payload];
+    case 'TOGGLE_CATEGORY': {
+      const ids = PATTERNS_BY_CATEGORY[action.payload].map((pattern) => pattern.id);
+      // A partly selected group fills up first, and clears once it is full
+      const next = ids.every((id) => pool.includes(id))
+        ? pool.filter((id) => !ids.includes(id))
+        : [...pool, ...ids.filter((id) => !pool.includes(id))];
+      return next.length > 0 ? next : pool;
+    }
+  }
 };
 
 /**

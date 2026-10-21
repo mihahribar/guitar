@@ -1,8 +1,8 @@
 /**
  * Pattern Selector Component
  *
- * Modal for selecting rhythm patterns.
- * Groups patterns by category (quarter, eighths, sixteenths, triplets).
+ * Modal for selecting rhythm patterns, either one for a panel or several for the
+ * random pool. Groups patterns by category (quarter, eighths, sixteenths, triplets).
  */
 
 import React from 'react';
@@ -16,10 +16,16 @@ interface PatternSelectorProps {
   isOpen: boolean;
   /** Close callback */
   onClose: () => void;
-  /** Pattern selection callback */
-  onSelect: (pattern: RhythmPattern) => void;
-  /** Currently selected pattern (for highlighting) */
-  currentPattern?: RhythmPattern;
+  /** Modal heading */
+  title: string;
+  /** Short instructions shown above the patterns */
+  description?: string;
+  /** Ids of the patterns shown as selected */
+  selectedIds: string[];
+  /** Pattern click; the event tells whether Shift was held */
+  onSelect: (pattern: RhythmPattern, event: React.MouseEvent) => void;
+  /** Category heading click; without it the headings are plain text */
+  onSelectCategory?: (category: SubdivisionType) => void;
 }
 
 const CATEGORY_ORDER: SubdivisionType[] = ['quarter', 'eighths', 'sixteenths', 'triplets'];
@@ -30,53 +36,78 @@ const CATEGORY_ORDER: SubdivisionType[] = ['quarter', 'eighths', 'sixteenths', '
 export const PatternSelector: React.FC<PatternSelectorProps> = ({
   isOpen,
   onClose,
+  title,
+  description,
+  selectedIds,
   onSelect,
-  currentPattern,
+  onSelectCategory,
 }) => {
-  const handlePatternSelect = (pattern: RhythmPattern) => {
-    onSelect(pattern);
-    onClose();
-  };
-
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Select Pattern">
+    <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <div className="p-4 space-y-6">
-        {CATEGORY_ORDER.map((category) => (
-          <div key={category}>
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-              {CATEGORY_DISPLAY_NAMES[category]}
-            </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {PATTERNS_BY_CATEGORY[category].map((pattern) => {
-                const isSelected = currentPattern?.id === pattern.id;
-                return (
+        {description && <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>}
+        {CATEGORY_ORDER.map((category) => {
+          const patterns = PATTERNS_BY_CATEGORY[category];
+          const selectedCount = patterns.filter((pattern) =>
+            selectedIds.includes(pattern.id)
+          ).length;
+
+          return (
+            <div key={category}>
+              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                {onSelectCategory ? (
                   <button
-                    key={pattern.id}
-                    onClick={() => handlePatternSelect(pattern)}
-                    className={`
-                      p-3 rounded-lg
-                      border-2 transition-all
-                      flex flex-col items-center gap-2
-                      ${
-                        isSelected
-                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                          : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'
-                      }
-                    `}
-                    aria-pressed={isSelected}
+                    onClick={() => onSelectCategory(category)}
+                    className="
+                      -mx-1 px-1 rounded
+                      hover:text-gray-900 dark:hover:text-gray-100
+                      focus:outline-none focus:ring-2 focus:ring-blue-500
+                    "
+                    aria-pressed={
+                      selectedCount === patterns.length ? true : selectedCount > 0 ? 'mixed' : false
+                    }
                   >
-                    <div className="w-12 h-12 text-gray-700 dark:text-gray-300">
-                      <NotationDisplay pattern={pattern} />
-                    </div>
-                    <span className="text-xs text-gray-600 dark:text-gray-400 text-center leading-tight">
-                      {pattern.name}
+                    {CATEGORY_DISPLAY_NAMES[category]}{' '}
+                    <span className="font-normal">
+                      {selectedCount}/{patterns.length}
                     </span>
                   </button>
-                );
-              })}
+                ) : (
+                  CATEGORY_DISPLAY_NAMES[category]
+                )}
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {patterns.map((pattern) => {
+                  const isSelected = selectedIds.includes(pattern.id);
+                  return (
+                    <button
+                      key={pattern.id}
+                      onClick={(event) => onSelect(pattern, event)}
+                      className={`
+                        p-3 rounded-lg
+                        border-2 transition-all
+                        flex flex-col items-center gap-2
+                        ${
+                          isSelected
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }
+                      `}
+                      aria-pressed={isSelected}
+                    >
+                      <div className="w-12 h-12 text-gray-700 dark:text-gray-300">
+                        <NotationDisplay pattern={pattern} />
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-400 text-center leading-tight">
+                        {pattern.name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </Modal>
   );

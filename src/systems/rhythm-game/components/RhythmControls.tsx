@@ -7,6 +7,7 @@
 import React, { useState } from 'react';
 import { Kbd } from '@/shared';
 import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
+import { ALL_PATTERNS } from '../constants';
 
 interface RhythmControlsProps {
   /** Whether the game is currently playing */
@@ -15,6 +16,8 @@ interface RhythmControlsProps {
   bpm: number;
   /** Whether random change mode is enabled */
   randomChangeMode: boolean;
+  /** How many patterns Randomize and Random Change pick from */
+  randomPoolSize: number;
   /** Whether audio playback is enabled */
   playAudio: boolean;
   /** Whether metronome playback is enabled */
@@ -25,6 +28,8 @@ interface RhythmControlsProps {
   onRandomizeAll: () => void;
   /** Set random change mode */
   onSetRandomChangeMode: (enabled: boolean) => void;
+  /** Open the random pool picker */
+  onOpenRandomPool: () => void;
   /** Set audio playback */
   onSetPlayAudio: (enabled: boolean) => void;
   /** Set metronome playback */
@@ -80,11 +85,13 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
   isPlaying,
   bpm,
   randomChangeMode,
+  randomPoolSize,
   playAudio,
   playMetronome,
   onTogglePlay,
   onRandomizeAll,
   onSetRandomChangeMode,
+  onOpenRandomPool,
   onSetPlayAudio,
   onSetPlayMetronome,
   onSetBpm,
@@ -235,12 +242,30 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
 
       {/* Toggle switches */}
       <div className="flex flex-wrap gap-x-6 gap-y-3 justify-center">
-        <ToggleSwitch
-          id="random-change-mode"
-          checked={randomChangeMode}
-          onChange={onSetRandomChangeMode}
-          label="Random Change"
-        />
+        <div className="flex items-center gap-3">
+          <ToggleSwitch
+            id="random-change-mode"
+            checked={randomChangeMode}
+            onChange={onSetRandomChangeMode}
+            label="Random Change"
+          />
+          <button
+            onClick={onOpenRandomPool}
+            className="
+              px-2.5 py-1 rounded-full
+              text-xs font-medium
+              bg-gray-100 dark:bg-gray-700
+              text-gray-700 dark:text-gray-200
+              hover:bg-gray-200 dark:hover:bg-gray-600
+              transition-colors duration-200
+              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
+              dark:focus:ring-offset-gray-900
+            "
+            aria-label={`Patterns ${randomPoolSize}/${ALL_PATTERNS.length}: choose which ones Randomize and Random Change use`}
+          >
+            Patterns {randomPoolSize}/{ALL_PATTERNS.length}
+          </button>
+        </div>
         <ToggleSwitch
           id="play-audio"
           checked={playAudio}
