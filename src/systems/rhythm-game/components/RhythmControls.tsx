@@ -211,62 +211,76 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
           </span>
         </button>
 
-        {/* Randomize button */}
-        <button
-          onClick={onRandomizeAll}
-          className="
-            px-4 py-3 rounded-lg
-            font-medium
-            bg-gray-100 dark:bg-gray-700
-            text-gray-700 dark:text-gray-200
-            hover:bg-gray-200 dark:hover:bg-gray-600
-            transition-colors duration-200
-            focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
-            dark:focus:ring-offset-gray-900
-          "
-          aria-label="Randomize all patterns"
-        >
-          <span className="flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-            {/* Icon only on phones, where the label pushes the row off screen */}
-            <span className="hidden sm:inline">Randomize</span>
-          </span>
-        </button>
-      </div>
-
-      {/* Toggle switches */}
-      <div className="flex flex-wrap gap-x-6 gap-y-3 justify-center">
-        <div className="flex items-center gap-3">
-          <ToggleSwitch
-            id="random-change-mode"
-            checked={randomChangeMode}
-            onChange={onSetRandomChangeMode}
-            label="Random Change"
-          />
+        {/* Randomize, split with a button that picks the patterns it draws from */}
+        <div className="flex rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
           <button
-            onClick={onOpenRandomPool}
+            onClick={onRandomizeAll}
             className="
-              px-2.5 py-1 rounded-full
-              text-xs font-medium
-              bg-gray-100 dark:bg-gray-700
-              text-gray-700 dark:text-gray-200
+              pl-3 pr-2.5 sm:pl-4 sm:pr-3 py-3 rounded-l-lg
+              font-medium
               hover:bg-gray-200 dark:hover:bg-gray-600
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
               dark:focus:ring-offset-gray-900
             "
-            aria-label={`Patterns ${randomPoolSize}/${ALL_PATTERNS.length}: choose which ones Randomize and Random Change use`}
+            aria-label="Randomize all patterns"
           >
-            Patterns {randomPoolSize}/{ALL_PATTERNS.length}
+            <span className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              {/* Icon only on phones, where the label pushes the row off screen */}
+              <span className="hidden sm:inline">Randomize</span>
+            </span>
+          </button>
+          <button
+            onClick={onOpenRandomPool}
+            className="
+              relative px-2 rounded-r-lg
+              border-l border-gray-300 dark:border-gray-600
+              hover:bg-gray-200 dark:hover:bg-gray-600
+              transition-colors duration-200
+              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
+              dark:focus:ring-offset-gray-900
+            "
+            aria-haspopup="dialog"
+            aria-label={`Choose patterns to randomize from, ${randomPoolSize} of ${ALL_PATTERNS.length} selected`}
+            title="Choose patterns"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+            {/* Marks a narrowed pool, in amber when nothing is left to pick from */}
+            {randomPoolSize < ALL_PATTERNS.length && (
+              <span
+                className={`absolute top-1.5 right-1.5 w-2 h-2 rounded-full ${
+                  randomPoolSize === 0 ? 'bg-amber-500' : 'bg-blue-500'
+                }`}
+                aria-hidden="true"
+              />
+            )}
           </button>
         </div>
+      </div>
+
+      {/* Toggle switches */}
+      <div className="flex flex-wrap gap-x-6 gap-y-3 justify-center">
+        <ToggleSwitch
+          id="random-change-mode"
+          checked={randomChangeMode}
+          onChange={onSetRandomChangeMode}
+          label="Random Change"
+        />
         <ToggleSwitch
           id="play-audio"
           checked={playAudio}
