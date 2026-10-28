@@ -9,10 +9,11 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // The app rewrites / to /caged/ on load; count it under /caged/ whichever runs first
+      // The app rewrites / to /caged/ on load; count it under /caged/ whichever runs first.
+      // The query holds a page's settings, so drop it to keep one row per page.
       window.goatcounter = {
         path: function (p) {
-          return p.replace(/^\/(?=\?|$)/, '/caged/');
+          return p.split('?')[0].replace(/^\/$/, '/caged/');
         },
       };
     </script>

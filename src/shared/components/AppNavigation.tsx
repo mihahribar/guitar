@@ -1,4 +1,5 @@
 import { useNavigation } from '../../hooks/useNavigation';
+import ShareButton from './ShareButton';
 import ThemeToggle from './ThemeToggle';
 import type { AppPage } from '../../types/navigation';
 
@@ -48,6 +49,7 @@ export default function AppNavigation() {
                 {label}
               </button>
             ))}
+            <ShareButton />
             <ThemeToggle />
           </div>
         </div>

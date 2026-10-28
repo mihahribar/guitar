@@ -7,3 +7,4 @@ export * from './chordUtils';
 export * from './splitColor';
 export * from './voicings';
 export * from './voicingSelection';
+export * from './urlParams';

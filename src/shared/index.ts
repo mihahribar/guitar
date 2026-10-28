@@ -17,8 +17,10 @@ export * from './utils/chordUtils';
 export * from './utils/splitColor';
 export * from './utils/voicings';
 export * from './utils/voicingSelection';
+export * from './utils/urlParams';
 
-// Hook exports - currently no shared hooks, system-specific hooks in their modules
+// Hook exports
+export * from './hooks/useUrlSync';
 
 // Constant exports
 export * from './constants/magicNumbers';
