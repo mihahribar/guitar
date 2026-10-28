@@ -10,7 +10,12 @@ import {
   mutedStrings,
   toneLabel,
 } from './sevenths';
-import { createInitialSeventhsState, seventhsReducer } from '../hooks/useSeventhsState';
+import {
+  createInitialSeventhsState,
+  decodeSevenths,
+  encodeSevenths,
+  seventhsReducer,
+} from '../hooks/useSeventhsState';
 
 const C = 0;
 
@@ -267,5 +272,53 @@ describe('seventhsReducer', () => {
       inversions: [2],
       anchorFret: 11,
     });
+  });
+});
+
+describe('sevenths URL settings', () => {
+  const initial = createInitialSeventhsState();
+  const decode = (query: string) => decodeSevenths(new URLSearchParams(query));
+
+  it('leaves the defaults out of the link', () => {
+    expect(encodeSevenths(initial).toString()).toBe('');
+    expect(decode('')).toEqual(initial);
+  });
+
+  it('round-trips a changed selection', () => {
+    let state = seventhsReducer(initial, { type: 'SET_ROOT', payload: 10 });
+    state = seventhsReducer(state, { type: 'SET_QUALITY', payload: 'min7b5' });
+    state = seventhsReducer(state, { type: 'TOGGLE_STRING_SET', payload: 'e-dgb' });
+    state = seventhsReducer(state, { type: 'TOGGLE_ALL_INVERSIONS' });
+    state = seventhsReducer(state, { type: 'TOGGLE_WHOLE_NECK' });
+    const params = encodeSevenths(state);
+    expect(params.get('key')).toBe('A#');
+    expect(params.get('sets')).toBe('e-dgb,adgb');
+    expect(decodeSevenths(params)).toEqual(state);
+  });
+
+  it('reads a flat key as its enharmonic', () => {
+    expect(decode('key=Bb').root).toBe(10);
+  });
+
+  it('round-trips every root, quality, string set and walk step', () => {
+    for (let root = 0; root < 12; root++) {
+      for (const quality of QUALITY_ORDER) {
+        for (const set of STRING_SET_ORDER) {
+          let state = seventhsReducer(createInitialSeventhsState(root), {
+            type: 'SET_QUALITY',
+            payload: quality,
+          });
+          state = seventhsReducer(state, { type: 'SOLO_STRING_SET', payload: set });
+          for (let step = 0; step < 8; step++) {
+            expect(decodeSevenths(encodeSevenths(state))).toEqual(state);
+            state = seventhsReducer(state, { type: 'NEXT' });
+          }
+        }
+      }
+    }
+  });
+
+  it('falls back to the defaults for junk', () => {
+    expect(decode('key=X&q=maj9&inv=4&sets=abc&at=-&notes=2')).toEqual(initial);
   });
 });

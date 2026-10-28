@@ -11,7 +11,12 @@ import {
   toneLabel,
   visibleTriads,
 } from './triads';
-import { createInitialTriadsState, triadsReducer } from '../hooks/useTriadsState';
+import {
+  createInitialTriadsState,
+  decodeTriads,
+  encodeTriads,
+  triadsReducer,
+} from '../hooks/useTriadsState';
 
 const C = 0;
 const GBE = 2 as StringIndex;
@@ -188,5 +193,66 @@ describe('triadsReducer', () => {
       inversions: [2],
       anchorFret: 2,
     });
+  });
+});
+
+describe('triads URL settings', () => {
+  const initial = createInitialTriadsState();
+  const decode = (query: string) => decodeTriads(new URLSearchParams(query));
+
+  it('leaves the defaults out of the link', () => {
+    expect(encodeTriads(initial).toString()).toBe('');
+    expect(decode('')).toEqual(initial);
+  });
+
+  it('round-trips a changed selection', () => {
+    let state = triadsReducer(initial, { type: 'SET_ROOT', payload: 7 });
+    state = triadsReducer(state, { type: 'SET_QUALITY', payload: 'minor' });
+    state = triadsReducer(state, { type: 'TOGGLE_STRING_SET', payload: 3 });
+    state = triadsReducer(state, { type: 'NEXT' });
+    state = triadsReducer(state, { type: 'TOGGLE_INVERSION', payload: 2 });
+    state = triadsReducer(state, { type: 'TOGGLE_SHOW_ALL_NOTES' });
+    const params = encodeTriads(state);
+    expect(params.get('sets')).toBe('DGB,GBE');
+    expect(decodeTriads(params)).toEqual(state);
+  });
+
+  it('opens a new key at its lowest spot without an `at`', () => {
+    expect(encodeTriads(createInitialTriadsState(2)).toString()).toBe('key=D');
+    expect(decode('key=D')).toEqual(createInitialTriadsState(2));
+  });
+
+  it('snaps `at` to the nearest real triad', () => {
+    const positions = buildSequence(C, 'major', 2)
+      .filter((triad) => triad.inversion === 0)
+      .map((triad) => triad.position);
+    expect(positions.length).toBeGreaterThan(1);
+    expect(decode(`at=${positions[1] - 1}`).anchorFret).toBe(positions[1]);
+  });
+
+  it('round-trips every root, quality, string set and walk step', () => {
+    for (let root = 0; root < 12; root++) {
+      for (const quality of QUALITY_ORDER) {
+        for (const set of STRING_SETS.map((set) => set.low)) {
+          let state = triadsReducer(createInitialTriadsState(root), {
+            type: 'SET_QUALITY',
+            payload: quality,
+          });
+          state = triadsReducer(state, { type: 'SOLO_STRING_SET', payload: set });
+          for (let step = 0; step < 8; step++) {
+            expect(decodeTriads(encodeTriads(state))).toEqual(state);
+            state = triadsReducer(state, { type: 'NEXT' });
+          }
+        }
+      }
+    }
+  });
+
+  it('falls back to the defaults for junk', () => {
+    expect(decode('key=H&q=sus&inv=7&sets=XYZ&at=abc&neck=yes')).toEqual(initial);
+  });
+
+  it('accepts lowercase string set names', () => {
+    expect(decode('sets=ead,adg').stringSets).toEqual([5, 4]);
   });
 });

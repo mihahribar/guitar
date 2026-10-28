@@ -15,7 +15,7 @@ import type {
 import { rotateInversion, sortInversions, visibleVoicings } from './voicings';
 
 /** Selected string sets as a duplicate-free list, in the config's order (lowest set first) */
-function sortStringSets<S>(stringSets: readonly S[], order: readonly S[]): S[] {
+export function sortStringSets<S>(stringSets: readonly S[], order: readonly S[]): S[] {
   return [...new Set(stringSets)].sort((a, b) => order.indexOf(a) - order.indexOf(b));
 }
 
@@ -39,13 +39,17 @@ function leadVoicing<Q extends string, I extends number, S>(
   return { sequence, lead };
 }
 
-/** A selection anchored at its lead voicing's lowest spot on the neck */
+/**
+ * A selection anchored at its lead voicing nearest `nearFret`: by default its
+ * lowest spot on the neck
+ */
 export function createVoicingSelection<Q extends string, I extends number, S>(
   config: VoicingSelectionConfig<Q, I, S>,
-  base: NoInfer<Omit<VoicingSelection<Q, I, S>, 'anchorFret'>>
+  base: NoInfer<Omit<VoicingSelection<Q, I, S>, 'anchorFret'>>,
+  nearFret = 0
 ): VoicingSelection<Q, I, S> {
-  const state = { ...base, anchorFret: 0 };
-  return { ...state, anchorFret: leadVoicing(config, state, 0).lead?.position ?? 0 };
+  const state = { ...base, anchorFret: nearFret };
+  return { ...state, anchorFret: leadVoicing(config, state).lead?.position ?? 0 };
 }
 
 /**

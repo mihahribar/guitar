@@ -1,8 +1,14 @@
 import { useMemo, useReducer } from 'react';
+import { useUrlSync } from '@/shared/hooks/useUrlSync';
 import type { StringIndex } from '@/shared/types/core';
 import type { VoicingSelectionAction, VoicingSelectionConfig } from '@/shared/types/voicing';
 import { createVoicingSelection, voicingSelectionReducer } from '@/shared/utils/voicingSelection';
-import { STRING_SETS } from '../constants';
+import {
+  decodeVoicingSelection,
+  encodeVoicingSelection,
+  type VoicingUrlConfig,
+} from '@/shared/utils/voicingUrl';
+import { QUALITY_ORDER, STRING_SETS } from '../constants';
 import type { Inversion, TriadQuality, TriadsState } from '../types';
 import { ALL_INVERSIONS, buildSequence } from '../utils/triads';
 
@@ -26,6 +32,24 @@ export function createInitialTriadsState(root = 0): TriadsState {
   });
 }
 
+// In a link, string sets go by their chip labels: sets=DGB,GBE
+const TRIADS_URL: VoicingUrlConfig<TriadQuality, Inversion, StringIndex> = {
+  selection: TRIADS_SELECTION,
+  qualities: QUALITY_ORDER,
+  stringSetNames: STRING_SETS.map((set) => [set.low, set.label] as const),
+  initial: createInitialTriadsState,
+};
+
+/** Settings for a link to this page */
+export function encodeTriads(state: TriadsState): URLSearchParams {
+  return encodeVoicingSelection(TRIADS_URL, state);
+}
+
+/** State from a link; anything missing or unrecognised keeps its default */
+export function decodeTriads(params: URLSearchParams): TriadsState {
+  return decodeVoicingSelection(TRIADS_URL, params);
+}
+
 export function triadsReducer(state: TriadsState, action: TriadsAction): TriadsState {
   return voicingSelectionReducer(TRIADS_SELECTION, state, action);
 }
@@ -38,7 +62,10 @@ export function triadsReducer(state: TriadsState, action: TriadsAction): TriadsS
  * quality keeps the same triads near the same spot on the neck.
  */
 export function useTriadsState() {
-  const [state, dispatch] = useReducer(triadsReducer, 0, createInitialTriadsState);
+  const [state, dispatch] = useReducer(triadsReducer, window.location.search, (search) =>
+    decodeTriads(new URLSearchParams(search))
+  );
+  useUrlSync(useMemo(() => encodeTriads(state), [state]));
 
   const actions = useMemo(
     () => ({
