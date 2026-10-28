@@ -30,6 +30,21 @@ changing any of them:
 - **Overlapping notes split their colour**: `createGradientStyle` (CAGED) and the shared `createSplitColorStyle` (3NPS, Triads, 7ths) render hard-edged segments, one per pattern covering that position.
 - **Overlays follow the selection**: CAGED's pentatonic and scale overlays box themselves around the union of the selected shapes, falling back to full-neck maps when everything is selected.
 
+## Shareable URLs
+
+Every page has its own path (`/caged/`, `/3nps/`, `/triads/`, `/sevenths/`, `/rhythm/`) and keeps
+its settings in the query string, so a teacher can send a link to an exact setup.
+
+- **Paths**: GitHub Pages has no SPA fallback, so a Vite plugin in `vite.config.ts` emits an
+  `index.html` per page from `APP_PAGES` (`src/types/navigation.ts`). `/` is rewritten to `/caged/`.
+- **Settings**: each state hook decodes `location.search` once on mount and writes changes back
+  with `useUrlSync` (`replaceState`). Defaults are left out of the link. Parsers live in
+  `src/shared/utils/urlParams.ts`; Triads and 7ths share `src/shared/utils/voicingUrl.ts`.
+- **A link is untrusted input**: anything unrecognised falls back to its default, and a fret
+  position (`at`) snaps to the nearest real pattern.
+- **The params are a public format**: renaming a param, a pattern id or a string set label
+  breaks links already sent to students. Keep the old name working when one has to change.
+
 ## Constraints
 
 - **Music theory accuracy**: calculations must be mathematically correct; verify against a real guitar.
