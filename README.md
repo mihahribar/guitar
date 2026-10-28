@@ -223,11 +223,11 @@ src/
 
 ### Tech Stack
 
-- **Framework**: React 19.3.0 + TypeScript 6.0.3
-- **Build Tool**: Vite 8.3.0 with React plugin and path aliases
-- **Styling**: TailwindCSS 4.3.3 with dark/light theme support
-- **Code Quality**: ESLint 10.10.0 with typescript-eslint
-- **Testing**: Vitest 5.0.1 with jsdom
+- **Framework**: React + TypeScript
+- **Build Tool**: Vite with React plugin and path aliases
+- **Styling**: TailwindCSS 4 with dark/light theme support
+- **Code Quality**: ESLint with typescript-eslint
+- **Testing**: Vitest with jsdom
 - **Deployment**: GitHub Actions → GitHub Pages
 
 ### Development Scripts
