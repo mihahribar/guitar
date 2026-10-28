@@ -1,7 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useCAGEDSequence } from '../useCAGEDSequence';
-import { useCAGEDState } from '../useCAGEDState';
+import { cagedSequenceLength, useCAGEDSequence } from '../useCAGEDSequence';
+import {
+  cagedReducer,
+  decodeCAGED,
+  encodeCAGED,
+  initialState,
+  useCAGEDState,
+} from '../useCAGEDState';
 
 // Pitch class of G
 const G = 7;
@@ -214,5 +220,56 @@ describe('useCAGEDState - position selection', () => {
     act(() => result.current.actions.togglePosition(2));
     act(() => result.current.actions.setChordQuality('minor'));
     expect(result.current.state.selectedPositions).toEqual([0, 2]);
+  });
+});
+
+describe('CAGED URL settings', () => {
+  const decode = (query: string) => decodeCAGED(new URLSearchParams(query));
+
+  it('leaves the defaults out of the link', () => {
+    expect(encodeCAGED(initialState).toString()).toBe('');
+    expect(decode('')).toEqual(initialState);
+  });
+
+  it('round-trips every root, quality, position and overlay', () => {
+    for (let root = 0; root < 12; root++) {
+      for (const quality of ['major', 'minor'] as const) {
+        let state = cagedReducer(initialState, { type: 'SET_ROOT', payload: root });
+        state = cagedReducer(state, { type: 'SET_CHORD_QUALITY', payload: quality });
+        state = cagedReducer(state, { type: 'TOGGLE_SHOW_PENTATONIC' });
+        for (let step = 0; step < cagedSequenceLength(root); step++) {
+          expect(decodeCAGED(encodeCAGED(state))).toEqual(state);
+          state = cagedReducer(state, { type: 'NEXT_POSITION' });
+        }
+        state = cagedReducer(state, { type: 'TOGGLE_POSITION', payload: 2 });
+        state = cagedReducer(state, { type: 'TOGGLE_SHOW_SCALE' });
+        expect(decodeCAGED(encodeCAGED(state))).toEqual(state);
+      }
+    }
+  });
+
+  it('writes the scale only while the overlay is on', () => {
+    let state = cagedReducer(initialState, { type: 'SET_SCALE_TYPE', payload: 'dorian' });
+    expect(encodeCAGED(state).has('scale')).toBe(false);
+    state = cagedReducer(state, { type: 'TOGGLE_SHOW_SCALE' });
+    expect(encodeCAGED(state).get('scale')).toBe('dorian');
+  });
+
+  it('writes a full selection as pos=all', () => {
+    const all = cagedReducer(cagedReducer(initialState, { type: 'SET_ROOT', payload: G }), {
+      type: 'TOGGLE_ALL_POSITIONS',
+    });
+    const params = encodeCAGED(all);
+    expect(params.get('pos')).toBe('all');
+    expect(decodeCAGED(params).selectedPositions).toEqual(all.selectedPositions);
+  });
+
+  it('drops positions past the end of the walk', () => {
+    expect(decode('pos=1,99').selectedPositions).toEqual([1]);
+    expect(decode('pos=99').selectedPositions).toEqual([0]);
+  });
+
+  it('falls back to the defaults for junk', () => {
+    expect(decode('key=Z&q=dim&pos=x&penta=yes&scale=blues')).toEqual(initialState);
   });
 });

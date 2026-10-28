@@ -1,4 +1,14 @@
 import { useMemo, useReducer } from 'react';
+import { useUrlSync } from '@/shared/hooks/useUrlSync';
+import {
+  encodeRoot,
+  parseEnum,
+  parseFlag,
+  parseList,
+  parseRoot,
+  withoutDefaults,
+} from '@/shared/utils/urlParams';
+import { SCALE_DEFINITIONS } from '../constants/scales';
 import type { ChordQuality, ScaleType } from '../types';
 import { cagedSequenceLength } from './useCAGEDSequence';
 
@@ -59,7 +69,7 @@ function shiftPositions(state: CAGEDState, delta: 1 | -1): CAGEDState {
   };
 }
 
-function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
+export function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
   switch (action.type) {
     case 'SET_ROOT':
       return {
@@ -138,7 +148,7 @@ function cagedReducer(state: CAGEDState, action: CAGEDAction): CAGEDState {
   }
 }
 
-const initialState: CAGEDState = {
+export const initialState: CAGEDState = {
   root: 0,
   chordQuality: 'major',
   selectedPositions: [0],
@@ -148,6 +158,50 @@ const initialState: CAGEDState = {
   showScale: false,
   selectedScale: 'major',
 };
+
+const SCALE_TYPES = Object.keys(SCALE_DEFINITIONS) as ScaleType[];
+
+/**
+ * Every setting as it appears in a link: pos=0,2 (or pos=all), and scale=<type>
+ * only while the scale overlay is on
+ */
+function encodeAll(state: CAGEDState): URLSearchParams {
+  return new URLSearchParams({
+    key: encodeRoot(state.root),
+    q: state.chordQuality,
+    pos: isEverythingSelected(state) ? 'all' : state.selectedPositions.join(','),
+    penta: state.showPentatonic ? '1' : '0',
+    notes: state.showAllNotes ? '1' : '0',
+    scale: state.showScale ? state.selectedScale : '',
+  });
+}
+
+/** Settings for a link to this page, leaving out the defaults */
+export function encodeCAGED(state: CAGEDState): URLSearchParams {
+  return withoutDefaults(encodeAll(state), encodeAll(initialState));
+}
+
+/** State from a link; anything missing or unrecognised keeps its default */
+export function decodeCAGED(params: URLSearchParams): CAGEDState {
+  const root = parseRoot(params.get('key')) ?? initialState.root;
+  const chordQuality = parseEnum(params.get('q'), ['major', 'minor'] as const) ?? 'major';
+  const positions = allPositions(cagedSequenceLength(root));
+  const pos = params.get('pos');
+  const selectedPositions =
+    pos === 'all' ? positions : parseList(pos, (item) => parseEnum(item, positions));
+  const scale = parseEnum(params.get('scale'), SCALE_TYPES);
+  return {
+    ...initialState,
+    root,
+    chordQuality,
+    selectedPositions: selectedPositions ? sortPositions(selectedPositions) : [0],
+    showPentatonic: parseFlag(params.get('penta')) ?? initialState.showPentatonic,
+    showAllNotes: parseFlag(params.get('notes')) ?? initialState.showAllNotes,
+    showScale: scale !== undefined,
+    // With the overlay off, start from the scale that matches the chord, as switching quality does
+    selectedScale: scale ?? (chordQuality === 'minor' ? 'naturalMinor' : 'major'),
+  };
+}
 
 /**
  * Custom hook for managing CAGED visualizer state using useReducer pattern
@@ -199,7 +253,10 @@ export function useCAGEDState(): {
     setScaleType: (scaleType: ScaleType) => void;
   };
 } {
-  const [state, dispatch] = useReducer(cagedReducer, initialState);
+  const [state, dispatch] = useReducer(cagedReducer, window.location.search, (search) =>
+    decodeCAGED(new URLSearchParams(search))
+  );
+  useUrlSync(useMemo(() => encodeCAGED(state), [state]));
 
   const actions = useMemo(
     () => ({

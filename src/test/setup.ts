@@ -8,6 +8,8 @@ expect.extend(matchers);
 // Cleanup after each test
 afterEach(() => {
   cleanup();
+  // State hooks read their settings from the URL and write them back, so each test starts clean
+  window.history.replaceState(null, '', '/');
 });
 
 // Mock Web Audio API for rhythm game tests
