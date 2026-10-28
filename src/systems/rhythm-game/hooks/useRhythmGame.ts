@@ -7,8 +7,9 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef, useReducer } from 'react';
 import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
+import { useUrlSync } from '@/shared/hooks/useUrlSync';
 import type { RhythmPattern, UseRhythmGameReturn, PanelIndex, BeatIndex } from '../types';
-import { ALL_PATTERNS, DEFAULT_PANELS } from '../constants';
+import { ALL_PATTERNS } from '../constants';
 import { useRhythmCycler } from './useRhythmCycler';
 import { useSubdivisionAudio } from './useSubdivisionAudio';
 import {
@@ -17,6 +18,7 @@ import {
   randomPoolReducer,
   stepRandomChange,
 } from '../utils/rhythmUtils';
+import { decodeRhythm, encodeRhythm } from '../utils/urlState';
 
 /**
  * Main hook for the rhythm game feature
@@ -29,21 +31,28 @@ import {
  * - Own BPM state (independent of site metronome)
  */
 export const useRhythmGame = (): UseRhythmGameReturn => {
+  // Settings from a shared link, or the defaults
+  const [initial] = useState(() => decodeRhythm(new URLSearchParams(window.location.search)));
+
   // Own BPM state (independent of site-wide metronome)
-  const [bpm, setBpmState] = useState<number>(METRONOME_CONSTANTS.DEFAULT_BPM);
+  const [bpm, setBpmState] = useState<number>(initial.bpm);
 
   // Panel patterns state
-  const [panels, setPanels] =
-    useState<[RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern]>(DEFAULT_PANELS);
+  const [panels, setPanels] = useState(initial.panels);
 
   // Game mode states
-  const [randomChangeMode, setRandomChangeModeState] = useState(false);
-  const [playAudio, setPlayAudioState] = useState(false);
-  const [playMetronome, setPlayMetronomeState] = useState(true);
+  const [randomChangeMode, setRandomChangeModeState] = useState(initial.randomChangeMode);
+  const [playAudio, setPlayAudioState] = useState(initial.playAudio);
+  const [playMetronome, setPlayMetronomeState] = useState(initial.playMetronome);
 
-  // Patterns Randomize and Random Change pick from, every pattern to start with
-  const [randomPool, updateRandomPool] = useReducer(randomPoolReducer, ALL_PATTERNS, (patterns) =>
-    patterns.map((pattern) => pattern.id)
+  // Patterns Randomize and Random Change pick from, every pattern unless a link says otherwise
+  const [randomPool, updateRandomPool] = useReducer(randomPoolReducer, initial.randomPool);
+
+  useUrlSync(
+    useMemo(
+      () => encodeRhythm({ bpm, panels, randomChangeMode, playAudio, playMetronome, randomPool }),
+      [bpm, panels, randomChangeMode, playAudio, playMetronome, randomPool]
+    )
   );
   const poolPatterns = useMemo(
     () => ALL_PATTERNS.filter((pattern) => randomPool.includes(pattern.id)),
