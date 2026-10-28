@@ -21,7 +21,7 @@ import {
   sortDegrees,
 } from '../utils/threeNps';
 
-export type ThreeNpsAction =
+type ThreeNpsAction =
   | { type: 'SET_ROOT'; payload: number }
   | { type: 'NEXT' }
   | { type: 'PREVIOUS' }

@@ -7,7 +7,7 @@ import {
 // Re-exported for existing CAGED consumers; the implementation lives in shared.
 export { absoluteOpenPitches };
 
-export interface FretPosition {
+interface FretPosition {
   stringIndex: number;
   fretNumber: number;
 }

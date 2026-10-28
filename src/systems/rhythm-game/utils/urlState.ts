@@ -14,7 +14,7 @@ import type { RhythmPattern } from '../types';
 type Panels = [RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern];
 
 /** What a link to the rhythm page holds; playback itself always starts stopped */
-export interface RhythmSettings {
+interface RhythmSettings {
   bpm: number;
   panels: Panels;
   randomChangeMode: boolean;

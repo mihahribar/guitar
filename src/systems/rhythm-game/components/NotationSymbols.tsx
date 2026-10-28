@@ -48,10 +48,7 @@ export const NoteStem: React.FC<SymbolProps & { x?: number; height?: number }> =
 /**
  * Single flag for eighth notes
  */
-export const SingleFlag: React.FC<SymbolProps & { x?: number }> = ({
-  className = '',
-  x = 10.5,
-}) => (
+const SingleFlag: React.FC<SymbolProps & { x?: number }> = ({ className = '', x = 10.5 }) => (
   <path
     d={`M ${x} -16 Q ${x + 8} -10 ${x + 6} 0`}
     fill="none"
@@ -64,10 +61,7 @@ export const SingleFlag: React.FC<SymbolProps & { x?: number }> = ({
 /**
  * Double flag for sixteenth notes
  */
-export const DoubleFlag: React.FC<SymbolProps & { x?: number }> = ({
-  className = '',
-  x = 10.5,
-}) => (
+const DoubleFlag: React.FC<SymbolProps & { x?: number }> = ({ className = '', x = 10.5 }) => (
   <g className={className}>
     <path
       d={`M ${x} -16 Q ${x + 8} -10 ${x + 6} 0`}

@@ -49,7 +49,7 @@ export type BeatIndex = 0 | 1 | 2 | 3;
 /**
  * Main state for the rhythm game
  */
-export interface RhythmGameState {
+interface RhythmGameState {
   /** Patterns for each of the 4 panels */
   panels: [RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern];
   /** Panels random change swapped that have not been played yet */
@@ -82,7 +82,7 @@ export type RandomPoolAction =
 /**
  * Actions available for the rhythm game
  */
-export interface RhythmGameActions {
+interface RhythmGameActions {
   /** Start beat cycling */
   start: () => void;
   /** Stop beat cycling */
@@ -111,20 +111,6 @@ export interface RhythmGameActions {
 export interface UseRhythmGameReturn extends RhythmGameState, RhythmGameActions {
   /** Current BPM from metronome */
   bpm: number;
-}
-
-/**
- * Props for pattern selector component
- */
-export interface PatternSelectorProps {
-  /** Whether the selector is open */
-  isOpen: boolean;
-  /** Close callback */
-  onClose: () => void;
-  /** Pattern selection callback */
-  onSelect: (pattern: RhythmPattern) => void;
-  /** Available patterns to choose from */
-  availablePatterns: RhythmPattern[];
 }
 
 /**

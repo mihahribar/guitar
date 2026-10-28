@@ -81,5 +81,3 @@ export const RhythmPanel: React.FC<RhythmPanelProps> = ({
     </button>
   );
 };
-
-export default RhythmPanel;

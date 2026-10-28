@@ -53,7 +53,7 @@ export const CAGED_SHAPE_DATA: CAGEDShapeData = {
 };
 
 // Minor chord patterns
-export const CAGED_MINOR_SHAPE_DATA: CAGEDShapeData = {
+const CAGED_MINOR_SHAPE_DATA: CAGEDShapeData = {
   C: {
     name: 'Cm Shape',
     color: '#FF6B6B',

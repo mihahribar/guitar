@@ -5,7 +5,7 @@
  */
 
 import type { RhythmPattern } from '../types';
-import { QUARTER_PATTERNS, ALL_PATTERNS } from './patterns';
+import { QUARTER_PATTERNS } from './patterns';
 
 // Re-export pattern definitions
 export * from './patterns';
@@ -40,25 +40,6 @@ export const DEFAULT_PANELS: [RhythmPattern, RhythmPattern, RhythmPattern, Rhyth
   DEFAULT_PATTERN,
   DEFAULT_PATTERN,
 ];
-
-/**
- * Visual state constants for panels
- */
-export const PANEL_VISUAL_CONSTANTS = {
-  /** CSS classes for inactive panel */
-  INACTIVE_BG: 'bg-gray-100 dark:bg-gray-800',
-  INACTIVE_BORDER: 'border-gray-300 dark:border-gray-600',
-  /** CSS classes for active panel */
-  ACTIVE_BG: 'bg-blue-100 dark:bg-blue-900',
-  ACTIVE_BORDER: 'border-blue-500 dark:border-blue-400',
-  /** Transition duration in ms */
-  TRANSITION_DURATION: 150,
-} as const;
-
-/**
- * Get all available patterns for selection
- */
-export const getAvailablePatterns = (): RhythmPattern[] => ALL_PATTERNS;
 
 /**
  * Category display names for UI

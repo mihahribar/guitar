@@ -22,7 +22,7 @@ import { FRETBOARD_CONSTANTS } from '@/shared/constants/magicNumbers';
  *
  * @param root - Pitch class of the chord root (0 = C … 11 = B)
  */
-export function buildCAGEDSequence(root: number): CAGEDPosition[] {
+function buildCAGEDSequence(root: number): CAGEDPosition[] {
   const positions: CAGEDPosition[] = [];
 
   for (const shape of FULL_CAGED_SEQUENCE) {

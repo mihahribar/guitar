@@ -3,6 +3,4 @@
  */
 
 export { useRhythmGame } from './useRhythmGame';
-export { useRhythmCycler } from './useRhythmCycler';
-export { useSubdivisionAudio } from './useSubdivisionAudio';
 export { useRhythmKeyboard } from './useRhythmKeyboard';

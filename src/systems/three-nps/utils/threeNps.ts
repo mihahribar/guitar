@@ -134,7 +134,7 @@ export function anchoredPatterns(
 }
 
 /** Every occurrence of the selected modes along the whole neck */
-export function patternsOfDegrees(
+function patternsOfDegrees(
   sequence: readonly NpsPattern[],
   degrees: readonly ModeDegree[]
 ): NpsPattern[] {

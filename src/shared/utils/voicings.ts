@@ -75,7 +75,7 @@ export function buildVoicingSequence<I extends number>(
 }
 
 /** The voicing of `inversion` whose position is closest to `anchorFret` */
-export function findNearestVoicing<V extends Voicing>(
+function findNearestVoicing<V extends Voicing>(
   sequence: readonly V[],
   inversion: V['inversion'],
   anchorFret: number

@@ -61,7 +61,7 @@ export const EIGHTH_PATTERNS: RhythmPattern[] = [
 /**
  * Sixteenth note patterns (4 subdivisions per beat)
  */
-export const SIXTEENTH_PATTERNS: RhythmPattern[] = [
+const SIXTEENTH_PATTERNS: RhythmPattern[] = [
   {
     id: 'four-sixteenths',
     name: 'Four Sixteenths',
@@ -149,7 +149,7 @@ export const SIXTEENTH_PATTERNS: RhythmPattern[] = [
  * Triplet patterns (3 subdivisions per beat)
  * Note: Triplets divide the beat into 3 equal parts (~0.333 each)
  */
-export const TRIPLET_PATTERNS: RhythmPattern[] = [
+const TRIPLET_PATTERNS: RhythmPattern[] = [
   {
     id: 'triplet',
     name: 'Triplet',

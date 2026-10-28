@@ -345,5 +345,3 @@ export const NotationDisplay: React.FC<NotationDisplayProps> = ({ pattern, class
     </svg>
   );
 };
-
-export default NotationDisplay;

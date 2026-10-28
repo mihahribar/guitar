@@ -308,5 +308,3 @@ export const RhythmControls: React.FC<RhythmControlsProps> = ({
     </div>
   );
 };
-
-export default RhythmControls;

@@ -7,7 +7,6 @@
 
 // Type exports
 export type * from './types/core';
-export type * from './types/fretboard';
 export type * from './types/help';
 export type * from './types/voicing';
 

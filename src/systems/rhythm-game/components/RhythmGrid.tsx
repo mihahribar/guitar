@@ -52,5 +52,3 @@ export const RhythmGrid: React.FC<RhythmGridProps> = ({
     </div>
   );
 };
-
-export default RhythmGrid;

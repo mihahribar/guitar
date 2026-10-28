@@ -161,5 +161,3 @@ export const PatternSelector: React.FC<PatternSelectorProps> = ({
     </Modal>
   );
 };
-
-export default PatternSelector;

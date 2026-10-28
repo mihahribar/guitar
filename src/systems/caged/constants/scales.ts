@@ -22,7 +22,7 @@ export type ScaleType =
 /**
  * Scale definition with display name, intervals, and category grouping
  */
-export interface ScaleDefinition {
+interface ScaleDefinition {
   /** Display name for the scale */
   name: string;
   /** Chromatic intervals from root (semitones) */

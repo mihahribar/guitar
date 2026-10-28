@@ -1,6 +1,6 @@
 import { memo, type ReactNode } from 'react';
 
-export type ToggleSwitchColor = 'indigo' | 'green' | 'blue' | 'violet' | 'orange';
+type ToggleSwitchColor = 'indigo' | 'green' | 'blue' | 'violet' | 'orange';
 
 // Full class names so Tailwind can detect them at build time
 const COLOR_CLASSES: Record<ToggleSwitchColor, { on: string; ring: string }> = {

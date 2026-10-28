@@ -54,48 +54,6 @@ export const UI_CONSTANTS = {
 } as const;
 
 /**
- * Storage and persistence constants
- */
-export const STORAGE_CONSTANTS = {
-  /** LocalStorage key for theme preferences */
-  THEME_PREFERENCES_KEY: 'caged-theme-preferences',
-
-  /** LocalStorage key for last session data */
-  LAST_SESSION_KEY: 'caged-last-session',
-} as const;
-
-/**
- * Animation and timing constants
- */
-export const ANIMATION_CONSTANTS = {
-  /** Duration for theme transition animations (ms) */
-  THEME_TRANSITION_DURATION: 200,
-
-  /** Duration for shape change animations (ms) */
-  SHAPE_TRANSITION_DURATION: 300,
-
-  /** Debounce delay for keyboard navigation (ms) */
-  KEYBOARD_DEBOUNCE_DELAY: 50,
-} as const;
-
-/**
- * Validation constants
- */
-export const VALIDATION_CONSTANTS = {
-  /** Valid chord types in the CAGED system */
-  VALID_CHORD_TYPES: ['C', 'A', 'G', 'E', 'D'] as const,
-
-  /** Valid chord qualities */
-  VALID_CHORD_QUALITIES: ['major', 'minor'] as const,
-
-  /** String index bounds (0-based) */
-  STRING_INDEX_BOUNDS: { MIN: 0, MAX: 5 } as const,
-
-  /** Fret number bounds */
-  FRET_NUMBER_BOUNDS: { MIN: 0, MAX: 21 } as const,
-} as const;
-
-/**
  * Metronome constants
  */
 export const METRONOME_CONSTANTS = {

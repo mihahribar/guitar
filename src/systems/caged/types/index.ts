@@ -22,14 +22,6 @@ export interface CAGEDShape extends MusicShape {
 }
 
 /**
- * CAGED shape with explicit chord quality information
- */
-export interface CAGEDShapeWithQuality extends CAGEDShape {
-  /** Chord quality (major or minor) for this shape variant */
-  quality: ChordQuality;
-}
-
-/**
  * Collection of CAGED shapes indexed by shape letter
  */
 export interface CAGEDShapeData {
@@ -47,28 +39,6 @@ export interface CAGEDShapesByQuality extends ShapesByQuality {
 }
 
 /**
- * CAGED visualizer state
- */
-export interface CAGEDState {
-  /** Pitch class of the chord root (0 = C … 11 = B) */
-  root: number;
-  /** Current chord quality (major/minor) */
-  chordQuality: ChordQuality;
-  /** Indices into the CAGED sequence that are drawn at once; sorted, never empty */
-  selectedPositions: number[];
-  /** Selection to restore when "show all shapes" is switched back off */
-  collapsedSelection: number[];
-  /** Whether to show pentatonic scale overlay */
-  showPentatonic: boolean;
-  /** Whether to show all note names */
-  showAllNotes: boolean;
-  /** Whether to show scale overlay */
-  showScale: boolean;
-  /** Currently selected scale type */
-  selectedScale: ScaleType;
-}
-
-/**
  * A single playable position in the CAGED sequence: a chord shape together with the
  * fret it's anchored at. The same shape can appear at multiple positions on a 21-fret
  * neck (e.g. G shape at fret 0 and again at fret 12).
@@ -78,48 +48,6 @@ export interface CAGEDPosition {
   shape: ChordType;
   /** Base fret the shape is anchored at (0 = open form) */
   basePosition: number;
-}
-
-/**
- * CAGED navigation props
- */
-export interface CAGEDNavigationProps {
-  root: number;
-  chordQuality: ChordQuality;
-  selectedPositions: number[];
-  cagedSequence: readonly CAGEDPosition[];
-  onRootChange: (root: number) => void;
-  onChordQualityChange: (quality: ChordQuality) => void;
-  onPreviousPosition: () => void;
-  onNextPosition: () => void;
-  onTogglePosition: (position: number) => void;
-  onSoloPosition: (position: number) => void;
-}
-
-/**
- * CAGED view mode toggles props
- */
-export interface CAGEDViewModeProps {
-  rootName: string;
-  chordQuality: ChordQuality;
-  selectedCount: number;
-  showAllShapes: boolean;
-  showPentatonic: boolean;
-  showAllNotes: boolean;
-  showScale: boolean;
-  selectedScale: ScaleType;
-  onToggleShowAllShapes: () => void;
-  onToggleShowPentatonic: () => void;
-  onToggleShowAllNotes: () => void;
-  onToggleShowScale: () => void;
-  onSetScaleType: (scaleType: ScaleType) => void;
-}
-
-/**
- * Shape position calculations
- */
-export interface ShapePositions {
-  [key: string]: number;
 }
 
 /**

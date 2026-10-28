@@ -33,16 +33,6 @@ export interface ChromaticValues {
 }
 
 /**
- * Position on the fretboard
- */
-export interface FretboardPosition {
-  /** Guitar string index (0 = low E, 5 = high E) */
-  stringIndex: StringIndex;
-  /** Fret number (0 = open, 1+ = fret positions) */
-  fretNumber: FretNumber;
-}
-
-/**
  * Basic musical shape definition for any learning system
  */
 export interface MusicShape {
@@ -54,14 +44,6 @@ export interface MusicShape {
   pattern: readonly number[];
   /** String indices that contain important notes (roots, etc.) */
   keyNotes: readonly number[];
-}
-
-/**
- * Extended shape with quality information
- */
-export interface ShapeWithQuality extends MusicShape {
-  /** Chord/scale quality for this shape variant */
-  quality: ChordQuality;
 }
 
 /**
@@ -79,74 +61,4 @@ export interface ShapesByQuality {
   major: ShapeData;
   /** Minor quality shapes */
   minor: ShapeData;
-}
-
-/**
- * Generic learning system state
- */
-export interface LearningSystemState {
-  /** Currently selected root note */
-  selectedRoot: ChordType;
-  /** Current quality (major/minor) */
-  quality: ChordQuality;
-  /** Current position in sequence */
-  currentPosition: number;
-  /** Whether to show all patterns simultaneously */
-  showAllPatterns: boolean;
-  /** Whether to show additional overlays */
-  showOverlays: boolean;
-  /** Whether to show note names */
-  showNoteNames: boolean;
-}
-
-/**
- * Validation result type for safe operations
- */
-export type ValidationResult<T> =
-  { success: true; data: T } | { success: false; errors: ValidationError[] };
-
-/**
- * Validation error information
- */
-export interface ValidationError {
-  /** Field name that failed validation */
-  field: string;
-  /** Human-readable error message */
-  message: string;
-  /** The value that was received */
-  received: unknown;
-  /** Expected type or format */
-  expected?: string;
-}
-
-/**
- * Theme preference type
- */
-export type ThemePreference = 'light' | 'dark';
-
-/**
- * Navigation page type
- */
-export type NavigationPage = 'caged' | '3nps' | 'triads' | 'sevenths' | 'rhythm';
-
-/**
- * App-wide navigation state
- */
-export interface NavigationState {
-  /** Current active page */
-  currentPage: NavigationPage;
-  /** Previous page for back navigation */
-  previousPage?: NavigationPage;
-}
-
-/**
- * Local storage data structure
- */
-export interface LocalStorageData {
-  /** Theme preferences */
-  theme?: ThemePreference;
-  /** Last updated timestamp */
-  lastUpdated?: number;
-  /** System-specific preferences */
-  preferences?: Record<string, unknown>;
 }
