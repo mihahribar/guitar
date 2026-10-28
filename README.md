@@ -235,7 +235,13 @@ src/
 - `npm run dev` - Start development server with hot reload
 - `npm run build` - Production build with TypeScript checking
 - `npm run lint` - Code quality and style checking
+- `npm run format:check` - Check formatting with Prettier (`npm run format` fixes it)
+- `npm run knip` - Find unused files, exports and dependencies
+- `npm run test:run` - Run the tests once
 - `npm run preview` - Preview production build locally
+
+CI runs lint, the formatting check, knip, the tests and the build on every push to `main`, and
+only deploys when all of them pass.
 
 ### Bundle Optimization
 

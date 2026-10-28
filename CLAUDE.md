@@ -59,6 +59,6 @@ its settings in the query string, so a teacher can send a link to an exact setup
 
 ## Testing
 
-- Run `npm run lint` and `npm run test:run` before committing.
+- Run `npm run lint`, `npm run knip` and `npm run test:run` before committing. CI runs these plus `npm run format:check` and the build, and does not deploy if any fail.
 - Pure logic is tested: pattern builders and reducers are pure functions kept outside components so they can be tested directly.
 - Components are not: UI is verified by hand, in desktop and mobile layouts.
