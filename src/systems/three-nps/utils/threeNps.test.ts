@@ -11,7 +11,12 @@ import {
   findNearest,
   visiblePatterns,
 } from './threeNps';
-import { createInitialThreeNpsState, threeNpsReducer } from '../hooks/useThreeNpsState';
+import {
+  createInitialThreeNpsState,
+  decodeThreeNps,
+  encodeThreeNps,
+  threeNpsReducer,
+} from '../hooks/useThreeNpsState';
 
 const C = 0;
 const C_MAJOR = MAJOR_SCALE_STEPS.map((s) => (C + s) % 12);
@@ -249,5 +254,52 @@ describe('threeNpsReducer', () => {
     expect(state.degrees).toEqual([1]);
     // A Dorian, the second degree of G major, on the low E string
     expect(state.anchorFret).toBe(5);
+  });
+});
+
+describe('3NPS URL settings', () => {
+  const initial = createInitialThreeNpsState(C);
+  const decode = (query: string) => decodeThreeNps(new URLSearchParams(query));
+
+  it('leaves the defaults out of the link', () => {
+    expect(encodeThreeNps(initial).toString()).toBe('');
+    expect(decode('')).toEqual(initial);
+  });
+
+  it('writes modes by name and the pair by its low string number', () => {
+    let state = threeNpsReducer(initial, { type: 'TOGGLE_MODE', payload: 3 });
+    state = threeNpsReducer(state, { type: 'PAIR_UP' });
+    const params = encodeThreeNps(state);
+    expect(params.get('modes')).toBe('ionian,lydian');
+    expect(params.get('pair')).toBe('5');
+    expect(decodeThreeNps(params)).toEqual(state);
+  });
+
+  it('opens a new key at its lowest position without an `at`', () => {
+    expect(encodeThreeNps(createInitialThreeNpsState(7)).toString()).toBe('key=G');
+    expect(decode('key=G')).toEqual(createInitialThreeNpsState(7));
+  });
+
+  it('round-trips every root, string pair, scope and walk step', () => {
+    for (let root = 0; root < 12; root++) {
+      for (const pair of [5, 4, 3, 2, 1] as StringIndex[]) {
+        for (const allStrings of [false, true]) {
+          let state = threeNpsReducer(createInitialThreeNpsState(root), {
+            type: 'SET_STRING_PAIR',
+            payload: pair,
+          });
+          if (allStrings) state = threeNpsReducer(state, { type: 'TOGGLE_ALL_STRINGS' });
+          state = threeNpsReducer(state, { type: 'TOGGLE_MODE', payload: 2 });
+          for (let step = 0; step < 8; step++) {
+            expect(decodeThreeNps(encodeThreeNps(state))).toEqual(state);
+            state = threeNpsReducer(state, { type: 'NEXT' });
+          }
+        }
+      }
+    }
+  });
+
+  it('falls back to the defaults for junk', () => {
+    expect(decode('key=Q&modes=blues&pair=1&strings=some&at=x&neck=on')).toEqual(initial);
   });
 });

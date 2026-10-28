@@ -1,5 +1,17 @@
 import { useMemo, useReducer } from 'react';
+import { FRETBOARD_CONSTANTS } from '@/shared/constants/magicNumbers';
+import { useUrlSync } from '@/shared/hooks/useUrlSync';
 import type { StringIndex } from '@/shared/types/core';
+import {
+  encodeRoot,
+  parseEnum,
+  parseFlag,
+  parseInteger,
+  parseList,
+  parseRoot,
+  withoutDefaults,
+} from '@/shared/utils/urlParams';
+import { MODES, STRING_PAIRS } from '../constants';
 import type { ModeDegree, NpsPattern, NpsScope, ThreeNpsState } from '../types';
 import {
   ALL_DEGREES,
@@ -47,18 +59,75 @@ function leadPattern(state: ThreeNpsState, anchorFret = state.anchorFret) {
   return { sequence, lead };
 }
 
+/** Anchored at the lead pattern nearest `fret` */
+function anchorNear(state: ThreeNpsState, fret: number): ThreeNpsState {
+  return { ...state, anchorFret: leadPattern(state, fret).lead?.startFret ?? 0 };
+}
+
 export function createInitialThreeNpsState(root = 0): ThreeNpsState {
-  const base: ThreeNpsState = {
-    root,
-    lowString: 5 as StringIndex,
-    degrees: [0],
-    anchorFret: 0,
-    wholeNeck: false,
-    allStrings: false,
-    showAllNotes: false,
-  };
   // Ionian at its lowest position on the neck
-  return { ...base, anchorFret: leadPattern(base, 0).lead?.startFret ?? 0 };
+  return anchorNear(
+    {
+      root,
+      lowString: 5 as StringIndex,
+      degrees: [0],
+      anchorFret: 0,
+      wholeNeck: false,
+      allStrings: false,
+      showAllNotes: false,
+    },
+    0
+  );
+}
+
+/** Mode names in a link: modes=ionian,lydian */
+const MODE_NAMES = MODES.map((mode) => mode.name.toLowerCase());
+
+/** String pairs in a link go by the low string as guitarists number them: pair=6 is 6-5 */
+const PAIR_NUMBERS = STRING_PAIRS.map((pair) => pair.low + 1);
+
+function encodeAll(state: ThreeNpsState): URLSearchParams {
+  return new URLSearchParams({
+    key: encodeRoot(state.root),
+    modes: state.degrees.map((degree) => MODE_NAMES[degree]).join(','),
+    pair: String(state.lowString + 1),
+    strings: state.allStrings ? 'all' : 'pair',
+    at: String(state.anchorFret),
+    neck: state.wholeNeck ? '1' : '0',
+    notes: state.showAllNotes ? '1' : '0',
+  });
+}
+
+/** Settings for a link to this page, leaving out the defaults for the key */
+export function encodeThreeNps(state: ThreeNpsState): URLSearchParams {
+  const defaults = encodeAll(createInitialThreeNpsState(state.root));
+  defaults.set('key', encodeRoot(createInitialThreeNpsState().root));
+  return withoutDefaults(encodeAll(state), defaults);
+}
+
+/** State from a link; anything missing or unrecognised keeps its default */
+export function decodeThreeNps(params: URLSearchParams): ThreeNpsState {
+  const root = parseRoot(params.get('key')) ?? createInitialThreeNpsState().root;
+  const defaults = createInitialThreeNpsState(root);
+  const degrees = parseList(params.get('modes'), (item) => {
+    const degree = MODE_NAMES.indexOf(item.toLowerCase());
+    return degree === -1 ? undefined : (degree as ModeDegree);
+  });
+  const pair = parseEnum(params.get('pair'), PAIR_NUMBERS);
+  const strings = parseEnum(params.get('strings'), ['all', 'pair'] as const);
+  return anchorNear(
+    {
+      root,
+      lowString: pair === undefined ? defaults.lowString : ((pair - 1) as StringIndex),
+      degrees: degrees ? sortDegrees(degrees) : defaults.degrees,
+      anchorFret: 0,
+      wholeNeck: parseFlag(params.get('neck')) ?? defaults.wholeNeck,
+      allStrings: strings === undefined ? defaults.allStrings : strings === 'all',
+      showAllNotes: parseFlag(params.get('notes')) ?? defaults.showAllNotes,
+    },
+    // Never trusted as given: snaps to the nearest real pattern
+    parseInteger(params.get('at'), 0, FRETBOARD_CONSTANTS.MAX_FRET) ?? defaults.anchorFret
+  );
 }
 
 /**
@@ -142,7 +211,10 @@ export function threeNpsReducer(state: ThreeNpsState, action: ThreeNpsAction): T
  * pairs or scope keeps the same modes near the same spot on the neck.
  */
 export function useThreeNpsState() {
-  const [state, dispatch] = useReducer(threeNpsReducer, 0, createInitialThreeNpsState);
+  const [state, dispatch] = useReducer(threeNpsReducer, window.location.search, (search) =>
+    decodeThreeNps(new URLSearchParams(search))
+  );
+  useUrlSync(useMemo(() => encodeThreeNps(state), [state]));
 
   const actions = useMemo(
     () => ({
