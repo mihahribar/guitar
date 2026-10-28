@@ -4,6 +4,13 @@ import type { AppPage } from '../types/navigation';
 import { canonicalUrl, pageFromPath, pathForPage } from '../utils/navigation';
 import { NavigationContext } from './NavigationContextCore';
 
+declare global {
+  interface Window {
+    /** Set in index.html; `count` only exists once GoatCounter's script has loaded */
+    goatcounter?: { count?: (vars: { path: string }) => void };
+  }
+}
+
 export function NavigationProvider({ children }: { children: ReactNode }) {
   const [currentPage, setCurrentPage] = useState<AppPage>(() => {
     // Show the page's own path, e.g. `/` becomes `/caged/`, without adding a history entry
@@ -20,7 +27,10 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
 
   const navigateTo = (page: AppPage) => {
     if (page !== currentPage) {
-      window.history.pushState(null, '', pathForPage(page));
+      const path = pathForPage(page);
+      window.history.pushState(null, '', path);
+      // GoatCounter only counts the first load by itself; missing when blocked
+      window.goatcounter?.count?.({ path });
     }
     setCurrentPage(page);
   };

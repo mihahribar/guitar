@@ -8,6 +8,14 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // The app rewrites / to /caged/ on load; count it under /caged/ whichever runs first
+      window.goatcounter = {
+        path: function (p) {
+          return p.replace(/^\/(?=\?|$)/, '/caged/');
+        },
+      };
+    </script>
     <script
       data-goatcounter="https://guitar-hribar.goatcounter.com/count"
       async
