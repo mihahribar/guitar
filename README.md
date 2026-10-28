@@ -16,6 +16,7 @@ An interactive web application for learning various guitar system with a modular
 - **Scale Overlay** - Overlay any of the supported scales and modes over the chord shapes
 - **All Notes Display** - Toggle to show natural note names (E, F, G, A, B, C, D) on all fret positions for fretboard navigation
 - **Rhythm Practice** - Interactive rhythm training with musical notation display, customizable BPM, and audio feedback
+- **Shareable links** - Every page keeps its settings in the URL, so a teacher can send a link to an exact exercise
 - **Dark/Light theme toggle** with system preference detection
 - Authentic neck inlay dots for reference
 - Clean, minimal design focused on learning
@@ -41,7 +42,7 @@ set their own floor in that range; CI runs Node 24).
 
 ### CAGED Visualizer
 
-- **Select a root chord** (C, A, G, E, or D) and **chord quality** (Major/Minor)
+- **Select any of the 12 roots** and a **chord quality** (Major/Minor)
 - Each chip in the selector is one playable position, labelled with its shape and base fret
 - **Tap a chip to stack it** on the fretboard; tap again to remove it. Shift-click shows that position on its own
 - Use Previous/Next to walk every selected position one step up or down the neck together
@@ -121,17 +122,42 @@ set their own floor in that range; CI runs Node 24).
 - Click "Rhythm" to access the rhythm training system
 - View 4 rhythm panels displaying different subdivision patterns with musical notation
 - Click any panel to change its rhythm pattern from a library of common subdivisions
-- Set your tempo with the BPM input (30-300 BPM)
+- Set your tempo with the BPM input (40-240 BPM)
 - Click Start to begin cycling through the panels with audio beat clicks
 - Enable "Play Notes" to hear the subdivision notes for each pattern
 - Enable "Random Change" to have patterns randomly change after each cycle
 - Use "Randomize" to shuffle all patterns at once
+
+### Sharing a Setup
+
+Every page has its own address (`/caged/`, `/3nps/`, `/triads/`, `/sevenths/`, `/rhythm/`), and the
+address bar always holds the page's current settings. Set up an exercise, then press the share
+button in the top bar: it opens the share sheet on phones and copies the link everywhere else.
+Opening the link restores the same setup, and reloading the page keeps yours.
+
+Settings left at their defaults are left out of the link. Links can also be written by hand:
+
+| Page                | Params                                                                                                   | Example                                                      |
+| ------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| All fretboard pages | `key` root note (`G`, `F#` or `Fs`, `Bb`)                                                                | `key=G`                                                      |
+| CAGED               | `q` major/minor, `pos` positions (or `all`), `penta=1`, `notes=1`, `scale` overlay                       | `/caged/?key=G&q=minor&pos=0,2&scale=dorian`                 |
+| 3NPS                | `modes` by name, `pair` low string (6-2), `strings=all`, `at` fret, `neck=1`, `notes=1`                  | `/3nps/?key=A&modes=ionian,lydian&pair=5`                    |
+| Triads              | `q` quality, `inv` inversions (0-2), `sets` (EAD, ADG, DGB, GBE), `at`, `neck=1`, `notes=1`              | `/triads/?key=D&q=minor&inv=1,2&sets=DGB,GBE`                |
+| 7ths                | `q` (maj7, dom7, min7, min7b5, dim7), `inv` (0-3), `sets` (e-dgb, adgb, dgbe), `at`, `neck=1`, `notes=1` | `/sevenths/?key=Bb&q=min7b5&sets=adgb`                       |
+| Rhythm              | `bpm`, `panels` four pattern ids, `pool` pattern ids (or `none`), `random=1`, `audio=1`, `metronome=0`   | `/rhythm/?bpm=80&panels=quarter,two-eighths,triplet,quarter` |
+
+Anything the app doesn't recognise falls back to its default, and `at` (the fret the selection
+sits near) snaps to the nearest real position.
 
 ## Building for Production
 
 ```bash
 npm run build
 ```
+
+GitHub Pages has no fallback for single-page apps, so the build also writes a copy of
+`index.html` for every page (`dist/triads/index.html` and so on). The list of pages is
+`APP_PAGES` in `src/types/navigation.ts`.
 
 ## Project Architecture
 
@@ -144,8 +170,9 @@ src/
 ├── shared/                 # Reusable components, utilities, and types
 │   ├── components/        # Shared UI components (FretboardDisplay, AppNavigation)
 │   ├── constants/         # Shared constants and magic numbers
+│   ├── hooks/             # Shared React hooks (URL settings sync)
 │   ├── types/            # Shared TypeScript type definitions
-│   └── utils/            # Shared utilities (music theory, chord voicings, selection reducer)
+│   └── utils/            # Shared utilities (music theory, chord voicings, selection reducer, URL params)
 ├── systems/              # Modular learning systems
 │   ├── caged/           # CAGED chord system module
 │   │   ├── components/  # CAGED-specific components
@@ -187,6 +214,7 @@ src/
 ### Key Architecture Features
 
 - **Modular Systems**: Each guitar learning system (CAGED, 3NPS, Triads, 7ths, Rhythm) is completely isolated
+- **Settings in the URL**: each system's state hook reads its settings from the query string on load and writes changes back with `replaceState`
 - **Shared Resources**: Common components and utilities are centralized for reuse
 - **TypeScript Path Aliases**: Clean imports using `@/shared` and `@/systems`
 - **Barrel Exports**: Each module provides clean export interfaces
@@ -230,5 +258,6 @@ The modular architecture makes it easy to add new guitar learning systems:
 2. Follow the established pattern: `components/`, `hooks/`, `types/`, `constants/`
 3. Add system exports to a barrel export file
 4. Import and integrate in the main app
+5. Add the page to `APP_PAGES` in `src/types/navigation.ts` so it gets its own path, and give its state hook an encode/decode pair so its settings can be shared (see `src/shared/utils/urlParams.ts`)
 
 This design supports future expansion to other guitar learning methods like scale patterns, chord progressions, or music theory exercises. The rhythm-game system demonstrates how audio-based features integrate within this architecture using Web Audio API.
