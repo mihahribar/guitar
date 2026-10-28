@@ -15,15 +15,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/shared/*": ["./src/shared/*"],
-      "@/systems/*": ["./src/systems/*"],
-      "@/components": ["./src/components"],
-      "@/hooks": ["./src/hooks"],
-      "@/types": ["./src/types"],
-      "@/constants": ["./src/constants"],
-      "@/utils": ["./src/utils"],
-      "@/contexts": ["./src/contexts"]
+      "@/*": ["./src/*"]
     },
 
     /* Linting */

@@ -1,7 +1,7 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import { APP_PAGES } from './src/types/navigation.ts';
+import { APP_PAGES } from './src/app/navigation/pages.ts';
 
 /**
  * GitHub Pages has no SPA fallback, so `/triads/` would 404. Emit a copy of
@@ -28,16 +28,6 @@ function pageEntries(): Plugin {
 export default defineConfig({
   plugins: [react(), tailwindcss(), pageEntries()],
   resolve: {
-    alias: {
-      '@': '/src',
-      '@/shared': '/src/shared',
-      '@/systems': '/src/systems',
-      '@/components': '/src/components',
-      '@/hooks': '/src/hooks',
-      '@/types': '/src/types',
-      '@/constants': '/src/constants',
-      '@/utils': '/src/utils',
-      '@/contexts': '/src/contexts',
-    },
+    alias: { '@': '/src' },
   },
 });

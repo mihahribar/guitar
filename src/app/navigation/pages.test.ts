@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { APP_PAGES, DEFAULT_PAGE } from '../types/navigation';
-import { canonicalUrl, pageFromPath, pathForPage } from './navigation';
+import { APP_PAGES, DEFAULT_PAGE, canonicalUrl, pageFromPath, pathForPage } from './pages';
 
 describe('navigation paths', () => {
   it('round-trips every page', () => {

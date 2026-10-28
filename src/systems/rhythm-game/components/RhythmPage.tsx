@@ -7,7 +7,7 @@
 
 import React, { useCallback, useState } from 'react';
 import type { PanelIndex } from '../types';
-import { SystemHelp } from '@/shared';
+import SystemHelp from '@/shared/components/SystemHelp';
 import { RHYTHM_HELP } from '../constants';
 import { useRhythmGame, useRhythmKeyboard } from '../hooks';
 import { RhythmGrid } from './RhythmGrid';

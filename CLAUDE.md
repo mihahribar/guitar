@@ -36,7 +36,7 @@ Every page has its own path (`/caged/`, `/3nps/`, `/triads/`, `/sevenths/`, `/rh
 its settings in the query string, so a teacher can send a link to an exact setup.
 
 - **Paths**: GitHub Pages has no SPA fallback, so a Vite plugin in `vite.config.ts` emits an
-  `index.html` per page from `APP_PAGES` (`src/types/navigation.ts`). `/` is rewritten to `/caged/`.
+  `index.html` per page from `APP_PAGES` (`src/app/navigation/pages.ts`). `/` is rewritten to `/caged/`.
 - **Settings**: each state hook decodes `location.search` once on mount and writes changes back
   with `useUrlSync` (`replaceState`). Defaults are left out of the link. Parsers live in
   `src/shared/utils/urlParams.ts`; Triads and 7ths share `src/shared/utils/voicingUrl.ts`.

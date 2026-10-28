@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { ThemeContext, type Theme } from './theme';
+import { ThemeContext, type Theme } from './themeContext';
 
 declare global {
   interface Window {

@@ -1,4 +1,10 @@
-import { APP_PAGES, DEFAULT_PAGE, type AppPage } from '../types/navigation';
+/** Every page in the app; the build also emits one index.html per page from this list */
+export const APP_PAGES = ['caged', '3nps', 'triads', 'sevenths', 'rhythm'] as const;
+
+export type AppPage = (typeof APP_PAGES)[number];
+
+/** Page opened at `/` and for unknown paths */
+export const DEFAULT_PAGE: AppPage = 'caged';
 
 /** URL path for a page, with a trailing slash so GitHub Pages serves it without a redirect */
 export function pathForPage(page: AppPage): string {
@@ -16,6 +22,10 @@ export function canonicalUrl({
   pathname,
   search,
   hash,
-}: Pick<Location, 'pathname' | 'search' | 'hash'>): string {
+}: {
+  pathname: string;
+  search: string;
+  hash: string;
+}): string {
   return `${pathForPage(pageFromPath(pathname))}${search}${hash}`;
 }

@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Modal } from '@/shared/components';
+import Modal from '@/shared/components/Modal';
 import type { RhythmPattern, SubdivisionType } from '../types';
 import { ALL_PATTERNS, PATTERNS_BY_CATEGORY, CATEGORY_DISPLAY_NAMES } from '../constants';
 import { NotationDisplay } from './NotationDisplay';

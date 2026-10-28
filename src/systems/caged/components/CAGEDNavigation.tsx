@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Kbd } from '@/shared';
+import Kbd from '@/shared/components/Kbd';
 import { ROOT_OPTIONS } from '@/shared/utils/musicTheory';
 import type { ChordQuality, CAGEDPosition } from '../types';
 import { CAGED_SHAPES_BY_QUALITY } from '../constants';

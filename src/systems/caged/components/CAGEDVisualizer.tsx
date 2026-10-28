@@ -5,7 +5,8 @@ import { useCAGEDState } from '../hooks/useCAGEDState';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import CAGEDNavigation from './CAGEDNavigation';
 import ViewModeToggles from './ViewModeToggles';
-import { FretboardDisplay, SystemHelp } from '@/shared';
+import FretboardDisplay from '@/shared/components/FretboardDisplay';
+import SystemHelp from '@/shared/components/SystemHelp';
 import { CHROMATIC_TO_NOTE_NAME, STANDARD_TUNING, getNoteAtFret } from '@/shared/utils/musicTheory';
 import {
   CAGED_SHAPES_BY_QUALITY,

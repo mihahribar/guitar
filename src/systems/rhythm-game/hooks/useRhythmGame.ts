@@ -6,10 +6,9 @@
  */
 
 import { useState, useCallback, useMemo, useEffect, useRef, useReducer } from 'react';
-import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
 import { useUrlSync } from '@/shared/hooks/useUrlSync';
 import type { RhythmPattern, UseRhythmGameReturn, PanelIndex, BeatIndex } from '../types';
-import { ALL_PATTERNS } from '../constants';
+import { ALL_PATTERNS, METRONOME_CONSTANTS } from '../constants';
 import { useRhythmCycler } from './useRhythmCycler';
 import { useSubdivisionAudio } from './useSubdivisionAudio';
 import {

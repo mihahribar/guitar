@@ -6,7 +6,7 @@
  */
 
 import { useRef, useCallback, useEffect } from 'react';
-import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
+import { METRONOME_CONSTANTS } from '../constants';
 import type { RhythmPattern } from '../types';
 import { calculateNoteTimings } from '../utils/rhythmUtils';
 

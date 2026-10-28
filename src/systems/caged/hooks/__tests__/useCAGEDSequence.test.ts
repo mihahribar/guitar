@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { useCAGEDSequence } from '../useCAGEDSequence';
-import { FRETBOARD_CONSTANTS } from '@/shared/constants/magicNumbers';
+import { FRETBOARD_CONSTANTS } from '@/shared/constants/fretboard';
 import { getNoteAtFret } from '@/shared/utils/musicTheory';
 import { CAGED_SHAPE_DATA, CAGED_SHAPES_BY_QUALITY, CHROMATIC_VALUES } from '../../constants';
 import type { ChordQuality, ChordType } from '@/shared/types/core';

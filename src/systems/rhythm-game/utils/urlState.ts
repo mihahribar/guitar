@@ -6,9 +6,8 @@
  * link format, so renaming one breaks links already shared.
  */
 
-import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
 import { parseFlag, parseInteger, parseList, withoutDefaults } from '@/shared/utils/urlParams';
-import { ALL_PATTERNS, DEFAULT_PANELS } from '../constants';
+import { ALL_PATTERNS, DEFAULT_PANELS, METRONOME_CONSTANTS } from '../constants';
 import type { RhythmPattern } from '../types';
 
 type Panels = [RhythmPattern, RhythmPattern, RhythmPattern, RhythmPattern];

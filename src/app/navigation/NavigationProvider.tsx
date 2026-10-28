@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { AppPage } from '../types/navigation';
-import { canonicalUrl, pageFromPath, pathForPage } from '../utils/navigation';
-import { NavigationContext } from './NavigationContextCore';
+import { NavigationContext } from './navigationContext';
+import { canonicalUrl, pageFromPath, pathForPage, type AppPage } from './pages';
 
 declare global {
   interface Window {

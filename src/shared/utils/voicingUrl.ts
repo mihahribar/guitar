@@ -5,7 +5,7 @@
  * match the defaults for that key are left out.
  */
 
-import { FRETBOARD_CONSTANTS } from '../constants/magicNumbers';
+import { FRETBOARD_CONSTANTS } from '../constants/fretboard';
 import type { VoicingSelection, VoicingUrlConfig } from '../types/voicing';
 import {
   encodeRoot,

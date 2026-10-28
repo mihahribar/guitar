@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Kbd } from '@/shared';
+import Kbd from '@/shared/components/Kbd';
 import type { StringIndex } from '@/shared/types/core';
 import { CHROMATIC_TO_NOTE_NAME, ROOT_OPTIONS } from '@/shared/utils/musicTheory';
 import { MAJOR_SCALE_STEPS, MODES, STRING_PAIRS } from '../constants';

@@ -157,7 +157,7 @@ npm run build
 
 GitHub Pages has no fallback for single-page apps, so the build also writes a copy of
 `index.html` for every page (`dist/triads/index.html` and so on). The list of pages is
-`APP_PAGES` in `src/types/navigation.ts`.
+`APP_PAGES` in `src/app/navigation/pages.ts`.
 
 ## Project Architecture
 
@@ -167,9 +167,12 @@ This project features a **modular multi-system architecture** designed for scala
 
 ```
 src/
+├── app/                    # App shell: error boundary, theme, page navigation
+│   ├── theme/             # Theme context, provider and toggle
+│   └── navigation/        # Page list and paths, navigation context, top bar
 ├── shared/                 # Reusable components, utilities, and types
-│   ├── components/        # Shared UI components (FretboardDisplay, AppNavigation)
-│   ├── constants/         # Shared constants and magic numbers
+│   ├── components/        # Shared UI components (FretboardDisplay, voicing page, modal)
+│   ├── constants/         # Fretboard and music theory constants
 │   ├── hooks/             # Shared React hooks (URL settings sync)
 │   ├── types/            # Shared TypeScript type definitions
 │   └── utils/            # Shared utilities (music theory, chord voicings, selection reducer, URL params)
@@ -200,15 +203,12 @@ src/
 │   │   └── system.ts    # VoicingSystem definition: labels, string set chips, link names
 │   └── rhythm-game/     # Rhythm practice system module
 │       ├── components/  # Rhythm UI (panels, controls, notation)
-│       ├── constants/   # Rhythm patterns and defaults
+│       ├── constants/   # Rhythm patterns, defaults and metronome settings
 │       ├── hooks/       # Beat cycling, audio, game state
 │       ├── types/       # Rhythm system types
 │       └── utils/       # Timing and pattern utilities
-├── components/          # App infrastructure components
-├── contexts/           # React contexts for global state
-├── hooks/             # App-level React hooks
-├── types/             # Infrastructure type definitions
-└── utils/             # Infrastructure utilities
+├── App.tsx              # Providers and the page switch
+└── main.tsx             # Entry point
 ```
 
 ### Key Architecture Features
@@ -258,6 +258,6 @@ The modular architecture makes it easy to add new guitar learning systems:
 2. Follow the established pattern: `components/`, `hooks/`, `types/`, `constants/`
 3. Add system exports to a barrel export file
 4. Import and integrate in the main app
-5. Add the page to `APP_PAGES` in `src/types/navigation.ts` so it gets its own path, and give its state hook an encode/decode pair so its settings can be shared (see `src/shared/utils/urlParams.ts`)
+5. Add the page to `APP_PAGES` in `src/app/navigation/pages.ts` so it gets its own path, and give its state hook an encode/decode pair so its settings can be shared (see `src/shared/utils/urlParams.ts`)
 
 This design supports future expansion to other guitar learning methods like scale patterns, chord progressions, or music theory exercises. The rhythm-game system demonstrates how audio-based features integrate within this architecture using Web Audio API.

@@ -5,9 +5,8 @@
  */
 
 import React, { useState } from 'react';
-import { Kbd } from '@/shared';
-import { METRONOME_CONSTANTS } from '@/shared/constants/magicNumbers';
-import { ALL_PATTERNS } from '../constants';
+import Kbd from '@/shared/components/Kbd';
+import { ALL_PATTERNS, METRONOME_CONSTANTS } from '../constants';
 
 interface RhythmControlsProps {
   /** Whether the game is currently playing */

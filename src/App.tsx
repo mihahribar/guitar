@@ -1,10 +1,11 @@
 import { lazy, Suspense } from 'react';
 import CAGEDVisualizer from '@/systems/caged/components/CAGEDVisualizer';
-import { AppNavigation, LoadingFallback } from '@/shared/components';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { NavigationProvider } from './contexts/NavigationContext';
-import { useNavigation } from './hooks/useNavigation';
+import { LoadingFallback } from '@/shared/components/LoadingFallback';
+import { ErrorBoundary } from './app/ErrorBoundary';
+import AppNavigation from './app/navigation/AppNavigation';
+import { useNavigation } from './app/navigation/navigationContext';
+import { NavigationProvider } from './app/navigation/NavigationProvider';
+import { ThemeProvider } from './app/theme/ThemeProvider';
 
 // Lazy load 3NPS, Triads, 7ths and Rhythm components for better initial bundle size
 const RhythmPage = lazy(() => import('@/systems/rhythm-game/components/RhythmPage'));

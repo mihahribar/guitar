@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef } from 'react';
 import type { StringIndex, FretNumber } from '../types/core';
 import { STRING_NAMES } from '../utils/musicTheory';
-import { FRETBOARD_CONSTANTS, UI_CONSTANTS } from '../constants/magicNumbers';
+import { FRETBOARD_CONSTANTS, UI_CONSTANTS } from '../constants/fretboard';
 
 /** Pixel width of the string-label column (Tailwind w-8 / 2rem). */
 const LABEL_COLUMN_WIDTH = 32;
@@ -122,7 +122,7 @@ function FretboardDisplay({
     if (overflow <= 0) return; // already fully visible
 
     const fretAreaWidth = scrollWidth - LABEL_COLUMN_WIDTH;
-    const fretWidth = fretAreaWidth / FRETBOARD_CONSTANTS.TOTAL_FRETS;
+    const fretWidth = fretAreaWidth / FRETBOARD_CONSTANTS.MAX_FRET;
     // Center of fret N (1-based) sits at LABEL_COLUMN_WIDTH + (N - 0.5) * fretWidth.
     const fretCenterX = LABEL_COLUMN_WIDTH + (scrollToFret - 0.5) * fretWidth;
     const target = Math.max(0, Math.min(overflow, fretCenterX - clientWidth / 2));
@@ -293,7 +293,7 @@ function FretboardDisplay({
           <thead>
             <tr>
               <th className="w-8"></th>
-              {Array.from({ length: FRETBOARD_CONSTANTS.TOTAL_FRETS }, (_, i) => (
+              {Array.from({ length: FRETBOARD_CONSTANTS.MAX_FRET }, (_, i) => (
                 <th key={i} className="text-center pb-2 relative">
                   {(UI_CONSTANTS.FRET_MARKERS as readonly number[]).includes(i + 1) && (
                     <div className="text-xs text-gray-400 dark:text-gray-500 font-mono">
@@ -317,7 +317,7 @@ function FretboardDisplay({
                     {renderStringLabel(si, stringName)}
                   </th>
 
-                  {Array.from({ length: FRETBOARD_CONSTANTS.TOTAL_FRETS }, (_, fretIndex) => (
+                  {Array.from({ length: FRETBOARD_CONSTANTS.MAX_FRET }, (_, fretIndex) => (
                     <td
                       key={fretIndex}
                       className="fret-cell relative h-8 border-l border-gray-300 dark:border-gray-600 first:border-l-0"

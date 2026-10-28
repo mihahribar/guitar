@@ -1,4 +1,5 @@
-import { FretboardDisplay, SystemHelp } from '@/shared';
+import FretboardDisplay from '@/shared/components/FretboardDisplay';
+import SystemHelp from '@/shared/components/SystemHelp';
 import {
   CHROMATIC_TO_NOTE_NAME,
   getNoteNameAtFret,

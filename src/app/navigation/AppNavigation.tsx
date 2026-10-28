@@ -1,7 +1,7 @@
-import { useNavigation } from '../../hooks/useNavigation';
-import ShareButton from './ShareButton';
-import ThemeToggle from './ThemeToggle';
-import type { AppPage } from '../../types/navigation';
+import ShareButton from '@/shared/components/ShareButton';
+import ThemeToggle from '../theme/ThemeToggle';
+import { useNavigation } from './navigationContext';
+import type { AppPage } from './pages';
 
 export default function AppNavigation() {
   const { currentPage, navigateTo } = useNavigation();

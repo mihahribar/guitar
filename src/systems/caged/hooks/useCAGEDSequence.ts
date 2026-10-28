@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { CAGEDPosition } from '../types';
 import { CAGED_SHAPE_DATA, CHROMATIC_VALUES, FULL_CAGED_SEQUENCE } from '../constants';
-import { FRETBOARD_CONSTANTS } from '@/shared/constants/magicNumbers';
+import { FRETBOARD_CONSTANTS } from '@/shared/constants/fretboard';
 
 /**
  * Build the full CAGED walk for a chord across the entire fretboard.

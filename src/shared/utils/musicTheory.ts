@@ -5,7 +5,7 @@
  * that can be used across different guitar learning systems (CAGED, scales, etc.)
  */
 
-import { MUSIC_THEORY_CONSTANTS, FRETBOARD_CONSTANTS } from '../constants/magicNumbers';
+import { MUSIC_THEORY_CONSTANTS, FRETBOARD_CONSTANTS } from '../constants/fretboard';
 
 // Re-export constants for convenience
 export { FRETBOARD_CONSTANTS };

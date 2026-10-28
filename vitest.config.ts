@@ -33,12 +33,6 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: {
-      '@': resolve(import.meta.dirname, './src'),
-      '@/shared': resolve(import.meta.dirname, './src/shared'),
-      '@/systems/caged': resolve(import.meta.dirname, './src/systems/caged'),
-      '@/systems/rhythm-game': resolve(import.meta.dirname, './src/systems/rhythm-game'),
-      '@/systems/three-nps': resolve(import.meta.dirname, './src/systems/three-nps'),
-    },
+    alias: { '@': resolve(import.meta.dirname, './src') },
   },
 });

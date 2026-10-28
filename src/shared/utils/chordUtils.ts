@@ -5,7 +5,7 @@
  * that can be used across different guitar learning systems
  */
 
-import { MUSIC_THEORY_CONSTANTS, FRETBOARD_CONSTANTS } from '../constants/magicNumbers';
+import { MUSIC_THEORY_CONSTANTS, FRETBOARD_CONSTANTS } from '../constants/fretboard';
 import { getNoteAtFret } from './musicTheory';
 import type { ChordQuality } from '../types/core';
 

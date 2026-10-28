@@ -1,5 +1,5 @@
 import { useMemo, useReducer } from 'react';
-import { FRETBOARD_CONSTANTS } from '@/shared/constants/magicNumbers';
+import { FRETBOARD_CONSTANTS } from '@/shared/constants/fretboard';
 import { useUrlSync } from '@/shared/hooks/useUrlSync';
 import type { StringIndex } from '@/shared/types/core';
 import {
