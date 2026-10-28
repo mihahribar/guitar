@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { ThemeContext, type Theme } from './theme';
-import { getStoredItem, setStoredItem } from '@/utils/safeStorage';
 
 declare global {
   interface Window {
@@ -18,7 +17,13 @@ const THEME_STORAGE_KEY = 'guitar-app-theme';
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
     // First priority: Check localStorage for saved preference
-    const storedTheme = getStoredItem(THEME_STORAGE_KEY) as Theme | null;
+    // Storage throws in private windows and when site data is blocked
+    let storedTheme: string | null = null;
+    try {
+      storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    } catch {
+      // Fall through to the detected theme
+    }
     if (storedTheme === 'light' || storedTheme === 'dark') {
       return storedTheme;
     }
@@ -37,7 +42,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   useEffect(() => {
     // Persist theme to localStorage
-    setStoredItem(THEME_STORAGE_KEY, theme);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch (error) {
+      console.warn('Could not save the theme', error);
+    }
 
     // Apply theme to document root
     const root = document.documentElement;

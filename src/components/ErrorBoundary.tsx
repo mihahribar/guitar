@@ -1,30 +1,15 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
-import type { ComponentError } from '../types/errors';
-import { createComponentError } from '../types/errors';
 
-/**
- * Props for ErrorBoundary component
- */
 interface ErrorBoundaryProps {
-  /** Child components to wrap with error boundary */
   children: ReactNode;
-  /** Optional fallback component to render on error */
-  fallback?: ReactNode;
-  /** Optional callback when error occurs */
-  onError?: (error: ComponentError) => void;
-  /** Name of the component being wrapped for debugging */
+  /** Name of the wrapped page, shown in the error details */
   componentName?: string;
 }
 
-/**
- * State for ErrorBoundary component
- */
 interface ErrorBoundaryState {
-  /** Whether an error has occurred */
-  hasError: boolean;
-  /** The error that occurred */
-  error: ComponentError | null;
+  error: Error | null;
+  caughtAt: Date | null;
 }
 
 /**
@@ -33,17 +18,6 @@ interface ErrorBoundaryState {
  * Catches JavaScript errors anywhere in the child component tree and displays
  * a fallback UI instead of crashing the entire application. Provides detailed
  * error information for debugging while maintaining user experience.
- *
- * @example
- * ```tsx
- * <ErrorBoundary
- *   componentName="CAGEDVisualizer"
- *   fallback={<div>Something went wrong with the visualizer</div>}
- *   onError={(error) => console.error('CAGED error:', error)}
- * >
- *   <CAGEDVisualizer />
- * </ErrorBoundary>
- * ```
  *
  * @accessibility
  * - Provides screen reader accessible error messages
@@ -54,68 +28,27 @@ interface ErrorBoundaryState {
  * - Logs detailed error information for debugging
  * - Prevents application crashes from component errors
  * - Provides user-friendly fallback UI
- * - Supports error reporting to external services
  */
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-    };
+  state: ErrorBoundaryState = { error: null, caughtAt: null };
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { error, caughtAt: new Date() };
   }
 
-  /**
-   * Static method called when an error occurs
-   * Updates state to trigger fallback UI rendering
-   */
-  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
-    return {
-      hasError: true,
-      error: createComponentError('Unknown Component', 'update', undefined, error.message, error),
-    };
-  }
-
-  /**
-   * Called when an error occurs during rendering
-   * Logs error information and triggers error callback
-   */
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    const componentError = createComponentError(
-      this.props.componentName || 'Unknown Component',
-      'update',
-      undefined,
-      error.message,
-      error
+    console.error(
+      `ErrorBoundary caught an error in ${this.props.componentName ?? 'an unknown component'}:`,
+      error,
+      errorInfo.componentStack
     );
-
-    // Add React error info to context
-    componentError.context = {
-      ...componentError.context,
-      componentStack: errorInfo.componentStack,
-      errorBoundary: this.constructor.name,
-    };
-
-    // Log error for debugging
-    console.error('ErrorBoundary caught an error:', componentError);
-
-    // Update state with detailed error
-    this.setState({ error: componentError });
-
-    // Call error callback if provided
-    if (this.props.onError) {
-      this.props.onError(componentError);
-    }
   }
 
   /**
    * Reset error state to retry rendering
    */
   private handleRetry = (): void => {
-    this.setState({
-      hasError: false,
-      error: null,
-    });
+    this.setState({ error: null, caughtAt: null });
   };
 
   /**
@@ -126,13 +59,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   };
 
   render(): ReactNode {
-    if (this.state.hasError) {
-      // Use custom fallback if provided
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-
-      // Default error UI
+    const { error, caughtAt } = this.state;
+    if (error) {
       return (
         <div
           className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 m-4"
@@ -165,24 +93,22 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                     : 'An unexpected error occurred.'}{' '}
                   Please try again.
                 </p>
-                {this.state.error && (
-                  <details className="mt-2">
-                    <summary className="cursor-pointer font-medium hover:text-red-600 dark:hover:text-red-200">
-                      Error details
-                    </summary>
-                    <div className="mt-1 text-xs font-mono bg-red-100 dark:bg-red-900/40 p-2 rounded border">
-                      <p>
-                        <strong>Message:</strong> {this.state.error.message}
-                      </p>
-                      <p>
-                        <strong>Component:</strong> {this.state.error.componentName}
-                      </p>
-                      <p>
-                        <strong>Time:</strong> {this.state.error.timestamp.toLocaleString()}
-                      </p>
-                    </div>
-                  </details>
-                )}
+                <details className="mt-2">
+                  <summary className="cursor-pointer font-medium hover:text-red-600 dark:hover:text-red-200">
+                    Error details
+                  </summary>
+                  <div className="mt-1 text-xs font-mono bg-red-100 dark:bg-red-900/40 p-2 rounded border">
+                    <p>
+                      <strong>Message:</strong> {error.message}
+                    </p>
+                    <p>
+                      <strong>Component:</strong> {this.props.componentName ?? 'Unknown'}
+                    </p>
+                    <p>
+                      <strong>Time:</strong> {caughtAt?.toLocaleString()}
+                    </p>
+                  </div>
+                </details>
               </div>
               <div className="mt-4 flex space-x-3">
                 <button
