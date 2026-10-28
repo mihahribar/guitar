@@ -1,10 +1,5 @@
-import type {
-  InversionInfo,
-  SeventhQuality,
-  SeventhQualityInfo,
-  SeventhStringSet,
-  StringSetId,
-} from '../types';
+import type { InversionInfo } from '@/shared/types/voicing';
+import type { SeventhQuality, SeventhQualityInfo, SeventhStringSet, StringSetId } from '../types';
 
 export const SEVENTH_QUALITIES: Record<SeventhQuality, SeventhQualityInfo> = {
   maj7: {

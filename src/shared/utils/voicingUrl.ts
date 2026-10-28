@@ -6,7 +6,7 @@
  */
 
 import { FRETBOARD_CONSTANTS } from '../constants/magicNumbers';
-import type { VoicingSelection, VoicingSelectionConfig } from '../types/voicing';
+import type { VoicingSelection, VoicingUrlConfig } from '../types/voicing';
 import {
   encodeRoot,
   parseEnum,
@@ -18,15 +18,6 @@ import {
 } from './urlParams';
 import { createVoicingSelection, sortStringSets } from './voicingSelection';
 import { sortInversions } from './voicings';
-
-export interface VoicingUrlConfig<Q extends string, I extends number, S> {
-  selection: VoicingSelectionConfig<Q, I, S>;
-  qualities: readonly Q[];
-  /** Each string set with the name it has in a link */
-  stringSetNames: readonly (readonly [S, string])[];
-  /** The page's starting state for a key */
-  initial: (root: number) => VoicingSelection<Q, I, S>;
-}
 
 function encodeAll<Q extends string, I extends number, S>(
   config: VoicingUrlConfig<Q, I, S>,

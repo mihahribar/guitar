@@ -1,29 +1,21 @@
-import { memo } from 'react';
-import { Kbd } from '@/shared';
-import { ROOT_OPTIONS, STRING_NAMES } from '@/shared/utils/musicTheory';
-import {
-  INVERSIONS,
-  QUALITY_ORDER,
-  SEVENTH_QUALITIES,
-  STRING_SETS,
-  STRING_SET_ORDER,
-} from '../constants';
-import type { Inversion, SeventhQuality, SeventhStringSet, StringSetId } from '../types';
-import { mutedStrings } from '../utils/sevenths';
+import Kbd from '../Kbd';
+import type { VoicingSystem } from '../../types/voicing';
+import { ROOT_OPTIONS } from '../../utils/musicTheory';
 
-interface SeventhsNavigationProps {
+interface VoicingNavigationProps<Q extends string, I extends number, S extends string | number> {
+  system: VoicingSystem<Q, I, S>;
   root: number;
-  quality: SeventhQuality;
-  stringSets: StringSetId[];
-  inversions: Inversion[];
+  quality: Q;
+  stringSets: S[];
+  inversions: I[];
   onRootChange: (root: number) => void;
-  onQualityChange: (quality: SeventhQuality) => void;
-  onToggleStringSet: (id: StringSetId) => void;
-  onSoloStringSet: (id: StringSetId) => void;
+  onQualityChange: (quality: Q) => void;
+  onToggleStringSet: (set: S) => void;
+  onSoloStringSet: (set: S) => void;
   onPrevious: () => void;
   onNext: () => void;
-  onToggleInversion: (inversion: Inversion) => void;
-  onSoloInversion: (inversion: Inversion) => void;
+  onToggleInversion: (inversion: I) => void;
+  onSoloInversion: (inversion: I) => void;
   onToggleAllInversions: () => void;
 }
 
@@ -40,14 +32,12 @@ const segmentActiveClass = 'bg-blue-600 text-white shadow-sm focus:ring-blue-500
 const segmentIdleClass =
   'text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 focus:ring-gray-400';
 
-/** Screen-reader name for a set, e.g. "Strings E D G B, A string muted, drop 3" */
-function stringSetAriaLabel(set: SeventhStringSet): string {
-  const names = set.strings.map((s) => STRING_NAMES[s]).join(' ');
-  const muted = mutedStrings(set).map((s) => `${STRING_NAMES[s]} string muted, `);
-  return `Strings ${names}, ${muted.join('')}${set.voicing.toLowerCase()}`;
-}
-
-function SeventhsNavigation({
+export default function VoicingNavigation<
+  Q extends string,
+  I extends number,
+  S extends string | number,
+>({
+  system,
   root,
   quality,
   stringSets,
@@ -61,10 +51,10 @@ function SeventhsNavigation({
   onToggleInversion,
   onSoloInversion,
   onToggleAllInversions,
-}: SeventhsNavigationProps) {
+}: VoicingNavigationProps<Q, I, S>) {
+  const { inversions: INVERSIONS, qualities, nouns } = system;
   const allSelected = inversions.length === INVERSIONS.length;
-  const isLastInversion = (inversion: Inversion) =>
-    inversions.length === 1 && inversions[0] === inversion;
+  const isLastInversion = (inversion: I) => inversions.length === 1 && inversions[0] === inversion;
 
   return (
     <div className="bg-white dark:bg-gray-900 mb-6">
@@ -79,7 +69,7 @@ function SeventhsNavigation({
                 onChange={(e) => onRootChange(Number(e.target.value))}
                 className="appearance-none rounded-lg px-4 py-2 pr-8 text-white font-medium focus:ring-2 focus:ring-white focus:outline-none cursor-pointer border-none shadow-md transition-all duration-200"
                 style={{ backgroundColor: INVERSIONS[0].color }}
-                aria-label="Select chord root"
+                aria-label={`Select ${nouns.chord} root`}
               >
                 {ROOT_OPTIONS.map(({ value, label }) => (
                   <option key={value} value={value} className="bg-gray-800 text-white">
@@ -110,18 +100,18 @@ function SeventhsNavigation({
             <div
               className="flex bg-gray-200 dark:bg-gray-700 rounded-lg p-1"
               role="group"
-              aria-label="Seventh chord quality selector"
+              aria-label={nouns.qualityGroup}
             >
-              {QUALITY_ORDER.map((q) => (
+              {system.url.qualities.map((q) => (
                 <button
                   key={q}
                   onClick={() => onQualityChange(q)}
                   className={`${segmentButtonClass} ${q === quality ? segmentActiveClass : segmentIdleClass}`}
                   aria-pressed={q === quality}
-                  aria-label={SEVENTH_QUALITIES[q].name}
-                  title={SEVENTH_QUALITIES[q].name}
+                  aria-label={qualities[q].name}
+                  title={qualities[q].name}
                 >
-                  {SEVENTH_QUALITIES[q].short}
+                  {qualities[q].short}
                 </button>
               ))}
             </div>
@@ -134,19 +124,18 @@ function SeventhsNavigation({
               role="group"
               aria-label="String set selector"
             >
-              {STRING_SET_ORDER.map((id) => {
-                const set = STRING_SETS[id];
-                const isActive = stringSets.includes(id);
+              {system.stringSets.map((set) => {
+                const isActive = stringSets.includes(set.id);
                 return (
                   <button
-                    key={id}
+                    key={set.id}
                     onClick={(event) =>
-                      event.shiftKey ? onSoloStringSet(id) : onToggleStringSet(id)
+                      event.shiftKey ? onSoloStringSet(set.id) : onToggleStringSet(set.id)
                     }
                     className={`${segmentButtonClass} ${isActive ? segmentActiveClass : segmentIdleClass}`}
                     aria-pressed={isActive}
-                    aria-label={stringSetAriaLabel(set)}
-                    title={`Strings ${set.label}, ${set.voicing.toLowerCase()} (⇧ for this set only)`}
+                    aria-label={set.ariaLabel}
+                    title={`${set.title} (⇧ for this set only)`}
                   >
                     {set.label}
                   </button>
@@ -181,7 +170,7 @@ function SeventhsNavigation({
               aria-label="Inversion selector"
             >
               {INVERSIONS.map((info, index) => {
-                const inversion = index as Inversion;
+                const inversion = index as I;
                 const isActive = inversions.includes(inversion);
                 return (
                   <button
@@ -237,9 +226,9 @@ function SeventhsNavigation({
           </div>
           <div className="flex flex-wrap items-center justify-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-4">
             <span>Tap inversions and string sets to stack them •</span>
-            <Kbd>1-4</Kbd>
+            <Kbd>1-{INVERSIONS.length}</Kbd>
             <span>to toggle,</span>
-            <Kbd>⇧1-4</Kbd>
+            <Kbd>⇧1-{INVERSIONS.length}</Kbd>
             <span>for one •</span>
             <span>walk the neck with</span>
             <Kbd>←→</Kbd>
@@ -251,5 +240,3 @@ function SeventhsNavigation({
     </div>
   );
 }
-
-export default memo(SeventhsNavigation);

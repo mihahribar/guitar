@@ -1,22 +1,31 @@
 import { describe, it, expect } from 'vitest';
 import { getNoteAtFret } from '@/shared/utils/musicTheory';
 import type { StringIndex } from '@/shared/types/core';
-import { QUALITY_ORDER, STRING_SETS, TRIAD_QUALITIES } from '../constants';
-import type { Inversion, Triad, TriadQuality } from '../types';
+import { INVERSIONS, QUALITY_ORDER, STRING_SETS, TRIAD_QUALITIES } from '../constants';
+import type { TriadsState, Inversion, Triad, TriadQuality } from '../types';
+import type { VoicingSelectionAction } from '@/shared/types/voicing';
+import { createSplitColorStyle } from '@/shared/utils/splitColor';
 import {
-  ALL_INVERSIONS,
-  buildPositionMap,
-  buildSequence,
-  createInversionStyle,
-  toneLabel,
-  visibleTriads,
-} from './triads';
-import {
-  createInitialTriadsState,
-  decodeTriads,
-  encodeTriads,
-  triadsReducer,
-} from '../hooks/useTriadsState';
+  buildVoicingPositionMap as buildPositionMap,
+  chordToneLabel,
+  visibleVoicings as visibleTriads,
+} from '@/shared/utils/voicings';
+import { voicingSelectionReducer } from '@/shared/utils/voicingSelection';
+import { decodeVoicingSelection, encodeVoicingSelection } from '@/shared/utils/voicingUrl';
+import { TRIADS } from '../system';
+import { ALL_INVERSIONS, buildSequence } from './triads';
+
+const createInitialTriadsState = (root = 0) => TRIADS.url.initial(root);
+const triadsReducer = (
+  state: TriadsState,
+  action: VoicingSelectionAction<TriadQuality, Inversion, StringIndex>
+) => voicingSelectionReducer(TRIADS.url.selection, state, action);
+const encodeTriads = (state: TriadsState) => encodeVoicingSelection(TRIADS.url, state);
+const decodeTriads = (params: URLSearchParams) => decodeVoicingSelection(TRIADS.url, params);
+const toneLabel = (root: number, quality: TriadQuality, pitchClass: number) =>
+  chordToneLabel(TRIAD_QUALITIES[quality], root, pitchClass);
+const createInversionStyle = (inversions: readonly Inversion[]) =>
+  createSplitColorStyle(inversions.map((inversion) => INVERSIONS[inversion].color));
 
 const C = 0;
 const GBE = 2 as StringIndex;

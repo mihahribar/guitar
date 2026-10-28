@@ -1,21 +1,32 @@
 import { describe, it, expect } from 'vitest';
 import { getNoteAtFret } from '@/shared/utils/musicTheory';
-import { buildVoicingPositionMap, visibleVoicings } from '@/shared/utils/voicings';
-import { QUALITY_ORDER, SEVENTH_QUALITIES, STRING_SETS, STRING_SET_ORDER } from '../constants';
-import type { Inversion, SeventhChord, SeventhQuality, StringSetId } from '../types';
+import type { VoicingSelectionAction } from '@/shared/types/voicing';
+import { createSplitColorStyle } from '@/shared/utils/splitColor';
+import { buildVoicingPositionMap, chordToneLabel, visibleVoicings } from '@/shared/utils/voicings';
+import { voicingSelectionReducer } from '@/shared/utils/voicingSelection';
+import { decodeVoicingSelection, encodeVoicingSelection } from '@/shared/utils/voicingUrl';
 import {
-  ALL_INVERSIONS,
-  buildSequence,
-  createInversionStyle,
-  mutedStrings,
-  toneLabel,
-} from './sevenths';
-import {
-  createInitialSeventhsState,
-  decodeSevenths,
-  encodeSevenths,
-  seventhsReducer,
-} from '../hooks/useSeventhsState';
+  INVERSIONS,
+  QUALITY_ORDER,
+  SEVENTH_QUALITIES,
+  STRING_SETS,
+  STRING_SET_ORDER,
+} from '../constants';
+import { SEVENTHS } from '../system';
+import type { SeventhsState, Inversion, SeventhChord, SeventhQuality, StringSetId } from '../types';
+import { ALL_INVERSIONS, buildSequence, mutedStrings } from './sevenths';
+
+const createInitialSeventhsState = (root = 0) => SEVENTHS.url.initial(root);
+const seventhsReducer = (
+  state: SeventhsState,
+  action: VoicingSelectionAction<SeventhQuality, Inversion, StringSetId>
+) => voicingSelectionReducer(SEVENTHS.url.selection, state, action);
+const encodeSevenths = (state: SeventhsState) => encodeVoicingSelection(SEVENTHS.url, state);
+const decodeSevenths = (params: URLSearchParams) => decodeVoicingSelection(SEVENTHS.url, params);
+const toneLabel = (root: number, quality: SeventhQuality, pitchClass: number) =>
+  chordToneLabel(SEVENTH_QUALITIES[quality], root, pitchClass);
+const createInversionStyle = (inversions: readonly Inversion[]) =>
+  createSplitColorStyle(inversions.map((inversion) => INVERSIONS[inversion].color));
 
 const C = 0;
 

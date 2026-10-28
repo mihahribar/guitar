@@ -187,17 +187,17 @@ src/
 │   │   ├── types/       # 3NPS system types
 │   │   └── utils/       # Pattern and sequence generation (+ tests)
 │   ├── triads/          # Triads system module
-│   │   ├── components/  # Triads page, navigation, toggles
+│   │   ├── components/  # Triads page (renders the shared VoicingPage)
 │   │   ├── constants/   # Qualities, inversion colours, string sets
-│   │   ├── hooks/       # Triads state, logic, keyboard
 │   │   ├── types/       # Triads system types
-│   │   └── utils/       # Triad and sequence generation (+ tests)
+│   │   ├── utils/       # Triad and sequence generation (+ tests)
+│   │   └── system.ts    # VoicingSystem definition: labels, string set chips, link names
 │   ├── sevenths/        # Seventh chords (7ths) system module
-│   │   ├── components/  # 7ths page, navigation, toggles
+│   │   ├── components/  # 7ths page (renders the shared VoicingPage)
 │   │   ├── constants/   # Qualities, inversion colours, string sets
-│   │   ├── hooks/       # 7ths state, logic, keyboard
 │   │   ├── types/       # 7ths system types
-│   │   └── utils/       # Seventh chord sequences (+ tests)
+│   │   ├── utils/       # Seventh chord sequences (+ tests)
+│   │   └── system.ts    # VoicingSystem definition: labels, string set chips, link names
 │   └── rhythm-game/     # Rhythm practice system module
 │       ├── components/  # Rhythm UI (panels, controls, notation)
 │       ├── constants/   # Rhythm patterns and defaults

@@ -15,12 +15,6 @@ export interface TriadQualityInfo {
   toneLabels: readonly [string, string, string];
 }
 
-export interface InversionInfo {
-  name: string;
-  short: string;
-  color: string;
-}
-
 export interface StringSet {
   /** Thickest string of the set (index 0 = high E); the set is low, low-1, low-2 */
   low: StringIndex;

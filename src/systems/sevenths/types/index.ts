@@ -18,12 +18,6 @@ export interface SeventhQualityInfo {
   toneLabels: readonly [string, string, string, string];
 }
 
-export interface InversionInfo {
-  name: string;
-  short: string;
-  color: string;
-}
-
 export type StringSetId = 'e-dgb' | 'adgb' | 'dgbe';
 
 /** Four strings with one chord tone each, in a drop 2 or drop 3 voicing */

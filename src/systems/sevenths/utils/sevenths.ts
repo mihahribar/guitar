@@ -1,9 +1,7 @@
-import type { CSSProperties } from 'react';
 import type { StringIndex } from '@/shared/types/core';
 import type { VoicingLayout } from '@/shared/types/voicing';
-import { createSplitColorStyle } from '@/shared/utils/splitColor';
-import { buildVoicingSequence, chordToneLabel } from '@/shared/utils/voicings';
-import { INVERSIONS, SEVENTH_QUALITIES, STRING_SETS } from '../constants';
+import { buildVoicingSequence } from '@/shared/utils/voicings';
+import { SEVENTH_QUALITIES, STRING_SETS } from '../constants';
 import type { Inversion, SeventhChord, SeventhQuality, StringSetId } from '../types';
 
 /** Every inversion, in order */
@@ -24,20 +22,6 @@ export function buildSequence(
     STRING_SETS[stringSet],
     ALL_INVERSIONS
   );
-}
-
-/** Solid colour for one inversion, hard-edged stripes for positions shared by several */
-export function createInversionStyle(inversions: readonly Inversion[]): CSSProperties | undefined {
-  return createSplitColorStyle(inversions.map((inversion) => INVERSIONS[inversion].color));
-}
-
-/** Chord-tone label (R, 3, ♭3, 5, ♭5, 7, ♭7, ♭♭7) for a pitch class, or undefined if it isn't in the chord */
-export function toneLabel(
-  root: number,
-  quality: SeventhQuality,
-  pitchClass: number
-): string | undefined {
-  return chordToneLabel(SEVENTH_QUALITIES[quality], root, pitchClass);
 }
 
 /** Strings inside a set's span that stay silent (the A string in E·DGB) */

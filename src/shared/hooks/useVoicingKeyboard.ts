@@ -1,40 +1,44 @@
 import { useEffect } from 'react';
-import type { Inversion } from '../types';
 
-interface UseTriadsKeyboardProps {
+interface UseVoicingKeyboardProps<I extends number> {
+  /** Number of inversions; digits 1 to this select them */
+  inversionCount: number;
   onNext: () => void;
   onPrevious: () => void;
   onSetsUp: () => void;
   onSetsDown: () => void;
-  onToggleInversion: (inversion: Inversion) => void;
-  onSoloInversion: (inversion: Inversion) => void;
+  onToggleInversion: (inversion: I) => void;
+  onSoloInversion: (inversion: I) => void;
   onToggleAllInversions: () => void;
   onToggleWholeNeck: () => void;
   onToggleShowAllNotes: () => void;
 }
 
-/** Physical number-row keys, so the shortcuts survive Shift turning "1" into "!" */
-const INVERSION_KEY_CODES = ['Digit1', 'Digit2', 'Digit3'];
-
-function inversionFromKey(event: KeyboardEvent): Inversion | undefined {
-  const codeIndex = INVERSION_KEY_CODES.indexOf(event.code);
-  if (codeIndex >= 0) return codeIndex as Inversion;
-  const digit = Number(event.key);
-  return digit >= 1 && digit <= INVERSION_KEY_CODES.length ? ((digit - 1) as Inversion) : undefined;
+/**
+ * The inversion a number key selects, if any. Reads the physical key first, so
+ * the shortcut survives Shift turning "1" into "!".
+ */
+export function inversionFromKey<I extends number>(
+  event: Pick<KeyboardEvent, 'code' | 'key'>,
+  inversionCount: number
+): I | undefined {
+  const digit = /^Digit\d$/.test(event.code) ? Number(event.code.slice(5)) : Number(event.key);
+  return digit >= 1 && digit <= inversionCount ? ((digit - 1) as I) : undefined;
 }
 
 /**
- * Keyboard shortcuts for the triads visualizer
+ * Keyboard shortcuts for a voicing visualizer (Triads, 7ths)
  *
  * @keyboardShortcuts
  * - Arrow Left/Right: walk the whole selection down/up the neck
  * - Arrow Up/Down: move the selected string sets one set toward the high/low strings
- * - 1-3: add or remove an inversion; Shift+1-3 shows that inversion on its own
+ * - 1-N: add or remove an inversion; Shift+1-N shows that inversion on its own
  * - 0: select every inversion, or collapse back to the leading one
  * - Space: toggle whole neck
  * - N: toggle note names on the whole fretboard
  */
-export function useTriadsKeyboard({
+export function useVoicingKeyboard<I extends number>({
+  inversionCount,
   onNext,
   onPrevious,
   onSetsUp,
@@ -44,7 +48,7 @@ export function useTriadsKeyboard({
   onToggleAllInversions,
   onToggleWholeNeck,
   onToggleShowAllNotes,
-}: UseTriadsKeyboardProps) {
+}: UseVoicingKeyboardProps<I>) {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (
@@ -56,7 +60,7 @@ export function useTriadsKeyboard({
       }
       if (event.ctrlKey || event.metaKey || event.altKey) return;
 
-      const inversion = inversionFromKey(event);
+      const inversion = inversionFromKey<I>(event, inversionCount);
       if (inversion !== undefined) {
         event.preventDefault();
         if (event.shiftKey) {
@@ -105,6 +109,7 @@ export function useTriadsKeyboard({
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [
+    inversionCount,
     onNext,
     onPrevious,
     onSetsUp,

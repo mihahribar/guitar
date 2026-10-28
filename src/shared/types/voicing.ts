@@ -3,6 +3,7 @@
  */
 
 import type { StringIndex } from './core';
+import type { HelpContent } from './help';
 
 /** Where a voicing sits: its strings and the order its chord tones stack in */
 export interface VoicingLayout {
@@ -70,4 +71,59 @@ export interface VoicingSelectionConfig<Q extends string, I extends number, S> {
   stringSets: readonly S[];
   /** Every voicing of every inversion on one string set, ordered up the neck */
   buildSequence: (root: number, quality: Q, stringSet: S) => Voicing<I>[];
+}
+
+/** What a voicing visualizer plugs into the shared URL encoding */
+export interface VoicingUrlConfig<Q extends string, I extends number, S> {
+  selection: VoicingSelectionConfig<Q, I, S>;
+  qualities: readonly Q[];
+  /** Each string set with the name it has in a link */
+  stringSetNames: readonly (readonly [S, string])[];
+  /** The page's starting state for a key */
+  initial: (root: number) => VoicingSelection<Q, I, S>;
+}
+
+export interface InversionInfo {
+  name: string;
+  short: string;
+  color: string;
+}
+
+export interface VoicingQualityInfo {
+  name: string;
+  short: string;
+  /** Semitones above the root for each chord tone */
+  intervals: readonly number[];
+  /** Label for each chord tone (e.g. R, ♭3, 5) */
+  toneLabels: readonly string[];
+}
+
+/** One string set chip and how it is described */
+export interface VoicingStringSetChip<S> {
+  id: S;
+  /** Chip text, e.g. "GBE" */
+  label: string;
+  /** Tooltip, without the "⇧ for this set only" hint */
+  title: string;
+  ariaLabel: string;
+  /** Name in the summary line, e.g. "ADGB (drop 2)" */
+  summary: string;
+}
+
+/** Everything that tells one voicing page (Triads, 7ths) apart from another */
+export interface VoicingSystem<Q extends string, I extends number, S extends string | number> {
+  /** Reducer config, link names and the starting state */
+  url: VoicingUrlConfig<Q, I, S>;
+  qualities: Record<Q, VoicingQualityInfo>;
+  /** One per inversion, in order */
+  inversions: readonly InversionInfo[];
+  /** Chips from the lowest set upward */
+  stringSets: readonly VoicingStringSetChip<S>[];
+  /** Extra notes for the selected sets, such as the G-B shift */
+  stringSetNotes: (selected: readonly S[]) => string[];
+  /** Chord name for the summary, e.g. "C major" or "Cmaj7" */
+  chordName: (root: number, quality: Q) => string;
+  /** Wording: chord ("major triad"), shape ("every triad") and the quality group's aria label */
+  nouns: { chord: string; shape: string; qualityGroup: string };
+  help: HelpContent;
 }

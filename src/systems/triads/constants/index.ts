@@ -1,4 +1,5 @@
-import type { InversionInfo, StringSet, TriadQuality, TriadQualityInfo } from '../types';
+import type { InversionInfo } from '@/shared/types/voicing';
+import type { StringSet, TriadQuality, TriadQualityInfo } from '../types';
 
 export const TRIAD_QUALITIES: Record<TriadQuality, TriadQualityInfo> = {
   major: { name: 'Major', short: 'Maj', intervals: [0, 4, 7], toneLabels: ['R', '3', '5'] },

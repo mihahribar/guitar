@@ -1,15 +1,12 @@
-import { memo } from 'react';
-import ToggleSwitch from '@/shared/components/ToggleSwitch';
-import type { StringIndex } from '@/shared/types/core';
-import { CHROMATIC_TO_NOTE_NAME } from '@/shared/utils/musicTheory';
-import { INVERSIONS, STRING_SETS, TRIAD_QUALITIES } from '../constants';
-import type { Inversion, TriadQuality } from '../types';
+import ToggleSwitch from '../ToggleSwitch';
+import type { VoicingSystem } from '../../types/voicing';
 
-interface TriadsTogglesProps {
+interface VoicingTogglesProps<Q extends string, I extends number, S extends string | number> {
+  system: VoicingSystem<Q, I, S>;
   root: number;
-  quality: TriadQuality;
-  stringSets: StringIndex[];
-  inversions: Inversion[];
+  quality: Q;
+  stringSets: S[];
+  inversions: I[];
   fretRange?: [number, number];
   wholeNeck: boolean;
   showAllNotes: boolean;
@@ -17,10 +14,12 @@ interface TriadsTogglesProps {
   onToggleShowAllNotes: () => void;
 }
 
-/** The G-B pair is tuned a major third apart; sets starting on D or G cross it */
-const CROSSES_G_B: readonly number[] = [3, 2];
-
-function TriadsToggles({
+export default function VoicingToggles<
+  Q extends string,
+  I extends number,
+  S extends string | number,
+>({
+  system,
   root,
   quality,
   stringSets,
@@ -30,14 +29,15 @@ function TriadsToggles({
   showAllNotes,
   onToggleWholeNeck,
   onToggleShowAllNotes,
-}: TriadsTogglesProps) {
-  const chordName = `${CHROMATIC_TO_NOTE_NAME[root]} ${TRIAD_QUALITIES[quality].name.toLowerCase()}`;
-  const setLabels = STRING_SETS.filter((set) => stringSets.includes(set.low)).map(
-    (set) => set.label
-  );
+}: VoicingTogglesProps<Q, I, S>) {
+  const { inversions: INVERSIONS, nouns } = system;
+  const chordName = system.chordName(root, quality);
+  const setLabels = system.stringSets
+    .filter((set) => stringSets.includes(set.id))
+    .map((set) => set.summary);
   const stringsLabel = `${setLabels.length === 1 ? 'strings' : 'string sets'} ${setLabels.join(', ')}`;
   const soloInversion = inversions.length === 1 ? inversions[0] : undefined;
-  const crossesGB = stringSets.some((low) => CROSSES_G_B.includes(low));
+  const otherTones = system.qualities[quality].toneLabels.slice(1);
 
   return (
     <div className="mt-6">
@@ -89,18 +89,18 @@ function TriadsToggles({
             {!wholeNeck && fretRange && `, frets ${fretRange[0]}-${fretRange[1]}`}
           </p>
           <p>
-            Dots show the chord tone: R is the root, then the{' '}
-            {TRIAD_QUALITIES[quality].toneLabels[1]} and {TRIAD_QUALITIES[quality].toneLabels[2]}
+            Dots show the chord tone: R is the root, then the {otherTones.slice(0, -1).join(', ')}{' '}
+            and {otherTones[otherTones.length - 1]}
           </p>
-          {crossesGB && (
-            <p className="text-xs">
-              G-B strings are a major third apart: shapes crossing them shift up one fret
+          {system.stringSetNotes(stringSets).map((note) => (
+            <p key={note} className="text-xs">
+              {note}
             </p>
-          )}
+          ))}
           <p className="text-xs">
             {wholeNeck
-              ? 'Every triad of the selected inversions, all the way up the neck'
-              : 'One triad per inversion and string set, ←→ walks them along the neck together'}
+              ? `Every ${nouns.shape} of the selected inversions, all the way up the neck`
+              : `One ${nouns.shape} per inversion and string set, ←→ walks them along the neck together`}
           </p>
           <p className="text-xs">Press 0 for all inversions • Space for whole neck • N for notes</p>
         </div>
@@ -121,12 +121,12 @@ function TriadsToggles({
                 </li>
               ))}
             </ul>
-            <p className="text-xs mt-1">Split colours: notes shared by the selected triads</p>
+            <p className="text-xs mt-1">
+              Split colours: notes shared by the selected {nouns.shape}s
+            </p>
           </div>
         )}
       </div>
     </div>
   );
 }
-
-export default memo(TriadsToggles);
