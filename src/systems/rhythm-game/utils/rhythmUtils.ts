@@ -5,7 +5,7 @@
  * and subdivision calculations.
  */
 
-import type { RhythmPattern, PanelIndex, BeatIndex, RandomPoolAction } from '../types';
+import type { RhythmPattern, RhythmNote, PanelIndex, BeatIndex, RandomPoolAction } from '../types';
 import { ALL_PATTERNS, PATTERNS_BY_CATEGORY, RHYTHM_GAME_CONSTANTS } from '../constants';
 
 /**
@@ -114,3 +114,26 @@ export const calculateNoteTimings = (pattern: RhythmPattern, beatDurationMs: num
 
   return timings;
 };
+
+/**
+ * Which slots of a beat a pattern plays on, e.g. `[true, false, true, true]`
+ * for eighth + two sixteenths split into four sixteenth slots
+ */
+export const getPlayedSlots = (notes: RhythmNote[], slotCount: number): boolean[] => {
+  const slots = Array<boolean>(slotCount).fill(false);
+  let start = 0;
+  for (const note of notes) {
+    if (!note.isRest) slots[Math.round(start * slotCount)] = true;
+    start += note.duration;
+  }
+  return slots;
+};
+
+/**
+ * A pattern's name as counted on a given beat: sixteenth names count from the
+ * beat number, so "1 · & a" reads "3 · & a" on beat 3
+ */
+export const getPatternNameOnBeat = (pattern: RhythmPattern, beatNumber: number): string =>
+  pattern.category === 'sixteenths'
+    ? pattern.name.replace(/^1(?= )/, String(beatNumber))
+    : pattern.name;

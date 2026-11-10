@@ -32,7 +32,16 @@ export const DEFAULT_RHYTHM_SETTINGS: RhythmSettings = {
   randomPool: ALL_PATTERNS.map((pattern) => pattern.id),
 };
 
-const findPattern = (id: string) => ALL_PATTERNS.find((pattern) => pattern.id === id);
+/** Ids that links may still carry for patterns that were merged into another */
+const RENAMED_PATTERN_IDS: Record<string, string> = {
+  // Drawn as four sixteenth slots, it looked the same as two sixteenths + eighth
+  'three-sixteenths-rest': 'two-sixteenths-eighth',
+};
+
+const findPattern = (id: string) => {
+  const current = RENAMED_PATTERN_IDS[id] ?? id;
+  return ALL_PATTERNS.find((pattern) => pattern.id === current);
+};
 
 /** The pool as a link writes it: `all`, `none`, or its ids in pattern order */
 function encodePool(pool: readonly string[]): string {

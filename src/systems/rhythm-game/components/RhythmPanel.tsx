@@ -7,6 +7,7 @@
 
 import React from 'react';
 import type { RhythmPanelProps } from '../types';
+import { getPatternNameOnBeat } from '../utils/rhythmUtils';
 import { NotationDisplay } from './NotationDisplay';
 
 /**
@@ -21,6 +22,7 @@ export const RhythmPanel: React.FC<RhythmPanelProps> = ({
 }) => {
   // Panel beat number (1-indexed for display)
   const beatNumber = panelIndex + 1;
+  const name = getPatternNameOnBeat(pattern, beatNumber);
 
   return (
     <button
@@ -43,7 +45,7 @@ export const RhythmPanel: React.FC<RhythmPanelProps> = ({
               : 'bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
         }
       `}
-      aria-label={`Beat ${beatNumber}: ${pattern.name}${isChanged ? ', just changed' : ''}. Click to change pattern.`}
+      aria-label={`Beat ${beatNumber}: ${name}${isChanged ? ', just changed' : ''}. Click to change pattern.`}
       aria-pressed={isActive}
     >
       {/* Beat number indicator */}
@@ -76,7 +78,7 @@ export const RhythmPanel: React.FC<RhythmPanelProps> = ({
           ${isActive ? 'text-blue-600 dark:text-blue-300' : 'text-gray-500 dark:text-gray-400'}
         `}
       >
-        {pattern.name}
+        {name}
       </span>
     </button>
   );

@@ -153,6 +153,7 @@ const RhythmPage: React.FC = () => {
         isOpen={selectorOpen}
         onClose={handleCloseSelector}
         title="Select Pattern"
+        beatNumber={selectedPanelIndex !== null ? selectedPanelIndex + 1 : 1}
         selectedIds={selectedPanelIndex !== null ? [panels[selectedPanelIndex].id] : []}
         onSelect={handlePatternSelect}
       />

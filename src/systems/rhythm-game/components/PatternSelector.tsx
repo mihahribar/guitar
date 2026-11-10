@@ -9,6 +9,7 @@ import React from 'react';
 import Modal from '@/shared/components/Modal';
 import type { RhythmPattern, SubdivisionType } from '../types';
 import { ALL_PATTERNS, PATTERNS_BY_CATEGORY, CATEGORY_DISPLAY_NAMES } from '../constants';
+import { getPatternNameOnBeat } from '../utils/rhythmUtils';
 import { NotationDisplay } from './NotationDisplay';
 
 interface PatternSelectorProps {
@@ -22,6 +23,8 @@ interface PatternSelectorProps {
   description?: string;
   /** Notice shown below the instructions, e.g. when nothing is selected */
   warning?: string;
+  /** Beat the pick is for, so sixteenth names count from it; defaults to 1 */
+  beatNumber?: number;
   /** Ids of the patterns shown as selected */
   selectedIds: string[];
   /** Pattern click; the event tells whether Shift was held */
@@ -56,6 +59,7 @@ export const PatternSelector: React.FC<PatternSelectorProps> = ({
   title,
   description,
   warning,
+  beatNumber = 1,
   selectedIds,
   onSelect,
   onSelectCategory,
@@ -148,7 +152,7 @@ export const PatternSelector: React.FC<PatternSelectorProps> = ({
                         <NotationDisplay pattern={pattern} />
                       </div>
                       <span className="text-xs text-gray-600 dark:text-gray-400 text-center leading-tight">
-                        {pattern.name}
+                        {getPatternNameOnBeat(pattern, beatNumber)}
                       </span>
                     </button>
                   );

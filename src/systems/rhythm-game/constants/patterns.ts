@@ -60,24 +60,18 @@ export const EIGHTH_PATTERNS: RhythmPattern[] = [
 
 /**
  * Sixteenth note patterns (4 subdivisions per beat)
+ *
+ * Shown as four sixteenth slots, so each name is its count with a dot for a
+ * slot that is not played. The ids keep the standard-notation names because
+ * shared links use them; the durations keep audio notes ringing until the next.
  */
 const SIXTEENTH_PATTERNS: RhythmPattern[] = [
   {
     id: 'four-sixteenths',
-    name: 'Four Sixteenths',
+    name: '1 e & a',
     notes: [
       { duration: 0.25, isRest: false },
       { duration: 0.25, isRest: false },
-      { duration: 0.25, isRest: false },
-      { duration: 0.25, isRest: false },
-    ],
-    category: 'sixteenths',
-  },
-  {
-    id: 'eighth-two-sixteenths',
-    name: 'Eighth + 2 Sixteenths',
-    notes: [
-      { duration: 0.5, isRest: false },
       { duration: 0.25, isRest: false },
       { duration: 0.25, isRest: false },
     ],
@@ -85,7 +79,7 @@ const SIXTEENTH_PATTERNS: RhythmPattern[] = [
   },
   {
     id: 'two-sixteenths-eighth',
-    name: '2 Sixteenths + Eighth',
+    name: '1 e & ·',
     notes: [
       { duration: 0.25, isRest: false },
       { duration: 0.25, isRest: false },
@@ -95,7 +89,7 @@ const SIXTEENTH_PATTERNS: RhythmPattern[] = [
   },
   {
     id: 'sixteenth-eighth-sixteenth',
-    name: 'Sixteenth + Eighth + Sixteenth',
+    name: '1 e · a',
     notes: [
       { duration: 0.25, isRest: false },
       { duration: 0.5, isRest: false },
@@ -104,17 +98,8 @@ const SIXTEENTH_PATTERNS: RhythmPattern[] = [
     category: 'sixteenths',
   },
   {
-    id: 'dotted-eighth-sixteenth',
-    name: 'Dotted Eighth + Sixteenth',
-    notes: [
-      { duration: 0.75, isRest: false },
-      { duration: 0.25, isRest: false },
-    ],
-    category: 'sixteenths',
-  },
-  {
     id: 'sixteenth-dotted-eighth',
-    name: 'Sixteenth + Dotted Eighth',
+    name: '1 e · ·',
     notes: [
       { duration: 0.25, isRest: false },
       { duration: 0.75, isRest: false },
@@ -122,23 +107,79 @@ const SIXTEENTH_PATTERNS: RhythmPattern[] = [
     category: 'sixteenths',
   },
   {
-    id: 'three-sixteenths-rest',
-    name: '3 Sixteenths + Rest',
+    id: 'eighth-two-sixteenths',
+    name: '1 · & a',
     notes: [
+      { duration: 0.5, isRest: false },
       { duration: 0.25, isRest: false },
       { duration: 0.25, isRest: false },
+    ],
+    category: 'sixteenths',
+  },
+  {
+    id: 'dotted-eighth-sixteenth',
+    name: '1 · · a',
+    notes: [
+      { duration: 0.75, isRest: false },
       { duration: 0.25, isRest: false },
-      { duration: 0.25, isRest: true },
     ],
     category: 'sixteenths',
   },
   {
     id: 'rest-three-sixteenths',
-    name: 'Rest + 3 Sixteenths',
+    name: '· e & a',
     notes: [
       { duration: 0.25, isRest: true },
       { duration: 0.25, isRest: false },
       { duration: 0.25, isRest: false },
+      { duration: 0.25, isRest: false },
+    ],
+    category: 'sixteenths',
+  },
+  {
+    id: 'rest-sixteenth-eighth',
+    name: '· e & ·',
+    notes: [
+      { duration: 0.25, isRest: true },
+      { duration: 0.25, isRest: false },
+      { duration: 0.5, isRest: false },
+    ],
+    category: 'sixteenths',
+  },
+  {
+    id: 'rest-eighth-sixteenth',
+    name: '· e · a',
+    notes: [
+      { duration: 0.25, isRest: true },
+      { duration: 0.5, isRest: false },
+      { duration: 0.25, isRest: false },
+    ],
+    category: 'sixteenths',
+  },
+  {
+    id: 'rest-dotted-eighth',
+    name: '· e · ·',
+    notes: [
+      { duration: 0.25, isRest: true },
+      { duration: 0.75, isRest: false },
+    ],
+    category: 'sixteenths',
+  },
+  {
+    id: 'eighth-rest-two-sixteenths',
+    name: '· · & a',
+    notes: [
+      { duration: 0.5, isRest: true },
+      { duration: 0.25, isRest: false },
+      { duration: 0.25, isRest: false },
+    ],
+    category: 'sixteenths',
+  },
+  {
+    id: 'dotted-eighth-rest-sixteenth',
+    name: '· · · a',
+    notes: [
+      { duration: 0.75, isRest: true },
       { duration: 0.25, isRest: false },
     ],
     category: 'sixteenths',
@@ -185,6 +226,36 @@ const TRIPLET_PATTERNS: RhythmPattern[] = [
     name: 'Triplet (Rest Middle)',
     notes: [
       { duration: 1 / 3, isRest: false },
+      { duration: 1 / 3, isRest: true },
+      { duration: 1 / 3, isRest: false },
+    ],
+    category: 'triplets',
+  },
+  {
+    id: 'triplet-first-only',
+    name: 'Triplet (First Only)',
+    notes: [
+      { duration: 1 / 3, isRest: false },
+      { duration: 1 / 3, isRest: true },
+      { duration: 1 / 3, isRest: true },
+    ],
+    category: 'triplets',
+  },
+  {
+    id: 'triplet-middle-only',
+    name: 'Triplet (Middle Only)',
+    notes: [
+      { duration: 1 / 3, isRest: true },
+      { duration: 1 / 3, isRest: false },
+      { duration: 1 / 3, isRest: true },
+    ],
+    category: 'triplets',
+  },
+  {
+    id: 'triplet-last-only',
+    name: 'Triplet (Last Only)',
+    notes: [
+      { duration: 1 / 3, isRest: true },
       { duration: 1 / 3, isRest: true },
       { duration: 1 / 3, isRest: false },
     ],

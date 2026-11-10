@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { ALL_PATTERNS, EIGHTH_PATTERNS } from '../constants';
 import type { BeatIndex, PanelIndex } from '../types';
 import {
+  getPatternNameOnBeat,
   getRandomChangeBeat,
   getRandomPatternExcept,
   randomPoolReducer,
@@ -91,5 +92,19 @@ describe('random pool', () => {
     expect(randomPoolReducer(filled, { type: 'TOGGLE_CATEGORY', payload: 'eighths' })).toEqual([
       'quarter',
     ]);
+  });
+});
+
+describe('pattern names on a beat', () => {
+  const find = (id: string) => ALL_PATTERNS.find((pattern) => pattern.id === id)!;
+
+  it('counts sixteenths from the beat number', () => {
+    expect(getPatternNameOnBeat(find('four-sixteenths'), 3)).toBe('3 e & a');
+    expect(getPatternNameOnBeat(find('eighth-two-sixteenths'), 2)).toBe('2 · & a');
+  });
+
+  it('leaves names without a beat count alone', () => {
+    expect(getPatternNameOnBeat(find('rest-three-sixteenths'), 4)).toBe('· e & a');
+    expect(getPatternNameOnBeat(find('triplet'), 4)).toBe('Triplet');
   });
 });

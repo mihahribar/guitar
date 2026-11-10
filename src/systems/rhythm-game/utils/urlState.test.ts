@@ -56,4 +56,12 @@ describe('rhythm URL settings', () => {
   it('falls back to the defaults for junk', () => {
     expect(decode('bpm=fast&panels=x&pool=y&random=2&audio=on')).toEqual(DEFAULT_RHYTHM_SETTINGS);
   });
+
+  it('reads the id of the removed three sixteenths + rest as two sixteenths + eighth', () => {
+    const settings = decode(
+      'panels=three-sixteenths-rest&pool=three-sixteenths-rest,two-sixteenths-eighth'
+    );
+    expect(settings.panels[0].id).toBe('two-sixteenths-eighth');
+    expect(settings.randomPool).toEqual(['two-sixteenths-eighth']);
+  });
 });
